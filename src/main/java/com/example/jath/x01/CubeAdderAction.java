@@ -31,9 +31,6 @@ public class CubeAdderAction extends RecursiveAction {
             right.compute();
             left.join();
 
-            // or, let ForkJoin take care of details
-            // ForkJoinTask.invokeAll(left, right);
-
             result = left.result + right.result;
         }
     }
