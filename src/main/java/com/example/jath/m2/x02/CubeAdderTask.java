@@ -1,4 +1,4 @@
-package com.example.jath.x02;
+package com.example.jath.m2.x02;
 
 import java.util.concurrent.RecursiveTask;
 
