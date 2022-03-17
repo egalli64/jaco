@@ -87,7 +87,7 @@ public class LockTryWait {
         }
     }
 
-    double aLongishJob() {
+    private double aLongishJob() {
         double result = 0.0;
         for (int i = 0; i < 100; i++) {
             result += Math.cbrt(Math.random());
