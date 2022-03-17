@@ -1,4 +1,4 @@
-package com.example.jath.m2.x02;
+package com.example.jath.m2.s05;
 
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.DoubleStream;

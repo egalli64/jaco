@@ -1,4 +1,4 @@
-package com.example.jath.m2.x01;
+package com.example.jath.m2.s04;
 
 public class CubeAdderRunner implements Runnable {
 
