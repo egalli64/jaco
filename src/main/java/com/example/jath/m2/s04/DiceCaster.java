@@ -1,4 +1,4 @@
-package com.example.jath.m2.s02;
+package com.example.jath.m2.s04;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;

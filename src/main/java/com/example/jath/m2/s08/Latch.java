@@ -1,4 +1,4 @@
-package com.example.jath.m2.s06;
+package com.example.jath.m2.s08;
 
 import java.util.concurrent.CountDownLatch;
 

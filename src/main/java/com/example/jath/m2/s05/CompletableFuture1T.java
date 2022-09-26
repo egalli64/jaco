@@ -1,4 +1,4 @@
-package com.example.jath.m2.s03;
+package com.example.jath.m2.s05;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
