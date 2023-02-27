@@ -46,7 +46,7 @@ public class Waiting {
     public static void aMethod() {
         System.out.printf("Simulating a wait on a resource for %s thread%n", Thread.currentThread().getName());
         try {
-            // This is just a simulation! The production use of sleep() is very limited!
+            // This is just a simulation! The use of sleep() in production code is very limited!
             Thread.sleep(500);
 
             System.out.printf("Checking from '%s' thread: ", Thread.currentThread().getName());
@@ -76,6 +76,7 @@ public class Waiting {
     private static void anotherJob(long millis) {
         try {
             System.out.printf("Do something in %s thread for %dms%n", Thread.currentThread().getName(), millis);
+            // This is just a simulation! The use of sleep() in production code is very limited!
             Thread.sleep(millis);
         } catch (InterruptedException e) {
             throw new IllegalStateException(e);
