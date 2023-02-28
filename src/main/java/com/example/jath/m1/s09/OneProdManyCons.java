@@ -1,61 +1,98 @@
+/*
+ * Introduction to Java Thread
+ * 
+ * https://github.com/egalli64/jath
+ */
 package com.example.jath.m1.s09;
 
-public class OneProdManyCons {
-    private volatile double result = 0.0;
+import java.util.Random;
 
-    public static synchronized void checkThreadStates() {
-        System.out.println("Checking thread states from " + Thread.currentThread().getName());
+/**
+ * Thread communication
+ * 
+ * One Producer - Many Consumers
+ */
+public class OneProdManyCons {
+    private static final int PRODUCT_NOT_READY = 0;
+
+    private Random random = new Random();
+
+    /** The resource shared between threads */
+    private int product = PRODUCT_NOT_READY;
+
+    /**
+     * Utility method for demonstration purposes
+     */
+    private static synchronized void checkThreadStates() {
+        System.out.println("- Checking thread states from " + Thread.currentThread().getName());
         Thread[] ts = new Thread[6];
         // Thread::enumerate() should be used only for debugging and monitoring purposes
         int count = Thread.enumerate(ts);
         for (int i = 0; i < count; i++) {
             System.out.printf("%s is %s%n", ts[i].getName(), ts[i].getState());
         }
+        System.out.println("---");
     }
 
+    /**
+     * The producer thread runs this method, that sets the shared resource.
+     * <li>The production has to be terminated by interrupt.
+     * <li>After the production the producer notify all to consume it.
+     * <li>If there is a non-consumed product, the producer wait for its consumption
+     */
     private synchronized void producer() {
         try {
             while (!Thread.currentThread().isInterrupted()) {
-                System.out.println("Producer is about to generate a result");
-                result = Math.cbrt(Math.random());
-                System.out.println("Producer has produced as result " + result);
+                System.out.println("Producer is ready ... ");
+                product = random.nextInt(1, 7);
+                System.out.println("Producer has generated " + product);
 
                 checkThreadStates();
                 notifyAll();
-                while (result != 0.0) {
-                    System.out.println("Producer waits the result to be consumed");
+                while (product != PRODUCT_NOT_READY) {
+                    System.out.println("Producer waits");
                     wait(500);
                     System.out.println("Producer wait has ended");
                 }
             }
         } catch (InterruptedException e) {
-            System.out.println("Producer has been interrupted");
+            System.out.println("Producer wait has been interrupted");
             Thread.currentThread().interrupt();
         } finally {
-            System.out.println("Producer has stopped producing values");
+            System.out.println("Producer is about to terminate");
         }
     }
 
+    /**
+     * The consumer thread runs this method.
+     * 
+     * It waits the producer to set the product, then consumes it.
+     */
     private synchronized void consumer() {
         String tName = Thread.currentThread().getName();
         try {
-            while (result == 0.0) {
-                System.out.println(tName + " waits for the result");
+            while (product == PRODUCT_NOT_READY) {
+                System.out.println(tName + " waits");
                 wait();
                 System.out.println(tName + " wait is ended");
             }
 
-            System.out.printf("Consumer %s consumes %f and then notifies all about it%n", tName, result);
-            result = 0.0;
+            System.out.printf("Consumer %s consumes %d and then notifies all about it%n", tName, product);
+            product = PRODUCT_NOT_READY;
 
             checkThreadStates();
             notifyAll();
         } catch (InterruptedException e) {
             throw new IllegalStateException(e);
         }
-        System.out.println(tName + " exits consumer()");
+        System.out.println(tName + " is about to terminate");
     }
 
+    /**
+     * Start producer and consumers, then join first the consumers then the producer.
+     * 
+     * @param args not used
+     */
     public static void main(String[] args) throws InterruptedException {
         OneProdManyCons wn = new OneProdManyCons();
 
