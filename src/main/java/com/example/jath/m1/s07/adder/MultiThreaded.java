@@ -10,9 +10,15 @@ import java.util.Arrays;
 /**
  * Is multithreading worth?
  * 
- * Let's try a CPU intensive calculation using more threads "by hand"
+ * Let's try a CPU intensive calculation using more threads "by hand". The idea is dividing the job
+ * among a few threads to exploit the multithreading hardware available on the current machine.
+ * 
+ * Here I'm splitting the job in 8 parts. Is that a good choice?
  */
 public class MultiThreaded extends Problem {
+    private static final int WORKER_NR = 8;
+    private final int CHUNK_SIZE = data.length / WORKER_NR;
+
     /**
      * Calculate a simple cost estimate for calculate()
      * 
@@ -26,21 +32,12 @@ public class MultiThreaded extends Problem {
      * Split the job in 8 and give each part to a different thread, then put the result together.
      * 
      * The code is not complicated, but it is too low level.
-     * 
-     * TODO: why 8 jobs and not 4, or 16? This magic number is machine dependent!
      */
     @Override
     protected double calculate() {
-        final int subLen = data.length / 8;
-        Worker[] workers = { //
-                new Worker(0, subLen), //
-                new Worker(data.length / 8, subLen), //
-                new Worker(data.length / 4, subLen), //
-                new Worker(data.length / 8 * 3, subLen), //
-                new Worker(data.length / 2, subLen), //
-                new Worker(data.length / 8 * 5, subLen), //
-                new Worker(data.length / 4 * 3, subLen), //
-                new Worker(data.length / 8 * 7, subLen) //
+        Worker[] workers = { new Worker(0), new Worker(CHUNK_SIZE), new Worker(CHUNK_SIZE * 2),
+                new Worker(CHUNK_SIZE * 3), new Worker(CHUNK_SIZE * 4), new Worker(CHUNK_SIZE * 5),
+                new Worker(CHUNK_SIZE * 6), new Worker(CHUNK_SIZE * 7) //
         };
 
         for (Worker worker : workers) {
@@ -61,22 +58,20 @@ public class MultiThreaded extends Problem {
     /**
      * The worker for the current problem.
      * 
-     * Being an inner class, it could access "data". Notice that this is a read-only access.
+     * Being an inner class, it could access "data". Notice that this is a read-only access. Each thread
+     * puts the result of its work in variable of its own ownership.
      */
     private class Worker extends Thread {
         private int begin;
-        private int size;
         private double result = 0.0;
 
         /**
          * Constructor
          * 
          * @param begin index of the first element of data for this worker
-         * @param size  size of the slice of data for this worker
          */
-        Worker(int begin, int size) {
+        Worker(int begin) {
             this.begin = begin;
-            this.size = size;
         }
 
         /**
@@ -84,7 +79,7 @@ public class MultiThreaded extends Problem {
          */
         @Override
         public void run() {
-            result = Arrays.stream(data).skip(begin).limit(size).mapToDouble(x -> Math.cbrt(x)).sum();
+            result = Arrays.stream(data).skip(begin).limit(CHUNK_SIZE).mapToDouble(x -> Math.cbrt(x)).sum();
         }
 
         /**
