@@ -50,13 +50,7 @@ public abstract class Problem {
             times.add(System.currentTimeMillis() - start);
         }
 
-        // More than a result means something wrong in the algorithm
-        if (results.size() != 1) {
-            System.out.println("A single result was expected: " + results);
-        } else {
-            System.out.printf("Result: %f%n", results.iterator().next());
-        }
-
+        System.out.println("Results: " + results);
         System.out.println("Times in millis: " + times);
     }
 
