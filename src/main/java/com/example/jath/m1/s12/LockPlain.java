@@ -1,73 +1,87 @@
+/*
+ * Introduction to Java Thread
+ * 
+ * https://github.com/egalli64/jath
+ */
 package com.example.jath.m1.s12;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Lock and ReentrantLock.
+ * 
+ * Define two resources (actually, doubles) and protect them by lock/unlock on the associated lock
+ */
 public class LockPlain {
     private Lock lockF = new ReentrantLock();
-    private volatile double resourceF = 0.0;
+    private double resourceF = 0.0;
 
     private Lock lockG = new ReentrantLock();
-    private volatile double resourceG = 0.0;
+    private double resourceG = 0.0;
 
-    public static void main(String[] args) {
+    /**
+     * Run a few threads concurrently on the two resources.
+     * 
+     * @param args not used
+     * @throws InterruptedException when join in main is interrupted (should not happen)
+     */
+    public static void main(String[] args) throws InterruptedException {
         LockPlain lp = new LockPlain();
 
-        Thread[] threads = { //
-                new Thread(lp::syncOnF, "F1"), //
-                new Thread(lp::syncOnG, "G1"), //
-                new Thread(lp::syncOnF, "F2"), //
-                new Thread(lp::syncOnG, "G2") //
-        };
+        Thread[] threads = { new Thread(lp::syncOnF, "F1"), new Thread(lp::syncOnG, "G1"),
+                new Thread(lp::syncOnF, "F2"), new Thread(lp::syncOnG, "G2") };
 
         for (Thread t : threads) {
             t.start();
         }
 
         for (Thread t : threads) {
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                System.err.println("No interruption expected here - " + e.getMessage());
-                throw new IllegalStateException(e);
-            }
+            t.join();
         }
 
+        // From here on there is only one thread running, no need of synchronization in print
         System.out.printf("Resource F is %f%n", lp.resourceF);
-        System.out.printf("Resource F is %f%n", lp.resourceG);
+        System.out.printf("Resource G is %f%n", lp.resourceG);
         System.out.println("Bye from " + Thread.currentThread().getName());
     }
 
+    /**
+     * For threads accessing resource F
+     */
     public void syncOnF() {
         String name = Thread.currentThread().getName();
-        System.out.println(name + " needs the lock on F");
+        printer(name + " needs the lock on F");
 
         try {
             lockF.lock();
             double value = aRiskyJob();
-            System.out.printf("%s is adding %f to F%n", name, value);
+            printer(String.format("%s is adding %f to F", name, value));
             resourceF += value;
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            printer(e.getMessage());
         } finally {
-            System.out.println(name + " unlock on F");
+            printer(name + " unlock on F");
             lockF.unlock();
         }
     }
 
+    /**
+     * For threads accessing resource G
+     */
     public void syncOnG() {
         String name = Thread.currentThread().getName();
-        System.out.println(name + " needs the lock on G");
+        printer(name + " needs the lock on G");
 
         try {
             lockG.lock();
             double value = aRiskyJob();
-            System.out.printf("%s is adding %f to G%n", name, value);
+            printer(String.format("%s is adding %f to G", name, value));
             resourceG += value;
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            printer(e.getMessage());
         } finally {
-            System.out.println(name + " unlock on G");
+            printer(name + " unlock on G");
             lockG.unlock();
         }
     }
@@ -83,5 +97,14 @@ public class LockPlain {
             throw new IllegalStateException(Thread.currentThread().getName() + ", something bad happened");
         }
         return result;
+    }
+
+    /**
+     * The access to console for printing is protected by this method
+     * 
+     * @param message the message to print
+     */
+    private synchronized void printer(String message) {
+        System.out.println(message);
     }
 }
