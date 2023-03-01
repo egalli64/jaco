@@ -40,7 +40,6 @@ public class LockPlain {
             t.join();
         }
 
-        // From here on there is only one thread running, no need of synchronization in print
         System.out.printf("Resource F is %f%n", lp.resourceF);
         System.out.printf("Resource G is %f%n", lp.resourceG);
         System.out.println("Bye from " + Thread.currentThread().getName());
@@ -51,17 +50,17 @@ public class LockPlain {
      */
     public void syncOnF() {
         String name = Thread.currentThread().getName();
-        printer(name + " needs the lock on F");
+        System.out.println(name + " needs the lock on F");
 
         try {
             lockF.lock();
             double value = aRiskyJob();
-            printer(String.format("%s is adding %f to F", name, value));
+            System.out.printf("%s is adding %f to F%n", name, value);
             resourceF += value;
         } catch (Exception e) {
-            printer(e.getMessage());
+            System.out.println(e.getMessage());
         } finally {
-            printer(name + " unlock on F");
+            System.out.println(name + " unlock on F");
             lockF.unlock();
         }
     }
@@ -71,17 +70,17 @@ public class LockPlain {
      */
     public void syncOnG() {
         String name = Thread.currentThread().getName();
-        printer(name + " needs the lock on G");
+        System.out.println(name + " needs the lock on G");
 
         try {
             lockG.lock();
             double value = aRiskyJob();
-            printer(String.format("%s is adding %f to G", name, value));
+            System.out.printf("%s is adding %f to G%n", name, value);
             resourceG += value;
         } catch (Exception e) {
-            printer(e.getMessage());
+            System.out.println(e.getMessage());
         } finally {
-            printer(name + " unlock on G");
+            System.out.println(name + " unlock on G");
             lockG.unlock();
         }
     }
@@ -97,14 +96,5 @@ public class LockPlain {
             throw new IllegalStateException(Thread.currentThread().getName() + ", something bad happened");
         }
         return result;
-    }
-
-    /**
-     * The access to console for printing is protected by this method
-     * 
-     * @param message the message to print
-     */
-    private synchronized void printer(String message) {
-        System.out.println(message);
     }
 }

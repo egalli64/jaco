@@ -42,7 +42,6 @@ public class LockTryWait {
             t.join();
         }
 
-        // From here on there is only one thread running, no need of synchronization in print
         System.out.printf("Resource F is %f%n", ltw.resourceF);
         System.out.printf("Resource G is %f%n", ltw.resourceG);
         System.out.println("Bye from " + Thread.currentThread().getName());
@@ -55,24 +54,24 @@ public class LockTryWait {
      */
     public void syncOnF() {
         String name = Thread.currentThread().getName();
-        printer(name + " try the lock on F for some millis");
+        System.out.println(name + " try the lock on F for some millis");
 
         boolean locked = false;
         try {
             locked = lockF.tryLock(50, TimeUnit.MILLISECONDS);
             if (locked) {
                 double value = aLongishJob();
-                printer(String.format("%s is adding %f to F", name, value));
+                System.out.printf("%s is adding %f to F%n", name, value);
                 resourceF += value;
             }
         } catch (InterruptedException e) {
-            printer(name + " wait on lock unexpectedly interrupted");
+            System.out.println(name + " wait on lock unexpectedly interrupted");
         } finally {
             if (locked) {
-                printer(name + " unlock on F");
+                System.out.println(name + " unlock on F");
                 lockF.unlock();
             } else {
-                printer(name + " could not get the lock in the specified time frame");
+                System.out.println(name + " could not get the lock in the specified time frame");
             }
         }
     }
@@ -113,14 +112,5 @@ public class LockTryWait {
      */
     private double aLongishJob() {
         return DoubleStream.generate(() -> Math.cbrt(Math.random())).limit(100).sum();
-    }
-
-    /**
-     * The access to console for printing is protected by this method
-     * 
-     * @param message the message to print
-     */
-    private synchronized void printer(String message) {
-        System.out.println(message);
     }
 }
