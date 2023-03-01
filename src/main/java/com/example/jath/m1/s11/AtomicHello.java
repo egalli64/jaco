@@ -1,13 +1,26 @@
+/*
+ * Introduction to Java Thread
+ * 
+ * https://github.com/egalli64/jath
+ */
 package com.example.jath.m1.s11;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Approaching to atomic variables
+ */
 public class AtomicHello {
+    /**
+     * A few basic methods on AtomicInteger
+     * 
+     * @param args not used
+     */
     public static void main(String[] args) {
         AtomicInteger ai = new AtomicInteger(42);
 
         int i = ai.get();
-        System.out.printf("An AtomicInteger (%s) is just a wrapper for a volatile int (%d)%n", ai, i);
+        System.out.printf("An AtomicInteger (%s) is a wrapper around a volatile int (%d)%n", ai, i);
 
         i = 1;
         ai.set(i);
