@@ -1,21 +1,22 @@
+/*
+ * Introduction to Java Thread
+ * 
+ * https://github.com/egalli64/jath
+ */
 package com.example.jath.m2.s02;
 
+import java.util.stream.DoubleStream;
+
+/**
+ * A runnable for Executor examples
+ */
 public class Hello implements Runnable {
-	private int x;
-
-	public Hello(int x) {
-		this.x = x;
-	}
-
-	@Override
-	public void run() {
-		System.out.println("Hello " + x);
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		System.out.println("Goodbye " + x);
-	}
+    @Override
+    public void run() {
+        String name = Thread.currentThread().getName();
+        System.out.printf("%s begin @ %d%n", name, System.currentTimeMillis() % 1_000);
+        System.out.printf("%s {%f}%n", name, DoubleStream.generate(Math::random).limit(100_000).map(Math::cbrt).sum());
+        System.out.printf("%s end @ %d%n", name, System.currentTimeMillis() % 1_000);
+    }
 
 }
