@@ -12,39 +12,39 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Lock and Condition
  * 
- * A simple exchange between a producer and a consumer
+ * A single exchange between a producer and a consumer
  */
 public class OneProdCon {
-    private double result;
+    private double product;
     private boolean produced;
     private Lock lock;
-    private Condition available;
+    private Condition availability;
 
     /**
      * Constructor
      */
     public OneProdCon() {
-        this.result = 0.0;
+        this.product = 0.0;
         this.produced = false;
         this.lock = new ReentrantLock();
-        this.available = lock.newCondition();
+        this.availability = lock.newCondition();
     }
 
     /**
      * For the producer thread.
      * 
-     * Acquire the lock, produce the result, signal() on the condition its availability.
+     * Produce a single product, signal its availability, then terminate.
      */
     private void producer() {
         String name = Thread.currentThread().getName();
-        System.out.println(name + " enter producer()");
+        System.out.println(name + " enter in action");
 
+        lock.lock();
         try {
-            lock.lock();
-            result = Math.random();
+            product = Math.random();
             produced = true;
-            System.out.printf("%s has produced as result %f%n", name, result);
-            available.signal();
+            System.out.printf("%s signal availability of %f%n", name, product);
+            availability.signal();
         } finally {
             lock.unlock();
         }
@@ -53,22 +53,21 @@ public class OneProdCon {
     /**
      * For the consumer thread.
      * 
-     * Acquire the lock, if the product is not ready, await() on the condition for it. Then consume it.
+     * Wait for a product, consume it, then terminate.
      */
     private void consumer() {
         String name = Thread.currentThread().getName();
-        System.out.println(name + " enter consumer()");
+        System.out.println(name + " enter in action");
 
+        lock.lock();
         try {
-            lock.lock();
             while (!produced) {
-                System.out.println(name + " waits for the result");
-                available.await();
-                System.out.println(name + " wait is ended");
+                System.out.println(name + " waits");
+                availability.await();
+                System.out.println(name + " is signaled of product availability");
             }
 
-            System.out.printf("%s consumes %f%n", name, result);
-            produced = false;
+            System.out.printf("%s consumes %f%n", name, product);
         } catch (InterruptedException e) {
             throw new IllegalStateException(e);
         } finally {
@@ -77,8 +76,9 @@ public class OneProdCon {
     }
 
     /**
-     * Create and start a consumer thread, that it is going to hang, waiting for the producer. Then
-     * create and start a producer thread, that would signal its production to the consumer.
+     * Create and start producer and consumer. Let them play, then terminate.
+     *
+     * Notice that the timing is not deterministic.
      * 
      * @param args not used
      * @throws InterruptedException when interrupted
@@ -86,15 +86,16 @@ public class OneProdCon {
     public static void main(String[] args) throws InterruptedException {
         OneProdCon wn = new OneProdCon();
 
-        Thread consumer = new Thread(wn::consumer, "TC");
-        consumer.start();
+        Thread[] threads = { new Thread(wn::consumer, "C"), new Thread(wn::producer, "P") };
 
-        Thread producer = new Thread(wn::producer, "TP");
-        producer.start();
+        for (Thread t : threads) {
+            t.start();
+        }
 
-        System.out.println("Main thread waits end of exachange");
-        producer.join();
-        consumer.join();
+        System.out.println("Main waits");
+        for (Thread t : threads) {
+            t.join();
+        }
 
         System.out.println("Bye");
     }
