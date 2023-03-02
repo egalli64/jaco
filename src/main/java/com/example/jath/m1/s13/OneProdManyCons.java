@@ -5,7 +5,6 @@
  */
 package com.example.jath.m1.s13;
 
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -17,9 +16,11 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class OneProdManyCons {
     private double product;
+    /** true when the product is not valid (anymore) */
     private boolean consumed;
     private Lock lock;
     private Condition availability;
+    private Condition consumption;
 
     /**
      * Constructor
@@ -29,6 +30,7 @@ public class OneProdManyCons {
         this.consumed = true;
         this.lock = new ReentrantLock();
         this.availability = lock.newCondition();
+        this.consumption = lock.newCondition();
     }
 
     /**
@@ -37,55 +39,50 @@ public class OneProdManyCons {
      * Produce a product, signal it to all, then wait its consumption before produce again.
      */
     private void producer() {
-        try {
+        System.out.println("Producer in action");
+        while (!Thread.currentThread().isInterrupted()) {
             lock.lock();
-            System.out.println("Producer has acquired the lock");
-            while (!Thread.currentThread().isInterrupted()) {
+            try {
+                while (!consumed) {
+                    consumption.await();
+                }
                 product = Math.random();
                 consumed = false;
-
-                System.out.printf("Produced %f and signal availability%n", product);
+                System.out.printf("Producer signals availability of %f%n", product);
                 availability.signalAll();
-                while (!consumed) {
-                    System.out.println("Producer waits the product to be consumed");
-                    availability.await(500, TimeUnit.MILLISECONDS);
-                    System.out.println("Producer wait is ended");
-                }
+            } catch (InterruptedException e) {
+                System.out.println("Producer interrupted while waiting on consumption");
+                return;
+            } finally {
+                lock.unlock();
             }
-            System.out.println("Producer production has been interrupted");
-        } catch (InterruptedException e) {
-            System.out.println("Producer wait has been interrupted");
-            Thread.currentThread().interrupt();
-        } finally {
-            lock.unlock();
-            System.out.println("Producer has relased the lock and is terminating");
         }
     }
 
     /**
      * For the consumer thread.
      * 
-     * Wait until has access to a not-already-consumed product. Signal that, and then terminate.
+     * Wait until it can consume to a not-already-consumed product. Signal that, and then terminate.
      */
     private void consumer() {
         String name = Thread.currentThread().getName();
+
+        lock.lock();
+        System.out.println(name + " in action");
         try {
-            lock.lock();
-            System.out.println(name + " has acquired the lock");
             while (consumed) {
-                System.out.println(name + " waits for a product not already consumed");
                 availability.await();
-                System.out.println(name + " wait is ended");
             }
 
-            System.out.printf("%s signals consumation of %f%n", name, product);
+            System.out.printf("%s signals consumption of %f%n", name, product);
             consumed = true;
-            availability.signalAll();
+            consumption.signal();
         } catch (InterruptedException e) {
-            throw new IllegalStateException(e);
+            System.out.println(name + " unexpectedly interrupted while waiting on availability");
+            return;
         } finally {
             lock.unlock();
-            System.out.println(name + " has released the lock and is terminating");
+            System.out.println(name + " terminates");
         }
     }
 
@@ -103,8 +100,8 @@ public class OneProdManyCons {
         Thread producer = new Thread(wn::producer);
         producer.start();
 
-        Thread[] consumers = { new Thread(wn::consumer, "TC1"), new Thread(wn::consumer, "TC2"),
-                new Thread(wn::consumer, "TC3") };
+        Thread[] consumers = { new Thread(wn::consumer, "C1"), new Thread(wn::consumer, "C2"),
+                new Thread(wn::consumer, "C3") };
         for (Thread consumer : consumers) {
             consumer.start();
         }
