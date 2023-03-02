@@ -1,46 +1,67 @@
+/*
+ * Introduction to Java Thread
+ * 
+ * https://github.com/egalli64/jath
+ */
 package com.example.jath.m2.s03;
 
+import java.util.Arrays;
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.DoubleStream;
 
+/**
+ * Given an array of doubles, we want the sum of the cubes of its values.
+ * 
+ * Comparing Fork-Join approach with plain sum and use of parallel stream.
+ */
 public class CubeAdder {
+    /**
+     * Single thread classic approach by for-each
+     * 
+     * @param data the values to evaluate
+     * @return sum of elements cubes
+     */
     public static double plain(double[] data) {
         double result = 0;
-        for (int i = 0; i < data.length; i++) {
-            result += Math.pow(data[i], 3);
+        for (double cur : data) {
+            result += Math.pow(cur, 3);
         }
         return result;
     }
 
-    public static double classic(double[] data) {
-        CubeAdderRunner left = new CubeAdderRunner(data, 0, data.length / 2);
-        CubeAdderRunner right = new CubeAdderRunner(data, data.length / 2, data.length);
-
-        Thread[] ts = { new Thread(left), new Thread(right) };
-
-        for (Thread t : ts) {
-            t.start();
-        }
-
-        for (Thread t : ts) {
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                throw new IllegalStateException(e);
-            }
-        }
-
-        return left.result() + right.result();
-    }
-
+    /**
+     * Multithreaded approach by Fork Join
+     * 
+     * <li>Define a RecursiveAction, pass the data to it
+     * <li>On a Fork Join Pool, call invoke on the recursive action
+     * <li>Extract the result from the recursive action
+     * 
+     * @param data the values to evaluate
+     * @return sum of elements cubes
+     */
     public static double recursiveAction(double[] data) {
         CubeAdderAction action = new CubeAdderAction(data, 0, data.length);
         new ForkJoinPool().invoke(action);
         return action.result();
     }
 
+    /**
+     * Parallel stream approach
+     * 
+     * @param data the values to evaluate
+     * @return sum of elements cubes
+     */
+    public static double parallelStream(double[] data) {
+        return Arrays.stream(data).parallel().map(x -> Math.pow(x, 3)).sum();
+    }
+
+    /**
+     * Comparison of approaches.
+     * 
+     * @param args not used
+     */
     public static void main(String[] args) {
-        double[] data = DoubleStream.generate(Math::random).limit(16_000_000).toArray();
+        double[] data = DoubleStream.generate(Math::random).limit(8_000_000).toArray();
 
         System.out.println("Plain adder");
         for (int i = 0; i < 10; i++) {
@@ -49,17 +70,17 @@ public class CubeAdder {
             System.out.printf("Sum %f computed in ~ %d ms%n", result, (System.currentTimeMillis() - start));
         }
 
-        System.out.println("Classic MultiThreading on two parts");
-        for (int i = 0; i < 10; i++) {
-            long start = System.currentTimeMillis();
-            double result = classic(data);
-            System.out.printf("Sum %f computed in ~ %d ms%n", result, (System.currentTimeMillis() - start));
-        }
-
         System.out.println("Fork Join Recursive Action");
         for (int i = 0; i < 10; i++) {
             long start = System.currentTimeMillis();
             double result = recursiveAction(data);
+            System.out.printf("Sum %f computed in ~ %d ms%n", result, (System.currentTimeMillis() - start));
+        }
+
+        System.out.println("Parallel stream adder");
+        for (int i = 0; i < 10; i++) {
+            long start = System.currentTimeMillis();
+            double result = parallelStream(data);
             System.out.printf("Sum %f computed in ~ %d ms%n", result, (System.currentTimeMillis() - start));
         }
     }

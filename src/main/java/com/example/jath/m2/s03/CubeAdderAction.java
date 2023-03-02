@@ -1,9 +1,20 @@
+/*
+ * Introduction to Java Thread
+ * 
+ * https://github.com/egalli64/jath
+ */
 package com.example.jath.m2.s03;
 
+import java.util.List;
+import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveAction;
 
+/**
+ * A recursive action for Fork/Join
+ */
 @SuppressWarnings("serial")
 public class CubeAdderAction extends RecursiveAction {
+    /** Where the recursion should stop - it is our responsibility to find a good value */
     private static final int THRESHOLD = 200_000;
 
     private double[] data;
@@ -11,6 +22,13 @@ public class CubeAdderAction extends RecursiveAction {
     private int end;
     private double result;
 
+    /**
+     * Constructor
+     * 
+     * @param data  the full array
+     * @param begin left index in the current interval (included)
+     * @param end   right index in the current interval (excluded)
+     */
     public CubeAdderAction(double[] data, int begin, int end) {
         this.data = data;
         this.begin = begin;
@@ -25,16 +43,27 @@ public class CubeAdderAction extends RecursiveAction {
                 result += Math.pow(data[i], 3);
             }
         } else {
-            CubeAdderAction left = new CubeAdderAction(data, begin, (begin + end) / 2);
-            CubeAdderAction right = new CubeAdderAction(data, (begin + end) / 2, end);
-            left.fork();
-            right.compute();
-            left.join();
+            ForkJoinTask.invokeAll(List.of( //
+                    new CubeAdderAction(data, begin, (begin + end) / 2), //
+                    new CubeAdderAction(data, (begin + end) / 2, end) //
+            ));
 
-            result = left.result + right.result;
+            // same, but using explicitly the fork / join pattern
+//            CubeAdderAction left = new CubeAdderAction(data, begin, (begin + end) / 2);
+//            CubeAdderAction right = new CubeAdderAction(data, (begin + end) / 2, end);
+//            left.fork();
+//            right.compute();
+//            left.join();
+//
+//            result = left.result + right.result;
         }
     }
 
+    /**
+     * Getter
+     * 
+     * @return the expected result
+     */
     public double result() {
         return result;
     }
