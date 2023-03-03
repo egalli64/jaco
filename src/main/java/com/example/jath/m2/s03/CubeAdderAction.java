@@ -43,14 +43,12 @@ public class CubeAdderAction extends RecursiveAction {
                 result += Math.pow(data[i], 3);
             }
         } else {
-            ForkJoinTask.invokeAll(List.of( //
-                    new CubeAdderAction(data, begin, (begin + end) / 2), //
-                    new CubeAdderAction(data, (begin + end) / 2, end) //
-            ));
+            CubeAdderAction left = new CubeAdderAction(data, begin, (begin + end) / 2);
+            CubeAdderAction right = new CubeAdderAction(data, (begin + end) / 2, end);
 
-            // same, but using explicitly the fork / join pattern
-//            CubeAdderAction left = new CubeAdderAction(data, begin, (begin + end) / 2);
-//            CubeAdderAction right = new CubeAdderAction(data, (begin + end) / 2, end);
+            ForkJoinTask.invokeAll(List.of(left, right));
+
+            // same of calling invokeAll, but explicitly applying the fork / join pattern
 //            left.fork();
 //            right.compute();
 //            left.join();
