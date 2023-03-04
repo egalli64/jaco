@@ -5,7 +5,7 @@
  */
 package com.example.jath.m2.s02;
 
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
@@ -21,10 +21,12 @@ public class FixedThreadExecutor {
      * @param args not used
      */
     public static void main(String[] args) {
-        System.out.println("Fixed " + POOL_SIZE + " Thread Pool on Runnables");
-        Executor executor = Executors.newFixedThreadPool(POOL_SIZE);
+        System.out.printf("-Fixed %d Thread Pool on Runnables-", POOL_SIZE);
+        ExecutorService executor = Executors.newFixedThreadPool(POOL_SIZE);
         for (int i = 0; i < 5; i++) {
             executor.execute(new Hello());
         }
+
+        executor.shutdown();
     }
 }
