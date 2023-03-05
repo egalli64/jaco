@@ -1,24 +1,47 @@
+/*
+ * Introduction to Java Thread
+ * 
+ * https://github.com/egalli64/jath
+ */
 package com.example.jath.m2.s06;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.DoubleStream;
 
+/**
+ * A Callable to be used by an Executor
+ */
 public class Hello implements Callable<Integer> {
-	private int x;
+    private static AtomicInteger idGenerator = new AtomicInteger();
 
-	public Hello(int x) {
-		this.x = x;
-	}
+    private int id;
 
-	@Override
-	public Integer call() throws Exception {
-		System.out.println("Hello " + x);
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		System.out.println("Goodbye " + x);
+    /**
+     * Constructor
+     */
+    public Hello() {
+        this.id = idGenerator.getAndIncrement();
+    }
 
-		return x;
-	}
+    @Override
+    public Integer call() throws Exception {
+        String name = Thread.currentThread().getName();
+
+        System.out.printf("%s: Hello %d%n", name, id);
+        System.out.printf("%s: %f%n", name, aJob(100));
+        System.out.printf("%s: Goodbye %d%n", name, id);
+
+        return id;
+    }
+
+    /**
+     * A simple job that takes some time
+     * 
+     * @param size size of the job
+     * @return a double
+     */
+    private static double aJob(int size) {
+        return DoubleStream.generate(() -> Math.cbrt(Math.random())).limit(size).sum();
+    }
 }
