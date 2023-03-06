@@ -5,20 +5,16 @@
  */
 package com.example.jath.m2.s08;
 
-import java.util.Random;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.DoubleAdder;
-import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
 /**
  * Using a CyclicBarrier in a loop, plus interrupting workers and reset barrier.
  */
-public class BarrierLoop {
-    private static final int TASK_NR = 3;
+public class BarrierLoop extends ProblemFrame {
     private static final int LOOP_NR = 3;
-    public static Random random = new Random();
 
     /**
      * Create a CyclicBarrier for the workers and the main thread.
@@ -79,15 +75,5 @@ public class BarrierLoop {
 
         // InterruptedException expected for I1, BrokenBarrierException for I2
         ti1.interrupt();
-    }
-
-    /**
-     * A useless job
-     * 
-     * @param size number of random doubles to sum
-     * @return sum of a size random doubles in [0, 1)
-     */
-    private static double job(int size) {
-        return DoubleStream.generate(random::nextDouble).limit(size).sum();
     }
 }

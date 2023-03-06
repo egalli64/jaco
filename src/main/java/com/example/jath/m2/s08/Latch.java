@@ -1,39 +1,48 @@
+/*
+ * Introduction to Java Thread
+ * 
+ * https://github.com/egalli64/jath
+ */
 package com.example.jath.m2.s08;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.DoubleAdder;
+import java.util.stream.Stream;
 
-public class Latch {
-    private static final int NUMBER_OF_THREADS = 2;
-
+/**
+ * CountDownLatch
+ */
+public class Latch extends ProblemFrame {
+    /**
+     * Create a latch set to TASK_NR, run TASK_NR tasks, each task decrease the latch count.
+     * 
+     * Main wait on latch, when the count down is done, gather the result from the tasks and print it.
+     * 
+     * @param args not used
+     */
     public static void main(String[] args) {
-        CountDownLatch cdl = new CountDownLatch(NUMBER_OF_THREADS);
+        DoubleAdder accumulator = new DoubleAdder();
+        CountDownLatch cdl = new CountDownLatch(TASK_NR);
 
         Runnable worker = () -> {
             String name = Thread.currentThread().getName();
-
-            try {
-                System.out.println(name + " ...");
-                Thread.sleep((long) (Math.random() * 1_000));
-                System.out.println(name + " done [" + cdl.getCount() + "]");
-                cdl.countDown();
-            } catch (InterruptedException e) {
-                System.out.println("No exception expected here");
-                throw new IllegalStateException(e);
-            }
+            double value = job(100);
+            System.out.printf("%s: %f%n", name, value);
+            accumulator.add(value);
+            System.out.println(name + " done [" + cdl.getCount() + "]");
+            cdl.countDown();
         };
 
-        Thread[] ts = { new Thread(worker), new Thread(worker), new Thread(worker), new Thread(worker) };
-
-        for (Thread t : ts) {
-            t.start();
-        }
+        Stream.generate(() -> new Thread(worker)).limit(TASK_NR).forEach(t -> t.start());
 
         try {
+            System.out.println("Main waits on latch: " + cdl.getCount());
             cdl.await();
-            System.out.println("Go!");
+            System.out.println("Main sees countdown completed: " + cdl.getCount());
         } catch (InterruptedException e) {
             System.out.println("No exception expected here");
             throw new IllegalStateException(e);
         }
+        System.out.printf("Result: %f%n", accumulator.sum());
     }
 }
