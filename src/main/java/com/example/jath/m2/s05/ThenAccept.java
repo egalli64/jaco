@@ -6,9 +6,6 @@
 package com.example.jath.m2.s05;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.stream.DoubleStream;
 
 /**
  * CompletableFuture::thenAccept()
@@ -23,27 +20,14 @@ public class ThenAccept {
      */
     public static void main(String[] args) {
         System.out.println("Create and start the completable future task");
-        Future<Void> adder = CompletableFuture.supplyAsync(() -> aJob(10)) //
-                .thenAccept(x -> System.out.println("Worker result: " + x));
+        CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> Jobs.job(10)) //
+                .thenAccept(x -> System.out.printf("Worker result: %f%n", x));
 
-        while (!adder.isDone()) {
-            System.out.println("The adder works, the main thread does something else: " + aJob(3));
+        System.out.println("While the future job is not done, do something else in the main thread");
+        while (!cf.isDone()) {
+            System.out.printf("Main thread result: %f%n", Jobs.job(10));
         }
 
-        try {
-            System.out.println("Getting a Void is not useful: " + adder.get());
-        } catch (InterruptedException | ExecutionException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    /**
-     * A simple job that takes some time
-     * 
-     * @param size size of the job
-     * @return a double
-     */
-    private static double aJob(int size) {
-        return DoubleStream.generate(() -> Math.cbrt(Math.random())).limit(size).sum();
+        System.out.println("Joining on a Void CompletableFuture gives ... " + cf.join());
     }
 }

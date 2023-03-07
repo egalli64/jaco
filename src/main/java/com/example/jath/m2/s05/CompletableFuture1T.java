@@ -30,13 +30,15 @@ public class CompletableFuture1T {
         cf.complete("Completed in the main thread");
 
         if (cf.isDone()) {
-            System.out.println("Now cf has been completed");
+            System.out.println("cf has been completed");
         }
 
         try {
-            System.out.println("cf value is: " + cf.get());
+            System.out.println("cf value by get: " + cf.get());
         } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getMessage());
         }
+
+        System.out.println("cf value by join: " + cf.join());
     }
 }

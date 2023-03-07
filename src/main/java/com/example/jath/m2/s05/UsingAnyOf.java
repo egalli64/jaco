@@ -8,9 +8,9 @@ package com.example.jath.m2.s05;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * CompletableFuture::allOf()
+ * CompletableFuture::anyOf()
  */
-public class UsingAllOf {
+public class UsingAnyOf {
     /**
      * Parallel execution of two CompletableFuture
      * 
@@ -20,8 +20,7 @@ public class UsingAllOf {
         CompletableFuture<Double> cf1 = CompletableFuture.supplyAsync(() -> Jobs.job(10));
         CompletableFuture<Double> cf2 = CompletableFuture.supplyAsync(() -> Jobs.job(10));
 
-        CompletableFuture.allOf(cf1, cf2).join();
-
-        System.out.printf("Adding up the future results: %f%n", cf1.join() + cf1.join());
+        CompletableFuture<Object> completed = CompletableFuture.anyOf(cf1, cf2);
+        System.out.printf("The fastest task result is %f%n", completed.join());
     }
 }
