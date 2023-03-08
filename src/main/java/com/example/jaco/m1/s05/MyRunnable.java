@@ -5,23 +5,23 @@
  */
 package com.example.jaco.m1.s05;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.example.jaco.m1.s03.Jobs;
+
 /**
  * A runnable, to be used for creating and running threads
  * 
  * It is not doing anything special, just some printing and sleeping
  */
 public class MyRunnable implements Runnable {
+    private static final Logger log = LoggerFactory.getLogger(MyRunnable.class);
+
     @Override
     public void run() {
-        System.out.println("In thread " + Thread.currentThread().getName());
-
-        try {
-            // This is just a simulation! The use of sleep() in production code is very limited!
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new IllegalStateException(e);
-        }
-
-        System.out.printf("Thread %s is done%n", Thread.currentThread().getName());
+        log.trace("Enter");
+        Jobs.takeTime(100);
+        log.trace("Exit");
     }
 }
