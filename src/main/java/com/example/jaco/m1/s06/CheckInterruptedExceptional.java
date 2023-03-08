@@ -5,10 +5,19 @@
  */
 package com.example.jaco.m1.s06;
 
+import java.util.stream.DoubleStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.example.jaco.m1.s03.Jobs;
+
 /**
  * What happens when an interrupt is sent to a waiting (here, sleeping) thread
  */
 public class CheckInterruptedExceptional {
+    private static final Logger log = LoggerFactory.getLogger(CheckInterruptedExceptional.class);
+
     /**
      * A thread is created and started. After a while an interrupt is sent to it. However, that thread
      * could be waiting for something to happen (here, the wait is simulated by sleeping). So the
@@ -18,53 +27,44 @@ public class CheckInterruptedExceptional {
      * @param args not used
      */
     public static void main(String[] args) {
-        System.out.println("In thread " + Thread.currentThread().getName());
+        log.trace("Enter");
 
-        // What is going to be executed by the other thread. Only an interrupt will stop it.
+        // What is going to be executed by the worker. Only an interrupt will stop it.
         Runnable runnable = () -> {
+            log.trace("Enter");
             final Thread cur = Thread.currentThread();
-            System.out.println("In thread " + cur.getName());
 
             try {
                 while (!cur.isInterrupted()) {
-                    int i = 1;
-                    System.out.print("Simulating that " + cur.getName() + " is waiting on a resource ... ");
+                    System.out.print("(Fake) wait on a resource ... ");
                     // This is just a simulation! The use of sleep() in production code is very limited!
                     Thread.sleep(2);
-                    while (i % 100 != 0) {
-                        System.out.println(i++);
-                    }
+
+                    double value = DoubleStream.generate(Math::random).limit(10).sum();
+                    System.out.println(value + " calculated");
                 }
                 // thread interrupted when runnable
-                System.out.printf("Someone has interrupted %s!%n", cur.getName());
+                log.info("(Fake) resource elaboration interrupted");
             } catch (InterruptedException e) {
                 // thread interrupted when waiting, sleeping, or otherwise occupied
-                System.out.printf("InterruptedException detected in %s!%n", cur.getName());
+                log.info("(Fake) wait on resource acquisition interrupted", e);
                 // reset the flag on the current thread as interrupted
                 cur.interrupt();
             }
-
-            // Thread has been interrupted, terminate it
-            System.out.printf("Thread %s is done%n", cur.getName());
+            log.trace("Exit");
         };
 
-        Thread other = new Thread(runnable, "other");
+        Thread worker = new Thread(runnable, "worker");
 
-        System.out.println("!!! Two threads are going to compete on System.out !!!");
-        System.out.println("!!! Output could be garbled  !!!");
+        System.out.println("!!! Race condition on System.out - expect a garbled output !!!");
 
-        other.start();
+        worker.start();
 
-        try {
-            System.out.println("Simulating a job in main, let other thread having some fun ...");
-            // This is just a simulation! The use of sleep() in production code is very limited!
-            Thread.sleep(5);
-        } catch (InterruptedException e) {
-            throw new IllegalStateException(e);
-        }
+        // Let the worker kick in
+        Jobs.takeTime(20);
 
-        System.out.println("Thread main has enough of other thread!");
-        other.interrupt();
-        System.out.println("Bye");
+        System.out.println("Thread main decides it it time to cut it off");
+        worker.interrupt();
+        log.trace("Exit");
     }
 }
