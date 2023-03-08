@@ -7,50 +7,55 @@ package com.example.jaco.m1.s03;
 
 import java.lang.Thread.State;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Thread states
  * 
  * Enable assertions with -ea VM argument
  */
 public class BaseCase {
+    private static final Logger log = LoggerFactory.getLogger(BaseCase.class);
+
     /**
      * Create a simple thread and let it run
      * 
      * @param args not used
      */
     public static void main(String[] args) {
-        String name = "base";
-        System.out.printf("Thread states for %s%n", name);
+        String tName = "worker";
+        System.out.printf("- The current state of thread '%s' -%n", tName);
 
         // Create a thread with a given name, the passed runnable is its task
-        Thread t = new Thread(() -> System.out.printf("Hello from %s%n", name), name);
+        Thread t = new Thread(() -> System.out.printf("A message from %s: Hello!%n", tName), tName);
 
-        // The thread is in its initial state
+        // The thread is NEW, not already started
         assert t.getState() == State.NEW && !t.isAlive();
-        System.out.printf("Thread %s state is %s%n", t.getName(), t.getState());
+        System.out.printf("Thread %s is %s%n", t.getName(), t.getState());
 
         // Starting the thread, transition from NEW to RUNNABLE state
         t.start();
 
-        // The process now has two alive threads, main and base
+        // The current process now should have two alive threads, main and worker
         assert t.getState() == State.RUNNABLE || t.getState() == State.TERMINATED;
-        System.out.printf("Thread %s state is %s%n", t.getName(), t.getState());
+        System.out.printf("Thread %s is %s%n", t.getName(), t.getState());
         if (t.isAlive()) {
-            System.out.println("After start, a thread is said to be alive");
+            log.info("After start, a thread is said to be alive");
         } else {
-            System.out.printf("If main thread is slow, the other thread could terminate in the meantime!");
+            log.info("If main thread is slow, the other thread could terminate in the meantime!");
         }
 
         // Some other task executed by the main thread
         Jobs.takeTime(100);
 
-        // Now we could reasonably expect the base thread to have reached its end
+        // Now we could reasonably expect the worker thread to be terminated
         assert t.getState() == State.TERMINATED && !t.isAlive();
-        System.out.printf("Thread %s state is %s%n", t.getName(), t.getState());
+        System.out.printf("Thread %s is %s%n", t.getName(), t.getState());
         if (!t.isAlive()) {
-            System.out.println("After termination, a thread is no more alive");
+            log.info("After termination, a thread is no more alive");
         }
 
-        System.out.println("Bye");
+        System.out.println("- Main is about to terminate -");
     }
 }
