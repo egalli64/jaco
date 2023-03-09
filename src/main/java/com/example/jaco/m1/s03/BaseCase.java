@@ -31,13 +31,13 @@ public class BaseCase {
         Thread t = new Thread(() -> System.out.printf("A message from %s: Hello!%n", tName), tName);
 
         // The thread is NEW, not already started
-        assert t.getState() == State.NEW && !t.isAlive();
+        assert t.getState() == State.NEW;
         System.out.printf("Thread %s is %s%n", t.getName(), t.getState());
 
         // Starting the thread, transition from NEW to RUNNABLE state
         t.start();
 
-        // The current process now should have two alive threads, main and worker
+        // The worker could be running or maybe already terminated
         assert t.getState() == State.RUNNABLE || t.getState() == State.TERMINATED;
         System.out.printf("Thread %s is %s%n", t.getName(), t.getState());
         if (t.isAlive()) {
