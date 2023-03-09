@@ -5,43 +5,49 @@
  */
 package com.example.jaco.m1.s07;
 
+import java.util.stream.IntStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Using Thread::isAlive() and Thread::join() with time
  */
 public class MainLongRunner {
+    private static final Logger log = LoggerFactory.getLogger(MainLongRunner.class);
+
     /**
      * Create a thread, join with time limit. Maybe the other thread terminate before, maybe not.
      */
     public static void main(String[] args) {
-        // Creating a worker with a time consuming job
-        Thread t0 = new Thread(() -> {
-            System.out.println("Starting a worker");
+        log.trace("Enter");
 
-            double result = 0.0;
-            for (int i = 1; i < 30_000_000; i++) {
-                result += Math.cbrt(Math.pow(i, Math.PI));
-            }
+        Thread worker = new Thread(() -> {
+            log.trace("Enter");
 
-            System.out.printf("Result is %.0f%n", result);
-        });
+            double result = IntStream.range(2, 1_000).mapToDouble(i -> Math.cbrt(i)).sum();
+            System.out.printf("Result is %f%n", result);
 
-        t0.start();
+            log.trace("Exit");
+        }, "worker");
+
+        worker.start();
 
         try {
-            System.out.println("Waiting a while for the other thread, then go back to do other stuff");
-            t0.join(20);
-        } catch (InterruptedException e) {
-            throw new IllegalStateException(e);
+            log.trace("Waiting a while {}, then go back to do other stuff", worker.getName());
+            worker.join(5);
+        } catch (InterruptedException ex) {
+            log.warn("This should not happen", ex);
+            Thread.currentThread().interrupt();
         }
 
         // Maybe the worker is still alive, maybe not
-        if (t0.isAlive()) {
-            System.out.println("After timed join(), but the worker is still alive");
+        if (worker.isAlive()) {
+            log.trace("After timed joining in, {} is still alive", worker.getName());
         } else {
-            System.out.println("The worker was so fast that it has already terminated!");
+            log.trace("After timed joining in, {} was faster than main thread", worker.getName());
         }
 
-        // In any case, terminate the main thread
-        System.out.println("Bye");
+        log.trace("Exit");
     }
 }

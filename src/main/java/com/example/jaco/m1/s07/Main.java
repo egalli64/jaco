@@ -5,50 +5,63 @@
  */
 package com.example.jaco.m1.s07;
 
+import java.lang.Thread.State;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Using Thread::isAlive() and Thread::join()
+ * 
+ * Enable assertions with -ea VM argument
  */
 public class Main {
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
+
     /**
      * Create, start, and join thread, checking if it is alive now and there.
      * 
      * @param args not used
      */
     public static void main(String[] args) {
-        // Create a thread
-        Thread t0 = new Thread(() -> System.out.println("A message from another thread"));
+        log.trace("Enter");
+        String name = "worker";
+        // Create another thread
+        Thread worker = new Thread(() -> System.out.printf("A message from %s%n", name), name);
 
-        // It is not alive yet
-        if (!t0.isAlive()) {
-            System.out.printf("Before starting it, %s is not yet alive%n", t0.getName());
-        } else {
-            throw new IllegalStateException("You should not get here");
+        // The worker is NEW, not alive yet
+        assert worker.getState() == State.NEW;
+        if (!worker.isAlive()) {
+            log.trace("Before start, {} is not yet alive", worker.getName());
         }
 
-        t0.start();
+        worker.start();
 
-        // After starting it is alive
-        if (t0.isAlive()) {
-            System.out.printf("After starting it, %s is alive%n", t0.getName());
+        // Uncomment next line to let the worker kick in
+//        Jobs.takeTime(10);
+
+        assert worker.getState() == State.RUNNABLE || worker.getState() == State.TERMINATED;
+        if (worker.isAlive()) {
+            log.trace("After start, now {} could be alive", worker.getName());
         } else {
-            throw new IllegalStateException("You should not get here");
+            log.trace("After start, now {} could be terminated", worker.getName());
         }
 
         try {
-            // the current thread wait the other thread to terminate
-            t0.join();
-            System.out.println(t0.getName() + " joined");
-        } catch (InterruptedException e) {
-            System.out.printf("Main thread interrupted while waiting %s to join%n" + t0.getName());
+            log.trace("Wait {} to terminate", worker.getName());
+            worker.join();
+        } catch (InterruptedException ex) {
+            // No one should interrupt the main thread join on the worker
+            log.warn("This should not happen", ex);
             // we usually handle the interruption, at least resetting the interrupt flag
             Thread.currentThread().interrupt();
         }
 
-        // After joining the other thread should not be alive anymore
-        if (!t0.isAlive()) {
-            System.out.println("The other thread is not alive anymore");
+        if (!worker.isAlive()) {
+            log.trace("After joining in, {} is not alive anymore", worker.getName());
         } else {
-            System.out.println("You should not get this message, join interrupted?");
+            log.warn("This should not happen. Join interrupted?");
         }
+        log.trace("Exit");
     }
 }
