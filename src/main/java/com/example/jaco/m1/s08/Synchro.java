@@ -5,20 +5,25 @@
  */
 package com.example.jaco.m1.s08;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Avoid race condition even though more threads have access to the same resource.
  */
 public class Synchro {
-    private final Random random = new Random();
+    private static final Logger log = LoggerFactory.getLogger(Synchro.class);
 
     /**
      * Four threads using System.out in a synchronized method
      * 
      * @param args not used
+     * @throws InterruptedException when join is interrupted
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
+        log.trace("Enter");
         System.out.println("Threads competing on console _with_ synchronization");
 
         Synchro synchro = new Synchro();
@@ -34,12 +39,9 @@ public class Synchro {
         }
 
         for (Thread thread : threads) {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                throw new IllegalStateException(e);
-            }
+            thread.join();
         }
+        log.trace("Exit");
     }
 
     /**
@@ -52,7 +54,7 @@ public class Synchro {
      */
     public synchronized void printStatus(String name) {
         System.out.printf("Hello, %s. ", name);
-        int score = random.nextInt(100);
+        int score = ThreadLocalRandom.current().nextInt(100);
         if (score > 50) {
             System.out.print("Well done! ");
         }

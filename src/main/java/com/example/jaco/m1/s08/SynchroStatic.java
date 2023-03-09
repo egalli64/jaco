@@ -5,24 +5,31 @@
  */
 package com.example.jaco.m1.s08;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * The synchronized static methods use their class as a lock
  */
 public class SynchroStatic {
+    private static final Logger log = LoggerFactory.getLogger(SynchroStatic.class);
+
     /**
      * Mixing calls to methods synchronized on this and on the class
      * 
      * @param args not used
+     * @throws InterruptedException when join is interrupted
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
+        log.trace("Enter");
         SynchroStatic sy1 = new SynchroStatic();
         SynchroStatic sy2 = new SynchroStatic();
 
         Thread[] threads = { //
-                new Thread(sy1::hello1, "ObjectOneA"), //
-                new Thread(sy1::hello2, "ObjectOneB"), //
-                new Thread(sy2::hello1, "ObjectTwoA"), //
-                new Thread(sy2::hello2, "ObjectTwoB") //
+                new Thread(sy1::inst1, "ObjectOneA"), //
+                new Thread(sy1::inst2, "ObjectOneB"), //
+                new Thread(sy2::inst1, "ObjectTwoA"), //
+                new Thread(sy2::inst2, "ObjectTwoB") //
         };
 
         for (Thread t : threads) {
@@ -30,52 +37,48 @@ public class SynchroStatic {
         }
 
         for (Thread t : threads) {
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                throw new IllegalStateException(e);
-            }
+            t.join();
         }
-        System.out.println("Bye from " + Thread.currentThread().getName());
+        log.trace("Exit");
     }
 
     /**
      * Synchronized on the class object
      */
-    private synchronized static void m1() {
-        System.out.println(Thread.currentThread().getName() + " enter static m1()");
+    private synchronized static void stat1() {
+        log.trace("Enter");
         System.out.println(Thread.currentThread().getName() + " static m1()");
-        System.out.println(Thread.currentThread().getName() + " exit static m1()");
+        log.trace("Exit");
     }
 
     /**
      * Synchronized on the class object
      */
-    private synchronized static void m2() {
-        System.out.println(Thread.currentThread().getName() + " enter static m2()");
+    private synchronized static void stat2() {
+        log.trace("Enter");
         System.out.println(Thread.currentThread().getName() + " static m2()");
-        System.out.println(Thread.currentThread().getName() + " exit static m2()");
+        log.trace("Exit");
     }
 
     /**
      * Synchronized on this
      */
-    public synchronized void hello1() {
-        System.out.println(Thread.currentThread().getName() + " enter hello1()");
-        m1();
+    public synchronized void inst1() {
+        log.trace("Enter");
+        stat1();
         System.out.println(Thread.currentThread().getName() + " hello1()");
-        m2();
-        System.out.println(Thread.currentThread().getName() + " exit hello1()");
+        stat2();
+        log.trace("Exit");
     }
 
     /**
      * Synchronized on this
      */
-    public synchronized void hello2() {
-        System.out.println(Thread.currentThread().getName() + " enter hello2()");
-        m1();
+    public synchronized void inst2() {
+        log.trace("Enter");
+        stat1();
         System.out.println(Thread.currentThread().getName() + " hello2()");
-        m2();
-        System.out.println(Thread.currentThread().getName() + " exit hello2()");
+        stat2();
+        log.trace("Exit");
     }
 }

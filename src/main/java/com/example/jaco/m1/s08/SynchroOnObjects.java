@@ -5,12 +5,17 @@
  */
 package com.example.jaco.m1.s08;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Finer synchronization, using more locks.
  * 
  * !!! Assume this is legacy code, see Lock for modern implementation !!!
  */
 public class SynchroOnObjects {
+    private static final Logger log = LoggerFactory.getLogger(SynchroOnObjects.class);
+
     private Object lockA = new Object();
     private int resourceA = 0;
     private Object lockB = new Object();
@@ -24,8 +29,10 @@ public class SynchroOnObjects {
      * <li>Synchronized on lock "A" and then "B" for both resources
      * 
      * @param args not used
+     * @throws InterruptedException when join is interrupted
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
+        log.trace("Enter");
         SynchroOnObjects soo = new SynchroOnObjects();
 
         Thread[] threads = { //
@@ -40,63 +47,64 @@ public class SynchroOnObjects {
         }
 
         for (Thread t : threads) {
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                throw new IllegalArgumentException(e);
-            }
+            t.join();
         }
-        System.out.println("Bye from " + Thread.currentThread().getName());
+
+        log.trace("Exit");
     }
 
-
     /**
-     * Synchronization for System.out
-     * 
      * A and B are in read-only access, then there is no race condition on them
      */
     public synchronized void syncThis() {
-        System.out.println(Thread.currentThread().getName() + " enter syncOnThis()");
-        System.out.printf("%s A is %d, B is %d%n", Thread.currentThread().getName(), resourceA, resourceB);
-        System.out.println(Thread.currentThread().getName() + " exit syncOnThis()");
+        log.trace("Enter, lock on this");
+        System.out.printf("Accordingly to %s A is %d, B is %d%n", //
+                Thread.currentThread().getName(), resourceA, resourceB);
+        log.trace("Exit, unlock on this");
     }
 
     /**
      * Synchronization for resourceA
      */
     public void syncA() {
-        System.err.println(Thread.currentThread().getName() + " enter sync block on A");
+        log.trace("Enter");
         synchronized (lockA) {
+            log.trace("Lock on A");
             resourceA += 1;
+            log.trace("Unlock on A");
         }
-        System.err.println(Thread.currentThread().getName() + " exit sync block on A");
+        log.trace("Exit");
     }
 
     /**
      * Synchronization for resourceB
      */
     public void syncB() {
-        System.err.println(Thread.currentThread().getName() + " enter sync block on B");
+        log.trace("Enter");
         synchronized (lockB) {
+            log.trace("Lock on B");
             resourceB += 1;
+            log.trace("Unlock on B");
         }
-        System.err.println(Thread.currentThread().getName() + " exit sync block on B");
+        log.trace("Exit");
     }
 
     /**
      * Synchronization for A and then B
      */
     public void syncAB() {
-        System.err.println(Thread.currentThread().getName() + " enter sync block on A");
-        synchronized (lockB) {
+        log.trace("Enter");
+        synchronized (lockA) {
+            log.trace("Lock on A");
             resourceA *= 2;
+            log.trace("Unlock on A");
         }
-        System.err.println(Thread.currentThread().getName() + " exit sync block on A");
 
-        System.err.println(Thread.currentThread().getName() + " enter sync block on B");
         synchronized (lockB) {
+            log.trace("Lock on B");
             resourceB *= 2;
+            log.trace("Unlock on B");
         }
-        System.err.println(Thread.currentThread().getName() + " exit sync block on B");
+        log.trace("Exit");
     }
 }

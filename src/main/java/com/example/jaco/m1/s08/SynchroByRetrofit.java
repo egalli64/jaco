@@ -5,16 +5,23 @@
  */
 package com.example.jaco.m1.s08;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Avoid race condition when running legacy code not ready for multithreading execution.
  */
 public class SynchroByRetrofit {
+    private static final Logger log = LoggerFactory.getLogger(SynchroByRetrofit.class);
+
     /**
      * Four threads need to run a non-synchronized method. Provide synchronization as a wrapper.
      * 
      * @param args not used
+     * @throws InterruptedException when join is interrupted
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
+        log.trace("Enter");
         System.out.println("Synchronizing on the object before running a non-synchronized method");
 
         NoSynchro noSync = new NoSynchro();
@@ -45,11 +52,8 @@ public class SynchroByRetrofit {
         }
 
         for (Thread thread : threads) {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                throw new IllegalStateException(e);
-            }
+            thread.join();
         }
+        log.trace("Exit");
     }
 }
