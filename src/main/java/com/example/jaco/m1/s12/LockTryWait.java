@@ -5,10 +5,14 @@
  */
 package com.example.jaco.m1.s12;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.DoubleStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Lock and ReentrantLock.
@@ -16,11 +20,24 @@ import java.util.stream.DoubleStream;
  * Similar to LockTry, but using timed tryLock()
  */
 public class LockTryWait {
-    private Lock lockF = new ReentrantLock();
-    private double resourceF = 0.0;
+    private static final Logger log = LoggerFactory.getLogger(LockTryWait.class);
 
-    private Lock lockG = new ReentrantLock();
-    private double resourceG = 0.0;
+    private final Lock lockF;
+    private double resourceF;
+
+    private final Lock lockG;
+    private double resourceG;
+
+    /**
+     * Constructor
+     */
+    public LockTryWait() {
+        this.lockF = new ReentrantLock();
+        this.resourceF = 0.0;
+
+        this.lockG = new ReentrantLock();
+        this.resourceG = 0.0;
+    }
 
     /**
      * Run a few threads concurrently on the two resources.
@@ -29,22 +46,20 @@ public class LockTryWait {
      * @throws InterruptedException when join in main is interrupted (should not happen)
      */
     public static void main(String[] args) throws InterruptedException {
+        log.trace("Enter");
         LockTryWait ltw = new LockTryWait();
 
         Thread[] threads = { new Thread(ltw::syncOnF, "F1"), new Thread(ltw::syncOnG, "G1"),
                 new Thread(ltw::syncOnF, "F2"), new Thread(ltw::syncOnG, "G2") };
 
-        for (Thread t : threads) {
-            t.start();
-        }
-
+        Arrays.stream(threads).forEach(Thread::start);
         for (Thread t : threads) {
             t.join();
         }
 
         System.out.printf("Resource F is %f%n", ltw.resourceF);
         System.out.printf("Resource G is %f%n", ltw.resourceG);
-        System.out.println("Bye from " + Thread.currentThread().getName());
+        log.trace("Exit");
     }
 
     /**
@@ -53,8 +68,8 @@ public class LockTryWait {
      * Let the tryLock wait enough time to reasonably acquire the lock
      */
     public void syncOnF() {
+        log.trace("Enter and try-lock (timed) on F");
         String name = Thread.currentThread().getName();
-        System.out.println(name + " try the lock on F for some millis");
 
         boolean locked = false;
         try {
@@ -64,14 +79,14 @@ public class LockTryWait {
                 System.out.printf("%s is adding %f to F%n", name, value);
                 resourceF += value;
             }
-        } catch (InterruptedException e) {
-            System.out.println(name + " wait on lock unexpectedly interrupted");
+        } catch (InterruptedException ex) {
+            log.warn("wait on lock unexpectedly interrupted ", ex);
         } finally {
             if (locked) {
-                System.out.println(name + " unlock on F");
+                log.trace("Unlock F then exit");
                 lockF.unlock();
             } else {
-                System.out.println(name + " could not get the lock in the specified time frame");
+                log.warn("Exit without doing anything, lock was not available in the given time frame");
             }
         }
     }
@@ -82,8 +97,8 @@ public class LockTryWait {
      * Let the tryLock wait for a short time, so that we can expect non-availability
      */
     public void syncOnG() {
+        log.trace("Enter and try-lock (very shortly timed) on G");
         String name = Thread.currentThread().getName();
-        System.out.println(name + " try the lock on G for a few millis");
 
         boolean locked = false;
         try {
@@ -93,14 +108,14 @@ public class LockTryWait {
                 System.out.printf("%s is adding %f to G%n", name, value);
                 resourceG += value;
             }
-        } catch (InterruptedException e) {
-            System.out.println(name + " wait on lock unexpectedly interrupted");
+        } catch (InterruptedException ex) {
+            log.warn("wait on lock unexpectedly interrupted ", ex);
         } finally {
             if (locked) {
-                System.out.println(name + " unlock on G");
+                log.trace("Unlock G then exit");
                 lockG.unlock();
             } else {
-                System.out.println(name + " could not get the lock in the specified time frame");
+                log.warn("Exit without doing anything, lock was not available in the given time frame");
             }
         }
     }
@@ -111,6 +126,7 @@ public class LockTryWait {
      * @return a value
      */
     private double aLongishJob() {
+        log.trace("Enter");
         return DoubleStream.generate(() -> Math.cbrt(Math.random())).limit(100).sum();
     }
 }

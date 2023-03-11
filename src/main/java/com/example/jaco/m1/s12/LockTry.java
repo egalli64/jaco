@@ -5,8 +5,13 @@
  */
 package com.example.jaco.m1.s12;
 
+import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Lock and ReentrantLock.
@@ -14,11 +19,24 @@ import java.util.concurrent.locks.ReentrantLock;
  * Close to LockPlain, but using tryLock()
  */
 public class LockTry {
-    private Lock lockF = new ReentrantLock();
-    private double resourceF = 0.0;
+    private static final Logger log = LoggerFactory.getLogger(LockTry.class);
 
-    private Lock lockG = new ReentrantLock();
-    private double resourceG = 0.0;
+    private final Lock lockF;
+    private double resourceF;
+
+    private final Lock lockG;
+    private double resourceG;
+
+    /**
+     * Constructor
+     */
+    public LockTry() {
+        this.lockF = new ReentrantLock();
+        this.resourceF = 0.0;
+
+        this.lockG = new ReentrantLock();
+        this.resourceG = 0.0;
+    }
 
     /**
      * Run a few threads concurrently on the two resources.
@@ -27,30 +45,28 @@ public class LockTry {
      * @throws InterruptedException when join in main is interrupted (should not happen)
      */
     public static void main(String[] args) throws InterruptedException {
+        log.trace("Enter");
         LockTry lt = new LockTry();
 
         Thread[] threads = { new Thread(lt::syncOnF, "F1"), new Thread(lt::syncOnG, "G1"),
                 new Thread(lt::syncOnF, "F2"), new Thread(lt::syncOnG, "G2") };
 
-        for (Thread t : threads) {
-            t.start();
-        }
-
+        Arrays.stream(threads).forEach(Thread::start);
         for (Thread t : threads) {
             t.join();
         }
 
         System.out.printf("Resource F is %f%n", lt.resourceF);
         System.out.printf("Resource G is %f%n", lt.resourceG);
-        System.out.println("Bye from " + Thread.currentThread().getName());
+        log.trace("Exit");
     }
 
     /**
      * For threads accessing resource F
      */
     public void syncOnF() {
+        log.trace("Enter and try-lock on F");
         String name = Thread.currentThread().getName();
-        System.out.println(name + " try the lock on F");
 
         if (lockF.tryLock()) {
             try {
@@ -58,13 +74,13 @@ public class LockTry {
                 System.out.printf("%s is adding %f to F%n", name, value);
                 resourceF += value;
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.out.printf("%s not adding to F: %s%n", name, e.getMessage());
             } finally {
-                System.out.println(name + " unlock on F");
+                log.trace("Unlock F then exit");
                 lockF.unlock();
             }
         } else {
-            System.out.println(name + " skip the job");
+            log.warn("Exit without doing anything, lock was not available");
         }
     }
 
@@ -72,8 +88,8 @@ public class LockTry {
      * For threads accessing resource G
      */
     public void syncOnG() {
+        log.trace("Enter and try-lock on G");
         String name = Thread.currentThread().getName();
-        System.out.println(name + " try the lock on G");
 
         if (lockG.tryLock()) {
             try {
@@ -81,26 +97,32 @@ public class LockTry {
                 System.out.printf("%s is adding %f to G%n", name, value);
                 resourceG += value;
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.out.printf("%s not adding to G: %s%n", name, e.getMessage());
             } finally {
-                System.out.println(name + " unlock on G");
+                log.trace("Unlock G then exit");
                 lockG.unlock();
             }
         } else {
-            System.out.println(name + " skip the job");
+            log.warn("Exit without doing anything, lock was not available");
         }
     }
 
     /**
      * A job that could go wrong
      * 
-     * @throws IllegalStateException
+     * @throws IllegalStateException if the job goes wrong
      */
     private double aRiskyJob() {
-        double result = Math.random();
-        if (result > 0.7) {
-            throw new IllegalStateException(Thread.currentThread().getName() + ", something bad happened");
+        log.trace("Enter");
+        try {
+            double result = ThreadLocalRandom.current().nextDouble();
+            if (result > 0.7) {
+                throw new IllegalStateException("wrong value detected");
+            }
+
+            return result;
+        } finally {
+            log.trace("Exit");
         }
-        return result;
     }
 }
