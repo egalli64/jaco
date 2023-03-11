@@ -5,7 +5,11 @@
  */
 package com.example.jaco.m1.s09;
 
-import java.util.Random;
+import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Thread communication
@@ -13,9 +17,8 @@ import java.util.Random;
  * One Producer - Many Consumers
  */
 public class OneProdManyCons {
+    private static final Logger log = LoggerFactory.getLogger(OneProdCon.class);
     private static final int PRODUCT_NOT_READY = 0;
-
-    private Random random = new Random();
 
     /** The resource shared between threads */
     private int product = PRODUCT_NOT_READY;
@@ -24,14 +27,14 @@ public class OneProdManyCons {
      * Utility method for demonstration purposes
      */
     private static synchronized void checkThreadStates() {
-        System.out.println("- Checking thread states from " + Thread.currentThread().getName());
+        log.trace("Enter");
         Thread[] ts = new Thread[6];
         // Thread::enumerate() should be used only for debugging and monitoring purposes
         int count = Thread.enumerate(ts);
         for (int i = 0; i < count; i++) {
             System.out.printf("%s is %s%n", ts[i].getName(), ts[i].getState());
         }
-        System.out.println("---");
+        log.trace("Exit");
     }
 
     /**
@@ -40,12 +43,13 @@ public class OneProdManyCons {
      * <li>After the production the producer notify all to consume it.
      * <li>If there is a non-consumed product, the producer wait for its consumption
      */
-    private synchronized void producer() {
+    private synchronized void produce() {
+        log.trace("Enter");
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 System.out.println("Producer is ready ... ");
-                product = random.nextInt(1, 7);
-                System.out.println("Producer has generated " + product);
+                product = ThreadLocalRandom.current().nextInt(1, 7);
+                System.out.printf("Producer generated %d and it is about to notify all about it%n", product);
 
                 checkThreadStates();
                 notifyAll();
@@ -59,7 +63,7 @@ public class OneProdManyCons {
             System.out.println("Producer wait has been interrupted");
             Thread.currentThread().interrupt();
         } finally {
-            System.out.println("Producer is about to terminate");
+            log.trace("Exit");
         }
     }
 
@@ -68,7 +72,8 @@ public class OneProdManyCons {
      * 
      * It waits the producer to set the product, then consumes it.
      */
-    private synchronized void consumer() {
+    private synchronized void consume() {
+        log.trace("Enter");
         String tName = Thread.currentThread().getName();
         try {
             while (product == PRODUCT_NOT_READY) {
@@ -77,7 +82,7 @@ public class OneProdManyCons {
                 System.out.println(tName + " wait is ended");
             }
 
-            System.out.printf("Consumer %s consumes %d and then notifies all about it%n", tName, product);
+            System.out.printf("%s consumes %d and then notifies all about it before terminating%n", tName, product);
             product = PRODUCT_NOT_READY;
 
             checkThreadStates();
@@ -85,29 +90,27 @@ public class OneProdManyCons {
         } catch (InterruptedException e) {
             throw new IllegalStateException(e);
         }
-        System.out.println(tName + " is about to terminate");
+        log.trace("Exit");
     }
 
     /**
-     * Start producer and consumers, then join first the consumers then the producer.
+     * Start producer and consumers, join the consumers, terminate and join the producer.
      * 
      * @param args not used
+     * @throws InterruptedException when a join is interrupted
      */
     public static void main(String[] args) throws InterruptedException {
-        OneProdManyCons wn = new OneProdManyCons();
+        log.trace("Enter");
+        OneProdManyCons pc = new OneProdManyCons();
 
-        Thread producer = new Thread(wn::producer, "TP");
+        // Different termination approach required
+        Thread producer = new Thread(pc::produce, "P");
+        producer.start();
 
         Thread[] consumers = { //
-                new Thread(wn::consumer, "TC1"), //
-                new Thread(wn::consumer, "TC2"), //
-                new Thread(wn::consumer, "TC3") //
+                new Thread(pc::consume, "C1"), new Thread(pc::consume, "C2"), new Thread(pc::consume, "C3") //
         };
-
-        producer.start();
-        for (Thread consumer : consumers) {
-            consumer.start();
-        }
+        Arrays.stream(consumers).forEach(Thread::start);
 
         System.out.println("All threads started, main waits the consumers to join");
         for (Thread consumer : consumers) {
@@ -118,6 +121,6 @@ public class OneProdManyCons {
         producer.interrupt();
         producer.join();
 
-        System.out.println("Bye");
+        log.trace("Exit");
     }
 }

@@ -5,7 +5,11 @@
  */
 package com.example.jaco.m1.s09;
 
-import java.util.Random;
+import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Thread communication
@@ -13,9 +17,9 @@ import java.util.Random;
  * One Producer - One Consumer
  */
 public class OneProdCon {
-    private static final int PRODUCT_NOT_READY = 0;
+    private static final Logger log = LoggerFactory.getLogger(OneProdCon.class);
 
-    private Random random = new Random();
+    private static final int PRODUCT_NOT_READY = 0;
 
     /** The resource shared between two threads */
     private int product = PRODUCT_NOT_READY;
@@ -26,10 +30,12 @@ public class OneProdCon {
      * Once the job is done it notifies the consumer thread about it.
      */
     private synchronized void producer() {
-        product = random.nextInt(1, 7);
+        log.trace("Enter");
+        product = ThreadLocalRandom.current().nextInt(1, 7);
         System.out.printf("%s has produced %d%n", Thread.currentThread().getName(), product);
         // Since there is just one consumer, here notifyAll() would be an overkill
         notify();
+        log.trace("Exit");
     }
 
     /**
@@ -38,8 +44,11 @@ public class OneProdCon {
      * It waits the producer to set the product, then consumes it.
      */
     private synchronized void consumer() {
+        log.trace("Enter");
         String tName = Thread.currentThread().getName();
         try {
+            System.out.println(tName + " requires a product");
+
             // Wait until the product is available
             while (product == PRODUCT_NOT_READY) {
                 System.out.println(tName + " waits for the result");
@@ -47,38 +56,35 @@ public class OneProdCon {
                 System.out.println(tName + " wait has ended");
             }
 
-            // It is safe to assume that here product is ready to be consumed
+            // It is safe to assume that now product is ready to be consumed
             System.out.printf("%s consumes %d%n", tName, product);
             product = PRODUCT_NOT_READY;
         } catch (InterruptedException e) {
             // In this simple case, it is not legal interrupting a consumer
             throw new IllegalStateException(e);
         }
+        log.trace("Exit");
     }
 
     /**
      * Start consumer and producer, then join them.
      * 
      * @param args not used
+     * @throws InterruptedException when a join is interrupted
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
+        log.trace("Enter");
         OneProdCon wn = new OneProdCon();
 
-        System.out.println("Starting the consumer, it would wait for the producer");
-        Thread consumer = new Thread(wn::consumer, "consumer");
-        consumer.start();
+        System.out.println("Create and start consumer and producer");
+        Thread[] threads = { new Thread(wn::consumer, "consumer"), new Thread(wn::producer, "producer") };
+        Arrays.stream(threads).forEach(Thread::start);
 
-        System.out.println("Starting the producer, it would notify the consumer");
-        Thread producer = new Thread(wn::producer, "producer");
-        producer.start();
-
-        try {
-            consumer.join();
-            producer.join();
-        } catch (InterruptedException e) {
-            throw new IllegalStateException(e);
+        System.out.println("Nothing else to do in main");
+        for (Thread t : threads) {
+            t.join();
         }
 
-        System.out.println("Bye");
+        log.trace("Exit");
     }
 }
