@@ -7,15 +7,20 @@ package com.example.jaco.m2.s02;
 
 import java.util.stream.DoubleStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A runnable for Executor examples
  */
 public class Hello implements Runnable {
+    private static final Logger log = LoggerFactory.getLogger(Hello.class);
+
     @Override
     public void run() {
-        String name = Thread.currentThread().getName();
-        System.out.printf("%s begin @ %d%n", name, System.currentTimeMillis() % 1_000);
-        System.out.printf("%s {%f}%n", name, DoubleStream.generate(Math::random).limit(100).map(Math::cbrt).sum());
-        System.out.printf("%s end @ %d%n", name, System.currentTimeMillis() % 1_000);
+        log.trace("Enter");
+        System.out.printf("%s {%f}%n", Thread.currentThread().getName(),
+                DoubleStream.generate(Math::random).limit(100).map(Math::cbrt).sum());
+        log.trace("Exit");
     }
 }
