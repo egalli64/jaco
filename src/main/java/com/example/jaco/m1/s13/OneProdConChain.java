@@ -9,6 +9,9 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Lock and Condition
  * 
@@ -16,6 +19,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * consumer communicate about their state.
  */
 public class OneProdConChain {
+    private static final Logger log = LoggerFactory.getLogger(OneProdConChain.class);
+
     /** How many product the producer is going to produce */
     private static final int PRODUCT_NR = 3;
 
@@ -24,7 +29,7 @@ public class OneProdConChain {
     private boolean produced;
     private Lock lock;
     private Condition availablility;
-    private Condition consumation;
+    private Condition consumption;
 
     /**
      * Constructor
@@ -34,7 +39,7 @@ public class OneProdConChain {
         this.produced = false;
         this.lock = new ReentrantLock();
         this.availablility = lock.newCondition();
-        this.consumation = lock.newCondition();
+        this.consumption = lock.newCondition();
     }
 
     /**
@@ -42,29 +47,31 @@ public class OneProdConChain {
      * 
      * Produce the requested products, once a time, signaling its availability then terminate.
      */
-    private void producer() {
-        String name = Thread.currentThread().getName();
-        System.out.println(name + " in action");
+    private void produce() {
+        log.trace("Enter");
 
         for (int i = 0; i < PRODUCT_NR; i++) {
             lock.lock();
             try {
+                log.trace("Lock acquired");
                 while (produced) {
-                    System.out.println(name + " waits the product being consumed");
-                    consumation.await();
-                    System.out.println(name + " is signaled of product consumption");
+                    log.trace("Wait for product consumption");
+                    consumption.await();
+                    log.trace("Consumption has been signaled");
                 }
                 product = Math.random();
                 produced = true;
-                System.out.printf("%s signals production of %f%n", name, product);
+                System.out.printf("Producer signals production of %f%n", product);
                 availablility.signal();
-            } catch (InterruptedException e) {
-                System.out.println(name + " unexpected interruption when waiting on consumation");
+            } catch (InterruptedException ex) {
+                log.warn("Exit with an unexpected interruption when waiting on consumption", ex);
                 return;
             } finally {
                 lock.unlock();
+                log.trace("Lock released");
             }
         }
+        log.trace("Exit");
     }
 
     /**
@@ -72,54 +79,61 @@ public class OneProdConChain {
      * 
      * Acquire the lock, if the product is not ready, await() on the condition for it. Then consume it.
      */
-    private void consumer() {
+    private void consume() {
+        log.trace("Enter");
         String name = Thread.currentThread().getName();
-        System.out.println(name + " in action");
 
         while (!Thread.currentThread().isInterrupted()) {
             lock.lock();
+            log.trace("Lock acquired");
             try {
                 while (!produced) {
-                    System.out.println(name + " waits for a product");
+                    log.trace("Wait for product availability");
                     availablility.await();
-                    System.out.println(name + " is signaled of product availablility");
+                    log.trace("Availablility has been signaled");
                 }
 
                 System.out.printf("%s signals that %f has been consumed%n", name, product);
                 produced = false;
-                consumation.signal();
-            } catch (InterruptedException e) {
-                System.out.println(name + " wait on availability interrupted");
+                consumption.signal();
+            } catch (InterruptedException ex) {
+                log.trace("Exit caused by interrupt while waiting on production");
                 return;
             } finally {
                 lock.unlock();
+                log.trace("Lock released");
             }
         }
+        log.trace("Exit");
     }
 
     /**
-     * Create and start a consumer thread, that it is going to hang, waiting for the producer. Then
-     * create and start a producer thread, that would signal its production to the consumer.
+     * Create and start a consumer thread, that it is going to hang, waiting for the producer.
+     * 
+     * Then create and start a producer thread, that would signal its production to the consumer.
      * 
      * @param args not used
-     * @throws InterruptedException when interrupted
+     * @throws InterruptedException when a join is interrupted
      */
     public static void main(String[] args) throws InterruptedException {
-        OneProdConChain wn = new OneProdConChain();
+        log.trace("Enter");
+        OneProdConChain pc = new OneProdConChain();
 
-        Thread consumer = new Thread(wn::consumer, "C");
+        Thread consumer = new Thread(pc::consume, "C");
         consumer.start();
 
-        Thread producer = new Thread(wn::producer, "P");
+        Thread producer = new Thread(pc::produce, "P");
         producer.start();
 
-        System.out.println("Main waits producer to terminate");
+        System.out.println("Setup done from main");
+
         producer.join();
 
-        System.out.println("Main interrupts the consumer");
+        System.out.println("Producer is done, main terminates the consumer");
+
         consumer.interrupt();
         consumer.join();
 
-        System.out.println("Bye");
+        log.trace("Enter");
     }
 }

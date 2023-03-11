@@ -5,9 +5,13 @@
  */
 package com.example.jaco.m1.s13;
 
+import java.util.Arrays;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Lock and Condition
@@ -15,6 +19,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * A single exchange between a producer and a consumer
  */
 public class OneProdCon {
+    private static final Logger log = LoggerFactory.getLogger(OneProdCon.class);
+
     private double product;
     private boolean produced;
     private Lock lock;
@@ -35,18 +41,20 @@ public class OneProdCon {
      * 
      * Produce a single product, signal its availability, then terminate.
      */
-    private void producer() {
-        String name = Thread.currentThread().getName();
-        System.out.println(name + " enter in action");
+    private void produce() {
+        log.trace("Enter");
 
         lock.lock();
         try {
+            log.trace("Lock acquired");
             product = Math.random();
             produced = true;
-            System.out.printf("%s signal availability of %f%n", name, product);
+
+            System.out.printf("%s signal availability of %f%n", Thread.currentThread().getName(), product);
             availability.signal();
         } finally {
             lock.unlock();
+            log.trace("Lock released, exit");
         }
     }
 
@@ -55,23 +63,24 @@ public class OneProdCon {
      * 
      * Wait for a product, consume it, then terminate.
      */
-    private void consumer() {
-        String name = Thread.currentThread().getName();
-        System.out.println(name + " enter in action");
+    private void consume() {
+        log.trace("Enter");
 
         lock.lock();
         try {
+            log.trace("Lock acquired");
             while (!produced) {
-                System.out.println(name + " waits");
+                log.trace("Waiting availability");
                 availability.await();
-                System.out.println(name + " is signaled of product availability");
+                log.trace("Signaled availability");
             }
 
-            System.out.printf("%s consumes %f%n", name, product);
+            System.out.printf("%s consumes %f%n", Thread.currentThread().getName(), product);
         } catch (InterruptedException e) {
             throw new IllegalStateException(e);
         } finally {
             lock.unlock();
+            log.trace("Lock released, exit");
         }
     }
 
@@ -84,19 +93,19 @@ public class OneProdCon {
      * @throws InterruptedException when interrupted
      */
     public static void main(String[] args) throws InterruptedException {
-        OneProdCon wn = new OneProdCon();
+        log.trace("Enter");
+        OneProdCon pc = new OneProdCon();
 
-        Thread[] threads = { new Thread(wn::consumer, "C"), new Thread(wn::producer, "P") };
+        Thread[] threads = { new Thread(pc::consume, "C"), new Thread(pc::produce, "P") };
 
-        for (Thread t : threads) {
-            t.start();
-        }
+        Arrays.stream(threads).forEach(Thread::start);
 
         System.out.println("Main waits");
+
         for (Thread t : threads) {
             t.join();
         }
 
-        System.out.println("Bye");
+        log.trace("Exit");
     }
 }

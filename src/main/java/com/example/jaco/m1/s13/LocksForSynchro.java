@@ -5,8 +5,12 @@
  */
 package com.example.jaco.m1.s13;
 
+import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Finer synchronization, using ReentrantLock.
@@ -14,10 +18,23 @@ import java.util.concurrent.locks.ReentrantLock;
  * Compare it to SynchroOnObjects
  */
 public class LocksForSynchro {
-    private Lock lockA = new ReentrantLock();
-    private int resourceA = 0;
-    private Lock lockB = new ReentrantLock();
-    private int resourceB = 0;
+    private static final Logger log = LoggerFactory.getLogger(LocksForSynchro.class);
+
+    private final Lock lockA;
+    private int resourceA;
+    private Lock lockB;
+    private int resourceB;
+
+    /**
+     * Constructor
+     */
+    public LocksForSynchro() {
+        this.lockA = new ReentrantLock();
+        this.resourceA = 0;
+
+        this.lockB = new ReentrantLock();
+        this.resourceB = 0;
+    }
 
     /**
      * Eight working threads divided in four groups
@@ -30,6 +47,7 @@ public class LocksForSynchro {
      * @throws InterruptedException when join is interrupted
      */
     public static void main(String[] args) throws InterruptedException {
+        log.trace("Enter");
         LocksForSynchro lfs = new LocksForSynchro();
 
         Thread[] threads = { //
@@ -39,14 +57,12 @@ public class LocksForSynchro {
                 new Thread(lfs::syncB, "B2"), new Thread(lfs::syncAB, "AB2") //
         };
 
-        for (Thread t : threads) {
-            t.start();
-        }
-
+        Arrays.stream(threads).forEach(Thread::start);
         for (Thread t : threads) {
             t.join();
         }
-        System.out.println("Bye from " + Thread.currentThread().getName());
+
+        log.trace("Exit");
     }
 
     /**
@@ -55,47 +71,50 @@ public class LocksForSynchro {
      * A and B are in read-only access, then there is no race condition on them
      */
     public synchronized void syncThis() {
-        System.out.println(Thread.currentThread().getName() + " enter syncOnThis()");
+        log.trace("Enter");
         System.out.printf("%s A is %d, B is %d%n", Thread.currentThread().getName(), resourceA, resourceB);
-        System.out.println(Thread.currentThread().getName() + " exit syncOnThis()");
+        log.trace("Exit");
     }
 
     /**
      * Synchronization for resourceA
      */
     public void syncA() {
-        System.err.println(Thread.currentThread().getName() + " enter sync block on A");
+        log.trace("Enter");
         synchronized (lockA) {
+            log.trace("Lock A acquired");
             resourceA += 1;
         }
-        System.err.println(Thread.currentThread().getName() + " exit sync block on A");
+        log.trace("Lock A released, exit");
     }
 
     /**
      * Synchronization for resourceB
      */
     public void syncB() {
-        System.err.println(Thread.currentThread().getName() + " enter sync block on B");
+        log.trace("Enter");
         synchronized (lockB) {
+            log.trace("Lock B acquired");
             resourceB += 1;
         }
-        System.err.println(Thread.currentThread().getName() + " exit sync block on B");
+        log.trace("Lock B released, exit");
     }
 
     /**
      * Synchronization for A and then B
      */
     public void syncAB() {
-        System.err.println(Thread.currentThread().getName() + " enter sync block on A");
-        synchronized (lockB) {
+        log.trace("Enter");
+        synchronized (lockA) {
+            log.trace("Lock A acquired");
             resourceA *= 2;
         }
-        System.err.println(Thread.currentThread().getName() + " exit sync block on A");
+        log.trace("Lock A released");
 
-        System.err.println(Thread.currentThread().getName() + " enter sync block on B");
         synchronized (lockB) {
+            log.trace("Lock B acquired");
             resourceB *= 2;
         }
-        System.err.println(Thread.currentThread().getName() + " exit sync block on B");
+        log.trace("Lock B released, exit");
     }
 }

@@ -5,9 +5,13 @@
  */
 package com.example.jaco.m1.s13;
 
+import java.util.Arrays;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Lock and Condition
@@ -15,6 +19,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * A simple exchange between a producer and a few consumers
  */
 public class OneProdManyCons {
+    private static final Logger log = LoggerFactory.getLogger(OneProdManyCons.class);
+
     private double product;
     /** true when the product is not valid (anymore) */
     private boolean consumed;
@@ -38,51 +44,60 @@ public class OneProdManyCons {
      * 
      * Produce a product, signal it to all, then wait its consumption before produce again.
      */
-    private void producer() {
-        System.out.println("Producer in action");
+    private void produce() {
+        log.trace("Enter");
+
         while (!Thread.currentThread().isInterrupted()) {
             lock.lock();
+            log.trace("Lock acquired");
             try {
                 while (!consumed) {
+                    log.trace("Wait for product consumption");
                     consumption.await();
+                    log.trace("Consumption has been signaled");
                 }
                 product = Math.random();
                 consumed = false;
                 System.out.printf("Producer signals availability of %f%n", product);
                 availability.signalAll();
-            } catch (InterruptedException e) {
-                System.out.println("Producer interrupted while waiting on consumption");
+            } catch (InterruptedException ex) {
+                log.trace("Exit caused by interrupt while waiting on consumption");
                 return;
             } finally {
                 lock.unlock();
+                log.trace("Lock released");
             }
         }
+        log.trace("Exit");
     }
 
     /**
-     * For the consumer thread.
+     * For the consumer threads.
      * 
      * Wait until it can consume to a not-already-consumed product. Signal that, and then terminate.
      */
-    private void consumer() {
+    private void consume() {
+        log.trace("Enter");
         String name = Thread.currentThread().getName();
 
         lock.lock();
-        System.out.println(name + " in action");
+        log.trace("Lock acquired");
         try {
             while (consumed) {
+                log.trace("Wait for product availability");
                 availability.await();
+                log.trace("Availablility has been signaled");
             }
 
             System.out.printf("%s signals consumption of %f%n", name, product);
             consumed = true;
             consumption.signal();
-        } catch (InterruptedException e) {
-            System.out.println(name + " unexpectedly interrupted while waiting on availability");
+        } catch (InterruptedException ex) {
+            log.warn("Exit with an unexpected interruption when waiting on availability", ex);
             return;
         } finally {
             lock.unlock();
-            System.out.println(name + " terminates");
+            log.trace("Lock released and exit");
         }
     }
 
@@ -95,17 +110,16 @@ public class OneProdManyCons {
      * @throws InterruptedException when interrupted
      */
     public static void main(String[] args) throws InterruptedException {
-        OneProdManyCons wn = new OneProdManyCons();
+        log.trace("Enter");
+        OneProdManyCons pc = new OneProdManyCons();
 
-        Thread producer = new Thread(wn::producer);
+        Thread producer = new Thread(pc::produce, "P");
         producer.start();
 
-        Thread[] consumers = { new Thread(wn::consumer, "C1"), new Thread(wn::consumer, "C2"),
-                new Thread(wn::consumer, "C3") };
-        for (Thread consumer : consumers) {
-            consumer.start();
-        }
+        Thread[] consumers = { new Thread(pc::consume, "C1"), new Thread(pc::consume, "C2"),
+                new Thread(pc::consume, "C3") };
 
+        Arrays.stream(consumers).forEach(Thread::start);
         for (Thread consumer : consumers) {
             consumer.join();
         }
@@ -114,6 +128,6 @@ public class OneProdManyCons {
         producer.interrupt();
         producer.join();
 
-        System.out.println("Bye");
+        log.trace("Exit");
     }
 }
