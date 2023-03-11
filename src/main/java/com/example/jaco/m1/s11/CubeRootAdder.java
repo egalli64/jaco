@@ -13,7 +13,7 @@ import com.example.jaco.m1.s07.adder.Problem;
 /**
  * A more interesting use of an atomic variable
  * 
- * The fixed number of thread is not good, but keep it simple and close to MultiThreadedBuggy
+ * The fixed number of thread is not good, but keeps it simple and close to MultiThreadedBuggy
  */
 public class CubeRootAdder extends Problem {
     private static final int WORKER_NR = 8;
@@ -62,9 +62,7 @@ public class CubeRootAdder extends Problem {
                 new Thread(() -> result.add(partialCubeRootAdder(data.length / WORKER_NR * 7))) //
         };
 
-        for (Thread worker : workers) {
-            worker.start();
-        }
+        Arrays.stream(workers).forEach(Thread::start);
 
         for (Thread worker : workers) {
             try {
