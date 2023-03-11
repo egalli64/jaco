@@ -5,14 +5,22 @@
  */
 package com.example.jaco.m1.s10;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.example.jaco.m1.s03.Jobs;
+
 /**
- * Thread communication
+ * Thread communication - weak synchronization by volatile.
  * 
- * Weak synchronization by volatile. More thread could work on a volatile variable, but only one of
- * them could change it.
+ * More threads could work on a volatile variable, but only one of them is allowed to change it.
  */
 public class Volatile {
+    private static final Logger log = LoggerFactory.getLogger(Volatile.class);
+
+    /** Written only by main */
     private static volatile boolean run = true;
+    /** Written only by worker */
     private static volatile int counter = 0;
 
     /**
@@ -22,20 +30,20 @@ public class Volatile {
      * @throws InterruptedException
      */
     public static void main(String[] args) throws InterruptedException {
+        log.trace("Enter");
         Thread worker = new Thread(() -> {
-            System.out.println("Starting worker");
+            log.trace("Enter");
             // run is read
             while (run) {
                 // counter is written
                 counter += 1;
             }
-            System.out.println("Terminating worker");
-        });
+            log.trace("Exit");
+        }, "worker");
         worker.start();
 
         // do something in main thread, give time to worker thread to kick in
-        double x = Math.cbrt(Math.PI);
-        System.out.println("Calculated by main thread: " + x);
+        Jobs.takeTime(0);
 
         // run is written
         run = false;
@@ -43,5 +51,6 @@ public class Volatile {
 
         // counter is read
         System.out.println("Calculated by worker: " + counter);
+        log.trace("Exit");
     }
 }
