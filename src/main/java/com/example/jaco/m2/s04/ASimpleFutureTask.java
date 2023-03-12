@@ -5,39 +5,40 @@
  */
 package com.example.jaco.m2.s04;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.stream.DoubleStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A FutureTask that returns a String
  */
 public class ASimpleFutureTask {
+    private static final Logger log = LoggerFactory.getLogger(ASimpleFutureTask.class);
+
     /**
      * Create a future task, run it in another thread, until is not done do something else, then print
      * its result and terminate.
      * 
      * @param args not used
+     * @throws Exception if anything goes wrong in the future task
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+        log.trace("Enter");
+
         FutureTask<String> myTask = new FutureTask<>(() -> {
-            System.out.println("The future task has started");
+            log.trace("Future task started");
             return "Future task result is " + aJob(300);
         });
-
-        System.out.println("Starting the future task from main");
         new Thread(myTask).start();
 
-        System.out.println("While the future task works, do something else in the main thread");
+        log.trace("While the future task works, do something else in the main thread");
         while (!myTask.isDone()) {
-            System.out.println("A main thread result is " + aJob(100));
+            System.out.println("A main thread result is " + aJob(10));
         }
 
-        try {
-            System.out.println(myTask.get());
-        } catch (InterruptedException | ExecutionException e) {
-            throw new IllegalStateException(e);
-        }
+        System.out.println(myTask.get());
     }
 
     /**
@@ -47,6 +48,7 @@ public class ASimpleFutureTask {
      * @return a double
      */
     private static double aJob(int size) {
+        log.trace("Enter");
         return DoubleStream.generate(() -> Math.cbrt(Math.random())).limit(size).sum();
     }
 }
