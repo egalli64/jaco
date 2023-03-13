@@ -6,42 +6,24 @@
 package com.example.jaco.m2.s06;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.DoubleStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Callable to be used by an Executor
  */
-public class Hello implements Callable<Integer> {
-    private static AtomicInteger idGenerator = new AtomicInteger();
-
-    private int id;
-
-    /**
-     * Constructor
-     */
-    public Hello() {
-        this.id = idGenerator.getAndIncrement();
-    }
+public class Hello implements Callable<Double> {
+    private static final Logger log = LoggerFactory.getLogger(Hello.class);
 
     @Override
-    public Integer call() throws Exception {
-        String name = Thread.currentThread().getName();
+    public Double call() throws Exception {
+        log.trace("Enter");
 
-        System.out.printf("%s: Hello %d%n", name, id);
-        System.out.printf("%s: %f%n", name, aJob(100));
-        System.out.printf("%s: Goodbye %d%n", name, id);
+        double result = DoubleStream.generate(() -> Math.cbrt(Math.random())).limit(100).sum();
 
-        return id;
-    }
-
-    /**
-     * A simple job that takes some time
-     * 
-     * @param size size of the job
-     * @return a double
-     */
-    private static double aJob(int size) {
-        return DoubleStream.generate(() -> Math.cbrt(Math.random())).limit(size).sum();
+        log.trace("Exit {}", result);
+        return result;
     }
 }

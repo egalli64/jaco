@@ -10,10 +10,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * ExecutorService, shutdown() vs shutdownNow()
+ * 
+ * Single Thread Executor on Runnables
  */
 public class ShutdownExecutor {
+    private static final Logger log = LoggerFactory.getLogger(ShutdownExecutor.class);
     private static final int TASK_NR = 5;
 
     /**
@@ -24,15 +30,16 @@ public class ShutdownExecutor {
      * @param args if at least an argument is passed, call shutdownNow(), otherwise shutdown()
      */
     public static void main(String[] args) {
-        System.out.println("Single Thread Executor on Runnables");
+        log.trace("Enter");
+
         ExecutorService es = Executors.newSingleThreadExecutor();
         for (int i = 0; i < TASK_NR; i++) {
-            es.execute(() -> System.out.println("Hello " + Math.cbrt(Math.random())));
+            es.execute(() -> System.out.printf("Result is %f%n", Math.cbrt(Math.random())));
         }
 
         if (args.length == 0) {
             List<Runnable> canceled = es.shutdownNow();
-            System.out.printf("%d tasks have been canceled%n", canceled.size());
+            log.info("{} tasks have been canceled", canceled.size());
         } else {
             es.shutdown();
         }
@@ -40,7 +47,9 @@ public class ShutdownExecutor {
         try {
             es.execute(() -> System.out.println("Rejected"));
         } catch (RejectedExecutionException ex) {
-            System.out.println("Can't add a task after shutdown");
+            log.info("Can't add a task after shutdown");
         }
+
+        log.trace("Exit");
     }
 }

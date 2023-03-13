@@ -12,23 +12,31 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * ExecutorService::awaitTermination()
+ * 
+ * Fixed Thread Pool sized POOL_SIZE for TASK_NR tasks
  */
 public class WaitingTermination {
+    private static final Logger log = LoggerFactory.getLogger(WaitingTermination.class);
     private static final int POOL_SIZE = 2;
     private static final int TASK_NR = 5;
 
     public static void main(String[] args) throws Exception {
-        System.out.printf("Fixed Thread Pool sized %d for %d tasks%n", POOL_SIZE, TASK_NR);
+        log.trace("Enter");
         ExecutorService es = Executors.newFixedThreadPool(POOL_SIZE);
 
-        List<Future<Integer>> futures = Stream.generate(() -> es.submit(new Hello())).limit(TASK_NR).toList();
+        List<Future<Double>> futures = Stream.generate(Hello::new).map(h -> es.submit(h)).limit(TASK_NR).toList();
         shutdownAndAwaitTermination(es);
 
-        for (Future<Integer> future : futures) {
+        // Future::get() throws InterruptedException, ExecutionException
+        for (Future<Double> future : futures) {
             System.out.println("Result " + future.get() + " delivered");
         }
+        log.trace("Exit");
     }
 
     /**
@@ -41,6 +49,7 @@ public class WaitingTermination {
      *      ExecutorService Java documentation<a>
      */
     static void shutdownAndAwaitTermination(ExecutorService pool) {
+        log.trace("Enter");
         // Disable new tasks from being submitted
         pool.shutdown();
         try {
@@ -58,5 +67,6 @@ public class WaitingTermination {
             // Preserve interrupt status
             Thread.currentThread().interrupt();
         }
+        log.trace("Exit");
     }
 }

@@ -11,10 +11,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * ExecutorService::submit() for Callable
+ * 
+ * Fixed Thread Pool sized POOL_SIZE for TASK_NR tasks
  */
 public class SubmitCallableToExecutor {
+    private static final Logger log = LoggerFactory.getLogger(SubmitCallableToExecutor.class);
     private static final int POOL_SIZE = 2;
     private static final int TASK_NR = 5;
 
@@ -26,14 +32,16 @@ public class SubmitCallableToExecutor {
      * @throws Exception from Future::get()
      */
     public static void main(String[] args) throws Exception {
-        System.out.printf("Fixed Thread Pool sized %d for %d tasks%n", POOL_SIZE, TASK_NR);
+        log.trace("Enter");
         ExecutorService es = Executors.newFixedThreadPool(POOL_SIZE);
 
-        List<Future<Integer>> futures = Stream.generate(() -> es.submit(new Hello())).limit(TASK_NR).toList();
+        List<Future<Double>> futures = Stream.generate(Hello::new).map(h -> es.submit(h)).limit(TASK_NR).toList();
         es.shutdown();
 
-        for (Future<Integer> future : futures) {
-            System.out.println("Result " + future.get() + " delivered");
+        // Future::get() throws InterruptedException, ExecutionException
+        for (Future<Double> future : futures) {
+            System.out.printf("Result %f delivered%n", future.get());
         }
+        log.trace("Exit");
     }
 }
