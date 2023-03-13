@@ -10,10 +10,15 @@ import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.DoubleAdder;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * CyclicBarrier
  */
 public class Barrier extends ProblemFrame {
+    private static final Logger log = LoggerFactory.getLogger(Barrier.class);
+
     /**
      * Create a CyclicBarrier for the workers and the main thread. Create a thread for each worker and
      * start them. Each worker does its job and waits on the barrier.
@@ -24,30 +29,34 @@ public class Barrier extends ProblemFrame {
      * @param args not used
      */
     public static void main(String[] args) {
+        log.trace("Enter");
         CyclicBarrier barrier = new CyclicBarrier(TASK_NR + 1);
         DoubleAdder accumulator = new DoubleAdder();
 
         Runnable worker = () -> {
-            String name = Thread.currentThread().getName();
+            log.trace("Enter");
+
             double value = job(100);
-            System.out.printf("%s: %f%n", name, value);
+            log.debug("Value is {}", value);
             accumulator.add(value);
             try {
                 barrier.await();
             } catch (InterruptedException | BrokenBarrierException ex) {
-                System.out.printf("%s, wait on barrier interrupted %s%n", name, ex);
+                log.warn("Wait on barrier interrupted", ex);
             }
+
+            log.trace("Exit");
         };
 
         Stream.generate(() -> new Thread(worker)).limit(TASK_NR).forEach(Thread::start);
 
-        String name = Thread.currentThread().getName();
         try {
             barrier.await();
         } catch (InterruptedException | BrokenBarrierException ex) {
-            System.out.printf("%s, wait on barrier interrupted %s%n", name, ex);
+            log.warn("Wait on barrier interrupted", ex);
         }
 
-        System.out.printf("In %s: %f%n", name, accumulator.sum());
+        System.out.printf("Total: %f%n", accumulator.sum());
+        log.trace("Exit");
     }
 }

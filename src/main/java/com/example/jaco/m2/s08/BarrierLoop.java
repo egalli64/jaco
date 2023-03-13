@@ -10,10 +10,14 @@ import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.DoubleAdder;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Using a CyclicBarrier in a loop, plus interrupting workers and reset barrier.
  */
 public class BarrierLoop extends ProblemFrame {
+    private static final Logger log = LoggerFactory.getLogger(BarrierLoop.class);
     private static final int LOOP_NR = 3;
 
     /**
@@ -30,20 +34,26 @@ public class BarrierLoop extends ProblemFrame {
      * @param args not used
      */
     public static void main(String[] args) {
+        log.trace("Enter");
+
         CyclicBarrier barrier = new CyclicBarrier(TASK_NR + 1);
         DoubleAdder accumulator = new DoubleAdder();
 
         Runnable worker = () -> {
-            String name = Thread.currentThread().getName();
+            log.trace("Enter");
+
             double value = job(100);
-            System.out.printf("%s: %f%n", name, value);
+            log.debug("Value {}", value);
             accumulator.add(value);
             try {
                 barrier.await();
             } catch (InterruptedException | BrokenBarrierException ex) {
+                String name = Thread.currentThread().getName();
                 long time = System.nanoTime() / 1000 % 10_000;
                 System.out.printf("%s, wait interrupted @%d %s %n", name, time, ex);
             }
+
+            log.trace("Exit");
         };
 
         // Loop on the barrier
@@ -54,7 +64,7 @@ public class BarrierLoop extends ProblemFrame {
             try {
                 barrier.await();
             } catch (InterruptedException | BrokenBarrierException ex) {
-                System.out.printf("%s, wait on barrier interrupted %s%n", name, ex);
+                log.warn("Wait on barrier interrupted", ex);
             }
 
             System.out.printf("In %s: %f (%d)%n", name, accumulator.sum(), i);
@@ -75,5 +85,6 @@ public class BarrierLoop extends ProblemFrame {
 
         // InterruptedException expected for I1, BrokenBarrierException for I2
         ti1.interrupt();
+        log.trace("Exit");
     }
 }
