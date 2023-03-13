@@ -7,28 +7,34 @@ package com.example.jaco.m2.s05;
 
 import java.util.concurrent.CompletableFuture;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * CompletableFuture::thenApply()
  * 
  * The previous stage result is passed to a function return another CompletableFuture
  */
 public class ThenApply {
+    private static final Logger log = LoggerFactory.getLogger(ThenApply.class);
+
     /**
      * Create a future, apply a function to its result, do something else then use the future result
      * 
      * @param args not used
      */
     public static void main(String[] args) {
-        System.out.println("Create and start a completable future task");
+        log.trace("Enter");
         CompletableFuture<String> cf = CompletableFuture.supplyAsync(() -> Jobs.job(10)) //
-                .thenApply(x -> String.format("Worker result: %f", x));
+                .thenApply(x -> String.format("Worker: %f", x));
 
-        if (!cf.isDone()) {
-            System.out.println("The future job is not done, do something else in the main thread");
-            System.out.printf("Main thread result: %f%n", Jobs.job(10));
+        log.trace("Do something else until the future is not completed");
+        while (!cf.isDone()) {
+            System.out.printf("Main: %f%n", Jobs.job(10));
         }
 
-        System.out.println("When there is nothing more to do, wait the future to complete");
+        log.trace("Finally join on the future");
         System.out.println(cf.join());
+        log.trace("Exit");
     }
 }
