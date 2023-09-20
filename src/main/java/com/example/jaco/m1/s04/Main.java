@@ -1,23 +1,30 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
 package com.example.jaco.m1.s04;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * To run the main method the main thread is created and started by the JVM
+ * The JVM creates and starts the main thread to run the main method
+ * <p>
+ * Two Thread static methods: currentThread() and sleep()
  */
 public class Main {
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) {
-        System.out.printf("Running thread %s%n", Thread.currentThread().getName());
+        System.out.printf("The thread running the main method is named %s%n", Thread.currentThread().getName());
 
         System.out.printf("About to sleep @ %d%n", System.currentTimeMillis());
         try {
-            // This is just a simulation! The use of sleep() in production code is very limited!
+            // Thread::sleep() is seldom seen in production code
             Thread.sleep(1_000);
         } catch (InterruptedException e) {
-            System.out.println("Sleep interrupted: " + e.getMessage());
+            log.error("Sleep interrupted", e);
         }
 
         System.out.printf("...sleep ended @ %d%n", System.currentTimeMillis());
