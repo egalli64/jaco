@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -12,37 +12,35 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A blocked thread
- * 
+ * <p>
  * Enable assertion with -ea VM argument
  */
 public class Blocked {
     private static final Logger log = LoggerFactory.getLogger(Blocked.class);
 
     /**
-     * Create and starts two threads on a synchronized time consuming method.
-     * 
-     * The second one should hang for a while, blocked.
+     * Create and starts two threads on a synchronized and time consuming method.
+     * <p>
+     * The second thread should hang for a while, blocked.
      * 
      * @param args not used
      */
     public static void main(String[] args) {
-        String tName = "worker";
-
-        System.out.printf("- A thread, %s, that could be blocked -%n", tName);
-        // Create and start another thread that runs before on the same method
+        System.out.println("- Main starts a blocking thread, than another that gets blocked -");
+        // Create and start the blocking thread
         new Thread(Blocked::aSynchronizedMethod, "blocking").start();
 
-        // The main thread does something else before creating and starting another thread
+        // Waste some time before creating and starting another thread
         Jobs.takeTime(50);
 
-        // Create and start a thread, that should run the same method of "blocking" one
-        Thread t1 = new Thread(Blocked::aSynchronizedMethod, tName);
+        // Create and start another thread on the same method of blocking one
+        Thread t1 = new Thread(Blocked::aSynchronizedMethod, "blocked");
         t1.start();
 
-        // Waste some other time, so we can assume that the new thread has time to kick in
+        // Waste some other time, so that the new thread has time to kick in
         Jobs.takeTime(50);
 
-        // Since both child thread run on the same synchronized method, the second should be blocked
+        // The second child thread should be blocked from the blocking thread
         assert t1.getState() == State.BLOCKED;
         System.out.printf("Thread %s is %s%n", t1.getName(), t1.getState());
 
@@ -58,14 +56,14 @@ public class Blocked {
 
     /**
      * The execution of this method is protected by an implicit lock on the class
-     * 
+     * <p>
      * It simulates to be busy in doing something for a while.
      */
     public static synchronized void aSynchronizedMethod() {
         log.trace("Enter");
 
         try {
-            // This is just a simulation! The production use of sleep() is very limited!
+            // Just a simulation! The use of sleep() in production code is very limited!
             Thread.sleep(300);
         } catch (InterruptedException e) {
             throw new IllegalStateException(e);

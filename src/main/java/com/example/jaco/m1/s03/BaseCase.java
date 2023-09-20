@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -12,20 +12,20 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Thread states
- * 
+ * <p>
  * Enable assertions with -ea VM argument
  */
 public class BaseCase {
     private static final Logger log = LoggerFactory.getLogger(BaseCase.class);
 
     /**
-     * Create a simple thread and let it run
+     * Create a thread with a simple task and let it run
      * 
      * @param args not used
      */
     public static void main(String[] args) {
         String tName = "worker";
-        System.out.printf("- The current state of thread '%s' -%n", tName);
+        System.out.printf("- Check the current state of thread '%s' -%n", tName);
 
         // Create a thread with a given name, the passed runnable is its task
         Thread t = new Thread(() -> System.out.printf("A message from %s: Hello!%n", tName), tName);

@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -10,21 +10,19 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Utility class
- * 
- * Use of Thread::sleep() is just for simple simulation of a busy job
  */
 public class Jobs {
     private static final Logger log = LoggerFactory.getLogger(Jobs.class);
 
     /**
-     * It simulates to be busy in doing something for a while.
+     * Fake to be busy doing something for a while.
      * 
-     * @param millis time to be busy, in milliseconds
+     * @param millis required duration for this fake job
      */
     public static void takeTime(long millis) {
         try {
             log.trace("Do something for (about) {} ms", millis);
-            // This is just a simulation! The use of sleep() in production code is very limited!
+            // In production code you won't see often calls to Thread::sleep()
             Thread.sleep(millis);
         } catch (InterruptedException e) {
             throw new IllegalStateException(e);
