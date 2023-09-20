@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -33,7 +33,8 @@ public class CubeAdder {
      * Multithreaded approach by Fork Join
      * 
      * <li>Define a RecursiveAction, pass the data to it
-     * <li>On a Fork Join Pool, call invoke on the recursive action
+     * <li>On a Fork Join Pool, call invoke on the recursive action - notice that
+     * since Java 19 ExecutorService is AutoCloseable
      * <li>Extract the result from the recursive action
      * 
      * @param data the values to evaluate
@@ -41,8 +42,11 @@ public class CubeAdder {
      */
     public static double recursiveAction(double[] data) {
         CubeAdderAction action = new CubeAdderAction(data, 0, data.length);
-        new ForkJoinPool().invoke(action);
-        return action.result();
+
+        try (var pool = new ForkJoinPool()) {
+            pool.invoke(action);
+            return action.result();
+        }
     }
 
     /**

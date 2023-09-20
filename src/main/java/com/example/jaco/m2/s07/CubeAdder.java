@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -15,7 +15,8 @@ import java.util.stream.DoubleStream;
 public class CubeAdder {
     /**
      * <li>Define a RecursiveTask, pass the data to it
-     * <li>On a Fork Join Pool, call invoke on the recursive action
+     * <li>On a Fork Join Pool, call invoke on the recursive action - notice that
+     * since Java 19 ExecutorService is AutoCloseable
      * <li>Extract the result from the recursive action
      * 
      * @param data the values to evaluate
@@ -23,8 +24,10 @@ public class CubeAdder {
      */
     public static Future<Double> recursiveAction(double[] data) {
         CubeAdderTask task = new CubeAdderTask(data, 0, data.length);
-        new ForkJoinPool().invoke(task);
-        return task;
+        try (var pool = new ForkJoinPool()) {
+            pool.invoke(task);
+            return task;
+        }
     }
 
     /**
