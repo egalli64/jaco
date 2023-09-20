@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -14,7 +14,9 @@ import java.util.concurrent.RecursiveAction;
  */
 @SuppressWarnings("serial")
 public class CubeAdderAction extends RecursiveAction {
-    /** Where the recursion should stop - it is our responsibility to find a good value */
+    /**
+     * it is our responsibility to set where the recursion should stop
+     */
     private static final int THRESHOLD = 200_000;
 
     private double[] data;
@@ -48,12 +50,13 @@ public class CubeAdderAction extends RecursiveAction {
 
             ForkJoinTask.invokeAll(List.of(left, right));
 
-            // same of calling invokeAll, but explicitly applying the fork / join pattern
+            // same as calling invokeAll, but explicitly applying the fork / join pattern
 //            left.fork();
 //            right.compute();
 //            left.join();
-//
-//            result = left.result + right.result;
+
+            // for both approaches, in the end set the joined result
+            result = left.result + right.result;
         }
     }
 
