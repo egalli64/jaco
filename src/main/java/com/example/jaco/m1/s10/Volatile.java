@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -12,8 +12,9 @@ import com.example.jaco.m1.s03.Jobs;
 
 /**
  * Thread communication - weak synchronization by volatile.
- * 
- * More threads could work on a volatile variable, but only one of them is allowed to change it.
+ * <p>
+ * More threads could work on a volatile variable, but only one of them should
+ * be allowed to change it.
  */
 public class Volatile {
     private static final Logger log = LoggerFactory.getLogger(Volatile.class);
@@ -24,7 +25,8 @@ public class Volatile {
     private static volatile int counter = 0;
 
     /**
-     * Main thread and runner communicates over two volatile variables. No need of synchronization.
+     * Main thread and runner communicates over two volatile variables. No need of
+     * synchronization.
      * 
      * @param args not used
      * @throws InterruptedException
