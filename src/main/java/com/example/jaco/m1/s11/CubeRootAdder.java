@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -12,8 +12,9 @@ import com.example.jaco.m1.s07.adder.Problem;
 
 /**
  * A more interesting use of an atomic variable
- * 
- * The fixed number of thread is not good, but keeps it simple and close to MultiThreadedBuggy
+ * <p>
+ * The fixed number of thread is not good, but keeps it simple and close to
+ * MultiThreadedBuggy
  */
 public class CubeRootAdder extends Problem {
     private static final int WORKER_NR = 8;
@@ -40,11 +41,12 @@ public class CubeRootAdder extends Problem {
 
     /**
      * The result variable is safely shared by workers being atomic
-     * 
-     * Notice that different runs could lead to slightly different results. This is an intrinsic problem
-     * caused by rounding and approximation in floating point operations. Given that the additions are
-     * potentially performed each time in a different order, we could see tiny changes.
-     * 
+     * <p>
+     * Notice that different runs could lead to slightly different results. This is
+     * an intrinsic problem caused by rounding and approximation in floating point
+     * operations. Given that the additions are potentially performed each time in a
+     * different order, we could see tiny changes.
+     * <p>
      * If we can't afford it, we should use BigDecimal instead.
      */
     @Override
