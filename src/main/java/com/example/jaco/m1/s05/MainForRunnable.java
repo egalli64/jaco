@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -12,7 +12,7 @@ import com.example.jaco.m1.s03.Jobs;
 
 /**
  * Working on a thread by composition
- * 
+ * <p>
  * The injected runnable is an instance of a class implementing Runnable
  */
 public class MainForRunnable {
@@ -25,14 +25,11 @@ public class MainForRunnable {
      */
     public static void main(String[] args) {
         log.trace("Enter");
-        String tName = "worker";
-        System.out.printf("- The current state of thread '%s' -%n", tName);
 
-        // The behavior we want to get from the worker
-        Runnable my = new MyRunnable();
+        System.out.println("- Create, start, and check the state of another thread");
 
-        // Inject the runnable in a thread object
-        Thread worker = new Thread(my, tName);
+        // Inject a runnable in a thread
+        Thread worker = new Thread(new MyRunnable());
         System.out.printf("%s is %s%n", worker.getName(), worker.getState());
 
         worker.start();

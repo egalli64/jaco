@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -23,11 +23,11 @@ public class MainForMyThread {
      */
     public static void main(String[] args) {
         log.trace("Enter");
-        String tName = "worker";
+
+        System.out.println("- Create, start, and check the state of another thread");
 
         // Create another thread defined as extension of class Thread
-        System.out.printf("- The current state of thread '%s' -%n", tName);
-        Thread worker = new MyThread(tName);
+        Thread worker = new MyThread();
         System.out.printf("%s is %s%n", worker.getName(), worker.getState());
 
         worker.start();

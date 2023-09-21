@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -12,7 +12,7 @@ import com.example.jaco.m1.s03.Jobs;
 
 /**
  * Working on a thread by composition
- * 
+ * <p>
  * Injecting a runnable defined locally
  */
 public class MainForRunnableLambda {
@@ -25,8 +25,8 @@ public class MainForRunnableLambda {
      */
     public static void main(String[] args) {
         log.trace("Enter");
-        String tName = "worker";
-        System.out.printf("- The current state of thread '%s' -%n", tName);
+
+        System.out.println("- Create, start, and check the state of another thread");
 
         // The behavior we want to get from the other thread
         Runnable runnable = () -> {
@@ -35,8 +35,8 @@ public class MainForRunnableLambda {
             log.trace("Exit");
         };
 
-        // Inject the runnable in a thread object
-        Thread worker = new Thread(runnable, tName);
+        // Inject a runnable in a thread
+        Thread worker = new Thread(runnable);
         System.out.printf("%s is %s%n", worker.getName(), worker.getState());
 
         worker.start();
