@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -12,8 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Thread communication
- * 
+ * Thread communication - synchronized block as monitor: wait/notify
+ * <p>
  * One Producer - Many Consumers
  */
 public class OneProdManyCons {
@@ -68,8 +68,8 @@ public class OneProdManyCons {
     }
 
     /**
-     * The consumer thread runs this method.
-     * 
+     * Each consumer thread runs this method.
+     * <p>
      * It waits the producer to set the product, then consumes it.
      */
     private synchronized void consume() {
@@ -94,7 +94,8 @@ public class OneProdManyCons {
     }
 
     /**
-     * Start producer and consumers, join the consumers, terminate and join the producer.
+     * Start producer and consumers, join the consumers, terminate and join the
+     * producer.
      * 
      * @param args not used
      * @throws InterruptedException when a join is interrupted
@@ -103,12 +104,15 @@ public class OneProdManyCons {
         log.trace("Enter");
         OneProdManyCons pc = new OneProdManyCons();
 
-        // Different termination approach required
+        // The producer is started first, and it is interrupted last
         Thread producer = new Thread(pc::produce, "P");
         producer.start();
 
+        // Each consumer consumes a product and then terminates
         Thread[] consumers = { //
-                new Thread(pc::consume, "C1"), new Thread(pc::consume, "C2"), new Thread(pc::consume, "C3") //
+                new Thread(pc::consume, "C1"), //
+                new Thread(pc::consume, "C2"), //
+                new Thread(pc::consume, "C3") //
         };
         Arrays.stream(consumers).forEach(Thread::start);
 

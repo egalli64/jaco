@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -12,8 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Thread communication
- * 
+ * Thread communication - synchronized block as monitor: wait/notify
+ * <p>
  * One Producer - One Consumer
  */
 public class OneProdCon {
@@ -26,7 +26,7 @@ public class OneProdCon {
 
     /**
      * The producer thread runs this method, that sets the shared resource.
-     * 
+     * <p>
      * Once the job is done it notifies the consumer thread about it.
      */
     private synchronized void producer() {
