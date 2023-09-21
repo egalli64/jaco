@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -16,7 +16,7 @@ public class SynchroStatic {
 
     /**
      * Mixing calls to methods synchronized on this and on the class
-     * 
+     *
      * @param args not used
      * @throws InterruptedException when join is interrupted
      */

@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Avoid race condition even though more threads have access to the same resource.
+ * Avoid race condition even though more threads access the same resource
  */
 public class Synchro {
     private static final Logger log = LoggerFactory.getLogger(Synchro.class);
@@ -46,9 +46,9 @@ public class Synchro {
 
     /**
      * Simulate access to user status and data print.
-     * 
-     * It is synchronized to protect the changes to System.out. If a thread enter this code, other
-     * threads should wait their turn to enter.
+     * <p>
+     * It is synchronized to protect the changes to System.out. If a thread enter
+     * this code, other threads should wait their turn.
      * 
      * @param name the user name
      */

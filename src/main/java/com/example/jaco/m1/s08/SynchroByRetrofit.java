@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -9,13 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Avoid race condition when running legacy code not ready for multithreading execution.
+ * Avoid race condition when running code designed for single thread execution
  */
 public class SynchroByRetrofit {
     private static final Logger log = LoggerFactory.getLogger(SynchroByRetrofit.class);
 
     /**
-     * Four threads need to run a non-synchronized method. Provide synchronization as a wrapper.
+     * Four threads need to run a non-synchronized method. Provide synchronization
+     * as a wrapper.
      * 
      * @param args not used
      * @throws InterruptedException when join is interrupted
@@ -26,7 +27,9 @@ public class SynchroByRetrofit {
 
         NoSynchro noSync = new NoSynchro();
 
-        // Each thread runs a synchronized block containing just the call to the non-synchronized method
+        // Each thread runs a synchronized block containing just the call to the
+        // non-synchronized method
+        // !!! Assume this is legacy code, see Lock for modern implementation !!!
         Thread[] threads = { //
                 new Thread(() -> {
                     synchronized (noSync) {

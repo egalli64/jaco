@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -16,7 +16,7 @@ public class Dog {
 
     /**
      * Let a dog bark.
-     * 
+     * <p>
      * Being synchronized only one thread could run this code in a given moment.
      */
     public synchronized void bark() {

@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -15,7 +15,8 @@ public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     /**
-     * A call to a synchronized method that calls another synchronized method on the same lock
+     * A call to a synchronized method that calls another synchronized method on the
+     * same lock
      * 
      * @param args not used
      */

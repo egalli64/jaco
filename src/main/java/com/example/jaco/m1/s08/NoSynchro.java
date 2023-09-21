@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -46,8 +46,8 @@ public class NoSynchro {
 
     /**
      * !!! BUGGED !!! Simulate access to user status and data print.
-     * 
-     * Since the output is done on a shared unprotected resource, the result could be garbled
+     * <p>
+     * The output is done on a shared unprotected resource, expect garbling
      * 
      * @param name the user name
      */

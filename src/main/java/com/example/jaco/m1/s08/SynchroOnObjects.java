@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Finer synchronization, using more locks.
- * 
+ * <p>
  * !!! Assume this is legacy code, see Lock for modern implementation !!!
  */
 public class SynchroOnObjects {
@@ -23,7 +23,7 @@ public class SynchroOnObjects {
 
     /**
      * Eight working threads divided in four groups
-     * <li>Synchronized on this (standard) for System.out
+     * <li>Synchronized on the current object (this - standard) for System.out
      * <li>Synchronized on lock "A" for resourceA
      * <li>Synchronized on lock "B" for resourceB
      * <li>Synchronized on lock "A" and then "B" for both resources
