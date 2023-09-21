@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -25,9 +25,9 @@ public class Main {
      */
     public static void main(String[] args) {
         log.trace("Enter");
-        String name = "worker";
+
         // Create another thread
-        Thread worker = new Thread(() -> System.out.printf("A message from %s%n", name), name);
+        Thread worker = new Thread(() -> System.out.println("A message from the worker"));
 
         // The worker is NEW, not alive yet
         assert worker.getState() == State.NEW;
@@ -42,13 +42,13 @@ public class Main {
 
         assert worker.getState() == State.RUNNABLE || worker.getState() == State.TERMINATED;
         if (worker.isAlive()) {
-            log.trace("After start, now {} could be alive", worker.getName());
+            log.trace("After start, the worker could be alive (or terminated)");
         } else {
-            log.trace("After start, now {} could be terminated", worker.getName());
+            log.trace("After start, the worker could be terminated (or alive)");
         }
 
         try {
-            log.trace("Wait {} to terminate", worker.getName());
+            log.trace("Wait on worker termination");
             worker.join();
         } catch (InterruptedException ex) {
             // No one should interrupt the main thread join on the worker
@@ -58,9 +58,9 @@ public class Main {
         }
 
         if (!worker.isAlive()) {
-            log.trace("After joining in, {} is not alive anymore", worker.getName());
+            log.trace("After joining in, the worker is not alive anymore");
         } else {
-            log.warn("This should not happen. Join interrupted?");
+            log.warn("This should not happen. Maybe join has been interrupted?");
         }
         log.trace("Exit");
     }

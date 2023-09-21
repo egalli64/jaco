@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -9,10 +9,11 @@ import java.util.Arrays;
 
 /**
  * Is multithreading worth?
- * 
- * Let's try a CPU intensive calculation using more threads "by hand". The idea is dividing the job
- * among a few threads to exploit the multithreading hardware available on the current machine.
- * 
+ * <p>
+ * Let's try a CPU intensive calculation using more threads "by hand". The idea
+ * is dividing the job among a few threads to exploit the multithreading
+ * hardware available on the current machine.
+ * <p>
  * Here I'm splitting the job in 8 parts. Is that a good choice?
  */
 public class MultiThreaded extends Problem {
@@ -29,7 +30,8 @@ public class MultiThreaded extends Problem {
     }
 
     /**
-     * Split the job in 8 and give each part to a different thread, then put the result together.
+     * Split the job in 8 and give each part to a different thread, then put the
+     * result together.
      * 
      * The code is not complicated, but it is too low level.
      */
@@ -58,8 +60,9 @@ public class MultiThreaded extends Problem {
     /**
      * The worker for the current problem.
      * 
-     * Being an inner class, it could access "data". Notice that this is a read-only access. Each thread
-     * puts the result of its work in variable of its own ownership.
+     * Being an inner class, it could access "data". Notice that this is a read-only
+     * access. Each thread puts the result of its work in variable of its own
+     * ownership.
      */
     private class Worker extends Thread {
         private int begin;

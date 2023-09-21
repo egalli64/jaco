@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -9,10 +9,11 @@ import java.util.Arrays;
 
 /**
  * Is multithreading worth?
- * 
- * Using a full fledged class for the worker as in the MultiThreaded example looks like a bit of an
- * overkill. Lambdas here could help in making the code more compact and readable.
- * 
+ * <p>
+ * Using a full fledged class for the worker as in the MultiThreaded example
+ * looks like a bit of an overkill. Lambdas here could help in making the code
+ * more compact and readable.
+ * <p>
  * However, here the code has a BUG caused by RACE CONDITION (more on it later)
  */
 public class MultiThreadedBuggy extends Problem {
@@ -40,15 +41,15 @@ public class MultiThreadedBuggy extends Problem {
 
     /**
      * !!! BUGGY! different threads access unsafely the same resource !!!
-     * 
+     * <p>
      * TODO: fix it (synchronization? atomic variables?)
      */
     @Override
     protected double calculate() {
-        // a local variable could be captured by a lambda only if it is effectively final
+        // a local variable could be captured by a lambda only if effectively final
         double[] result = { 0.0 };
 
-        // !!! BUG: result is written by more threads and not protected from race condition !!!
+        // !!! BUG: result is not protected from race condition !!!
         Thread[] workers = { //
                 new Thread(() -> result[0] += partialCubeRootAdder(0)), //
                 new Thread(() -> result[0] += partialCubeRootAdder(CHUNK_SIZE)), //

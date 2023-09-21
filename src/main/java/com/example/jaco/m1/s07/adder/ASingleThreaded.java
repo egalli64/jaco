@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 /**
  * Is multithreading worth?
- * 
+ * <p>
  * Let's try a CPU intensive calculation following a single thread approach
  */
 public class ASingleThreaded extends Problem {

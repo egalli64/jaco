@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -9,8 +9,9 @@ import java.util.Arrays;
 
 /**
  * Is multithreading worth?
- * 
- * Let's try a CPU intensive calculation using more threads using a Java 8 Stream feature
+ * <p>
+ * Let's try a CPU intensive calculation using more threads using a Java 8
+ * Stream feature
  */
 public class MultiThreadedStream extends Problem {
     /**

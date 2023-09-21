@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -12,7 +12,8 @@ import java.util.Set;
 import java.util.stream.IntStream;
 
 /**
- * Basic setup for a problem to see if multithreading is worth of all its trouble
+ * Basic setup for a problem to see if multithreading is worth of all its
+ * trouble
  */
 public abstract class Problem {
     /** Number of elements to work with */
@@ -29,7 +30,7 @@ public abstract class Problem {
 
     /**
      * Constructor
-     * 
+     * <p>
      * All the concrete classes should work on the same data
      */
     public Problem() {
@@ -40,7 +41,7 @@ public abstract class Problem {
 
     /**
      * Repeat NR times the calculation to have a rough time estimation.
-     * 
+     * <p>
      * Then print the result.
      */
     public void estimate() {
