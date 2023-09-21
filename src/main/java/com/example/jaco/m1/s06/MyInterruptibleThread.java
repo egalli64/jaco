@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -9,8 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A thread that ignore the standard interrupt approach but could be interrupted following a custom
- * approach.
+ * A thread that ignore the standard interrupt approach but could be interrupted
+ * following a custom approach.
  */
 public class MyInterruptibleThread extends Thread {
     private static final Logger log = LoggerFactory.getLogger(MyInterruptibleThread.class);
@@ -31,7 +31,8 @@ public class MyInterruptibleThread extends Thread {
     /**
      * Accept a termination request.
      * 
-     * Package private method, only from this package a MyInterruptibleThread could be terminated.
+     * Package private method, only from this package a MyInterruptibleThread could
+     * be terminated.
      */
     void shutdown() {
         done = true;
@@ -46,7 +47,7 @@ public class MyInterruptibleThread extends Thread {
         while (!done) {
             System.out.print("(Fake) wait on a resource ... ");
             try {
-                // This is just a simulation! The use of sleep() in production code is very limited!
+                // Just a simulation! Thread::sleep() in seldom seen in production code
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 log.warn("Interrupted ignored!");

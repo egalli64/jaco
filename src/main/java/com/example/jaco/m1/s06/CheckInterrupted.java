@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Working with two threads, one will interrupt the other one.
- * 
- * Notice that the console is carelessly shared between threads, expect troubles.
+ * <p>
+ * The console is carelessly shared between threads, expect troubles.
  */
 public class CheckInterrupted {
     private static final Logger log = LoggerFactory.getLogger(CheckInterrupted.class);
@@ -24,7 +24,7 @@ public class CheckInterrupted {
     public static void main(String[] args) {
         log.trace("Enter");
 
-        // What is going to be executed by the other thread. Only an interrupt will stop it.
+        // Behavior of the other thread, run until interrupted
         Runnable runnable = () -> {
             final Thread cur = Thread.currentThread();
             log.trace("Enter");
