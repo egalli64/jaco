@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -26,9 +26,10 @@ public class SingleThreadExecutor {
     public static void main(String[] args) {
         log.trace("Enter");
 
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Stream.generate(Hello::new).limit(5).forEach(executor::execute);
-        executor.shutdown();
+        // implicit executor shutdown, on close() by try with resource (Java 19)
+        try (ExecutorService executor = Executors.newSingleThreadExecutor()) {
+            Stream.generate(Hello::new).limit(5).forEach(executor::execute);
+        }
 
         log.trace("Exit");
     }

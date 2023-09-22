@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -24,7 +24,7 @@ public class CachedThreadPoolExecutor {
 
     /**
      * The Cached Thread Pool Executor starts with a core pool sized zero.
-     * 
+     * <p>
      * More threads are created only if required.
      * 
      * @param args not used
@@ -37,23 +37,22 @@ public class CachedThreadPoolExecutor {
         // Pass n Hello runnable to the executor
         Consumer<Integer> batch = n -> Stream.generate(Hello::new).limit(n).forEach(executor::execute);
         // Time waster
-        IntToDoubleFunction filler = (n) -> DoubleStream.generate(Math::random).limit(n).map(Math::cbrt).sum();
+        IntToDoubleFunction filler = n -> DoubleStream.generate(Math::random).limit(n).map(Math::cbrt).sum();
 
-        // first batch
+        System.out.println("Running the first batch of jobs ...");
         batch.accept(TASK_NR);
 
         System.out.println("Doing something else in main: " + filler.applyAsDouble(1_000_000));
-        System.out.println("Then assigning other tasks to the executor");
 
-        // second batch
+        System.out.println("Running the second batch of jobs ...");
         batch.accept(TASK_NR);
 
         System.out.println("Doing something else in main: " + filler.applyAsDouble(50_000));
-        System.out.println("Then assigning other tasks to the executor");
 
-        // third batch, requires more threads
+        System.out.println("Running the third batch of jobs (double size) ...");
         batch.accept(TASK_NR * 2);
 
+        // explicit shutdown
         executor.shutdown();
         log.trace("Exit");
     }

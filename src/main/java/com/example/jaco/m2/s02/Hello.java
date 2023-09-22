@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -19,7 +19,7 @@ public class Hello implements Runnable {
     @Override
     public void run() {
         log.trace("Enter");
-        System.out.printf("%s {%f}%n", Thread.currentThread().getName(),
+        System.out.printf("On %s generated value is %f%n", Thread.currentThread().getName(),
                 DoubleStream.generate(Math::random).limit(100).map(Math::cbrt).sum());
         log.trace("Exit");
     }
