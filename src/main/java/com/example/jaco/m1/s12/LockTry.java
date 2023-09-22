@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -15,8 +15,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Lock and ReentrantLock.
- * 
- * Close to LockPlain, but using tryLock()
+ * <p>
+ * COmpare it to LockPlain, here tryLock() is used
  */
 public class LockTry {
     private static final Logger log = LoggerFactory.getLogger(LockTry.class);
@@ -28,7 +28,7 @@ public class LockTry {
     private double resourceG;
 
     /**
-     * Constructor
+     * Constructor, initialize locks and resources
      */
     public LockTry() {
         this.lockF = new ReentrantLock();
@@ -42,14 +42,18 @@ public class LockTry {
      * Run a few threads concurrently on the two resources.
      * 
      * @param args not used
-     * @throws InterruptedException when join in main is interrupted (should not happen)
+     * @throws InterruptedException in case of unexpected interrupted join
      */
     public static void main(String[] args) throws InterruptedException {
         log.trace("Enter");
         LockTry lt = new LockTry();
 
-        Thread[] threads = { new Thread(lt::syncOnF, "F1"), new Thread(lt::syncOnG, "G1"),
-                new Thread(lt::syncOnF, "F2"), new Thread(lt::syncOnG, "G2") };
+        Thread[] threads = { //
+                new Thread(lt::syncOnF, "F1"), //
+                new Thread(lt::syncOnG, "G1"), //
+                new Thread(lt::syncOnF, "F2"), //
+                new Thread(lt::syncOnG, "G2") //
+        };
 
         Arrays.stream(threads).forEach(Thread::start);
         for (Thread t : threads) {

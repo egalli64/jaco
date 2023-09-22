@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -16,8 +16,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Lock and ReentrantLock.
- * 
- * Similar to LockTry, but using timed tryLock()
+ * <p>
+ * COmpare it to LockTry, here tryLock() is used
  */
 public class LockTryWait {
     private static final Logger log = LoggerFactory.getLogger(LockTryWait.class);
@@ -29,7 +29,7 @@ public class LockTryWait {
     private double resourceG;
 
     /**
-     * Constructor
+     * Constructor, initialize locks and resources
      */
     public LockTryWait() {
         this.lockF = new ReentrantLock();
@@ -43,14 +43,18 @@ public class LockTryWait {
      * Run a few threads concurrently on the two resources.
      * 
      * @param args not used
-     * @throws InterruptedException when join in main is interrupted (should not happen)
+     * @throws InterruptedException in case of unexpected interrupted join
      */
     public static void main(String[] args) throws InterruptedException {
         log.trace("Enter");
         LockTryWait ltw = new LockTryWait();
 
-        Thread[] threads = { new Thread(ltw::syncOnF, "F1"), new Thread(ltw::syncOnG, "G1"),
-                new Thread(ltw::syncOnF, "F2"), new Thread(ltw::syncOnG, "G2") };
+        Thread[] threads = { //
+                new Thread(ltw::syncOnF, "F1"), //
+                new Thread(ltw::syncOnG, "G1"), //
+                new Thread(ltw::syncOnF, "F2"), //
+                new Thread(ltw::syncOnG, "G2") //
+        };
 
         Arrays.stream(threads).forEach(Thread::start);
         for (Thread t : threads) {
@@ -64,7 +68,7 @@ public class LockTryWait {
 
     /**
      * For threads accessing resource F
-     * 
+     * <p>
      * Let the tryLock wait enough time to reasonably acquire the lock
      */
     public void syncOnF() {
@@ -93,7 +97,7 @@ public class LockTryWait {
 
     /**
      * For threads accessing resource G
-     * 
+     * <p>
      * Let the tryLock wait for a short time, so that we can expect non-availability
      */
     public void syncOnG() {
