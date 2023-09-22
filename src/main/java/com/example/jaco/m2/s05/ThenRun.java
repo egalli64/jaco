@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -12,14 +12,15 @@ import org.slf4j.LoggerFactory;
 
 /**
  * CompletableFuture::thenRun()
- * 
+ * <p>
  * When the previous stage is done, a runnable is run
  */
 public class ThenRun {
     private static final Logger log = LoggerFactory.getLogger(ThenRun.class);
 
     /**
-     * Create a completable future, print a message when done, do something else in the meantime
+     * Create a completable future, print a message when done, do something else in
+     * the meantime
      * 
      * @param args not used
      */

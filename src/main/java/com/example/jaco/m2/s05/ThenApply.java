@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -12,14 +12,16 @@ import org.slf4j.LoggerFactory;
 
 /**
  * CompletableFuture::thenApply()
- * 
- * The previous stage result is passed to a function return another CompletableFuture
+ * <p>
+ * The previous stage result is passed to a function return another
+ * CompletableFuture
  */
 public class ThenApply {
     private static final Logger log = LoggerFactory.getLogger(ThenApply.class);
 
     /**
-     * Create a future, apply a function to its result, do something else then use the future result
+     * Create a future, apply a function to its result, do something else then use
+     * the future result
      * 
      * @param args not used
      */
@@ -33,7 +35,7 @@ public class ThenApply {
             System.out.printf("Main: %f%n", Jobs.job(10));
         }
 
-        log.trace("Finally join on the future");
+        log.trace("Then join on the future");
         System.out.println(cf.join());
         log.trace("Exit");
     }

@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -12,14 +12,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A simple common use for a CompletableFuture.
- * 
+ * <p>
  * It is created in a (main) thread, another thread (worker) completes it.
  */
 public class CFutureCommon {
     private static final Logger log = LoggerFactory.getLogger(CFutureCommon.class);
 
     /**
-     * Get a completable future, do some other job, then hang waiting for the future to complete
+     * Get a completable future, do some other job, then wait the future to complete
      * 
      * @param args not used
      */
@@ -30,12 +30,14 @@ public class CFutureCommon {
         new Thread(() -> cf.complete(Jobs.job(10)), "CF").start();
 
         if (!cf.isDone()) {
-            log.trace("The future job is not done, do something else");
+            log.trace("If the future job is not done, do something else");
             System.out.printf("Main thread result: %f%n", Jobs.job(3));
         }
 
-        log.trace("Finally join on the future");
-        System.out.printf("Worker result: %f%n", cf.join());
+        log.trace("Then join on the future");
+        Double result = cf.join();
+
+        System.out.printf("Worker result: %f%n", result);
         log.trace("Exit");
     }
 }

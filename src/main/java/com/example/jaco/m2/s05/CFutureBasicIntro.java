@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -13,9 +13,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * CompletableFuture introduction.
- * 
- * Even though it is possible to work on a completable future just in a single thread, its common
- * use is about simplifying communication between threads.
+ * <p>
+ * Even though it is possible to work on a completable future just in a single
+ * thread, its common use is about simplifying communication between threads.
  */
 public class CFutureBasicIntro {
     private static final Logger log = LoggerFactory.getLogger(CFutureBasicIntro.class);

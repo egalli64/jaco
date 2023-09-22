@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -12,14 +12,16 @@ import org.slf4j.LoggerFactory;
 
 /**
  * CompletableFuture::thenAccept()
- * 
- * The previous stage result is passed to a consumer, the resulting Future contains a Void
+ * <p>
+ * The previous stage result is passed to a consumer, the resulting Future
+ * contains a Void
  */
 public class ThenAccept {
     private static final Logger log = LoggerFactory.getLogger(ThenAccept.class);
 
     /**
-     * Create a future, consumes to its result, do something else while the future is not done
+     * Create a future, consumes to its result, do something else while the future
+     * is not done
      * 
      * @param args not used
      */
