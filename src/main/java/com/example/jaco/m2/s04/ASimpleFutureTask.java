@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -18,8 +18,8 @@ public class ASimpleFutureTask {
     private static final Logger log = LoggerFactory.getLogger(ASimpleFutureTask.class);
 
     /**
-     * Create a future task, run it in another thread, until is not done do something else, then print
-     * its result and terminate.
+     * Create a future task, run it in another thread, until is not done do
+     * something else, then print its result and terminate.
      * 
      * @param args not used
      * @throws Exception if anything goes wrong in the future task
@@ -29,13 +29,13 @@ public class ASimpleFutureTask {
 
         FutureTask<String> myTask = new FutureTask<>(() -> {
             log.trace("Future task started");
-            return "Future task result is " + aJob(300);
+            return "Future task result is " + aJob(5_000);
         });
         new Thread(myTask).start();
 
         log.trace("While the future task works, do something else in the main thread");
         while (!myTask.isDone()) {
-            System.out.println("A main thread result is " + aJob(10));
+            System.out.println("A main thread result is " + aJob(5));
         }
 
         System.out.println(myTask.get());

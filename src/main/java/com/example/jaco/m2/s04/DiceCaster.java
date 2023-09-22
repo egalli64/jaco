@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * FutureTask on a Callable with exception
- * 
+ * <p>
  * Dice caster, NR dice having values in [1..MAX]
  */
 public class DiceCaster {
@@ -27,7 +27,8 @@ public class DiceCaster {
     private static final int MAX = 6;
 
     /**
-     * A list of futures based on a callable is generated. Then the results are extracted.
+     * A list of futures based on a callable is generated. Then the results are
+     * extracted.
      * 
      * @param args not used
      */
@@ -63,7 +64,7 @@ public class DiceCaster {
                 throw new IllegalStateException(ex);
             } catch (ExecutionException ex) {
                 // An exception thrown by a FutureTask is wrapped in an ExecutionException
-                System.out.println(ex.getCause().getMessage());
+                System.out.println("No result: " + ex.getCause().getMessage());
             }
         }
 
