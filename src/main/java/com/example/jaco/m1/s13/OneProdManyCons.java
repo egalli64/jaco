@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Lock and Condition
- * 
+ * <p>
  * A simple exchange between a producer and a few consumers
  */
 public class OneProdManyCons {
@@ -41,8 +41,8 @@ public class OneProdManyCons {
 
     /**
      * For the producer thread, loop until interrupted.
-     * 
-     * Produce a product, signal it to all, then wait its consumption before produce again.
+     * <p>
+     * Produce a product, signal all, then wait consumption before produce again.
      */
     private void produce() {
         log.trace("Enter");
@@ -56,6 +56,8 @@ public class OneProdManyCons {
                     consumption.await();
                     log.trace("Consumption has been signaled");
                 }
+
+                // Since a unique producer is expected, no need of ThreadLocalRandom
                 product = Math.random();
                 consumed = false;
                 System.out.printf("Producer signals availability of %f%n", product);
@@ -73,8 +75,8 @@ public class OneProdManyCons {
 
     /**
      * For the consumer threads.
-     * 
-     * Wait until it can consume to a not-already-consumed product. Signal that, and then terminate.
+     * <p>
+     * Wait for a not-already-consumed product. Signal that, and then terminate.
      */
     private void consume() {
         log.trace("Enter");
@@ -103,7 +105,7 @@ public class OneProdManyCons {
 
     /**
      * Create and start the producer, then create the consumers.
-     * 
+     * <p>
      * Join on them, and then terminate the producer.
      * 
      * @param args not used
@@ -116,8 +118,11 @@ public class OneProdManyCons {
         Thread producer = new Thread(pc::produce, "P");
         producer.start();
 
-        Thread[] consumers = { new Thread(pc::consume, "C1"), new Thread(pc::consume, "C2"),
-                new Thread(pc::consume, "C3") };
+        Thread[] consumers = { //
+                new Thread(pc::consume, "C1"), //
+                new Thread(pc::consume, "C2"), //
+                new Thread(pc::consume, "C3") //
+        };
 
         Arrays.stream(consumers).forEach(Thread::start);
         for (Thread consumer : consumers) {

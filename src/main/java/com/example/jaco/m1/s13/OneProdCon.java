@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Lock and Condition
- * 
+ * <p>
  * A single exchange between a producer and a consumer
  */
 public class OneProdCon {
@@ -38,7 +38,7 @@ public class OneProdCon {
 
     /**
      * For the producer thread.
-     * 
+     * <p>
      * Produce a single product, signal its availability, then terminate.
      */
     private void produce() {
@@ -47,6 +47,7 @@ public class OneProdCon {
         lock.lock();
         try {
             log.trace("Lock acquired");
+            // Since a unique producer is expected, no need of ThreadLocalRandom
             product = Math.random();
             produced = true;
 
@@ -60,7 +61,7 @@ public class OneProdCon {
 
     /**
      * For the consumer thread.
-     * 
+     * <p>
      * Wait for a product, consume it, then terminate.
      */
     private void consume() {
@@ -86,8 +87,8 @@ public class OneProdCon {
 
     /**
      * Create and start producer and consumer. Let them play, then terminate.
-     *
-     * Notice that the timing is not deterministic.
+     * <p>
+     * Notice that the execution order is not deterministic.
      * 
      * @param args not used
      * @throws InterruptedException when interrupted
@@ -96,12 +97,14 @@ public class OneProdCon {
         log.trace("Enter");
         OneProdCon pc = new OneProdCon();
 
-        Thread[] threads = { new Thread(pc::consume, "C"), new Thread(pc::produce, "P") };
+        Thread[] threads = { //
+                new Thread(pc::consume, "C"), //
+                new Thread(pc::produce, "P") //
+        };
 
         Arrays.stream(threads).forEach(Thread::start);
 
         System.out.println("Main waits");
-
         for (Thread t : threads) {
             t.join();
         }

@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -14,9 +14,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Lock and Condition
- * 
- * Chain of exchanges between a producer and a consumer. Two conditions are used to let producer and
- * consumer communicate about their state.
+ * <p>
+ * Chain of exchanges between a producer and a consumer. Two conditions are used
+ * to let producer and consumer communicate about their state.
  */
 public class OneProdConChain {
     private static final Logger log = LoggerFactory.getLogger(OneProdConChain.class);
@@ -44,8 +44,9 @@ public class OneProdConChain {
 
     /**
      * For the producer thread.
-     * 
-     * Produce the requested products, once a time, signaling its availability then terminate.
+     * <p>
+     * Produce the requested products, once a time, signaling its availability then
+     * terminate.
      */
     private void produce() {
         log.trace("Enter");
@@ -59,6 +60,8 @@ public class OneProdConChain {
                     consumption.await();
                     log.trace("Consumption has been signaled");
                 }
+
+                // Since a unique producer is expected, no need of ThreadLocalRandom
                 product = Math.random();
                 produced = true;
                 System.out.printf("Producer signals production of %f%n", product);
@@ -76,8 +79,9 @@ public class OneProdConChain {
 
     /**
      * For the consumer thread.
-     * 
-     * Acquire the lock, if the product is not ready, await() on the condition for it. Then consume it.
+     * <p>
+     * Acquire the lock, if the product is not ready, await() on the condition for
+     * it. Then consume it.
      */
     private void consume() {
         log.trace("Enter");
@@ -108,9 +112,10 @@ public class OneProdConChain {
     }
 
     /**
-     * Create and start a consumer thread, that it is going to hang, waiting for the producer.
-     * 
-     * Then create and start a producer thread, that would signal its production to the consumer.
+     * Create and start a consumer thread, that hangs, waiting for the producer.
+     * <p>
+     * Then create and start a producer thread, that signals its production to the
+     * consumer.
      * 
      * @param args not used
      * @throws InterruptedException when a join is interrupted

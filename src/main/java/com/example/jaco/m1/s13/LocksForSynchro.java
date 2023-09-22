@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -14,8 +14,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Finer synchronization, using ReentrantLock.
- * 
- * Compare it to SynchroOnObjects
+ * <p>
+ * Compare it to {@link com.example.jaco.m1.s08.SynchroOnObjects}
  */
 public class LocksForSynchro {
     private static final Logger log = LoggerFactory.getLogger(LocksForSynchro.class);
@@ -51,10 +51,14 @@ public class LocksForSynchro {
         LocksForSynchro lfs = new LocksForSynchro();
 
         Thread[] threads = { //
-                new Thread(lfs::syncThis, "This1"), new Thread(lfs::syncA, "A1"), //
-                new Thread(lfs::syncB, "B1"), new Thread(lfs::syncAB, "AB1"), //
-                new Thread(lfs::syncThis, "This2"), new Thread(lfs::syncA, "A2"), //
-                new Thread(lfs::syncB, "B2"), new Thread(lfs::syncAB, "AB2") //
+                new Thread(lfs::syncThis, "This1"), //
+                new Thread(lfs::syncA, "A1"), //
+                new Thread(lfs::syncB, "B1"), //
+                new Thread(lfs::syncAB, "AB1"), //
+                new Thread(lfs::syncThis, "This2"), //
+                new Thread(lfs::syncA, "A2"), //
+                new Thread(lfs::syncB, "B2"), //
+                new Thread(lfs::syncAB, "AB2") //
         };
 
         Arrays.stream(threads).forEach(Thread::start);
@@ -67,7 +71,7 @@ public class LocksForSynchro {
 
     /**
      * Synchronization for System.out
-     * 
+     * <p>
      * A and B are in read-only access, then there is no race condition on them
      */
     public synchronized void syncThis() {
