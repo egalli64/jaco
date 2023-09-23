@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -19,9 +19,11 @@ public class Latch extends ProblemFrame {
     private static final Logger log = LoggerFactory.getLogger(Latch.class);
 
     /**
-     * Create a latch set to TASK_NR, run TASK_NR tasks, each task decrease the latch count.
-     * 
-     * Main wait on latch, when the count down is done, gather the result from the tasks and print it.
+     * Create a latch set to TASK_NR, run TASK_NR tasks, each task decrease the
+     * latch count.
+     * <p>
+     * Main wait on latch, when the count down is done, gather the result from the
+     * tasks and print it.
      * 
      * @param args not used
      */
