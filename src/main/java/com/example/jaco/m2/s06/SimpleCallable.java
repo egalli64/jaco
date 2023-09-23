@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -12,10 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Callable to be used by an Executor
+ * A callable to be used by an Executor
  */
-public class Hello implements Callable<Double> {
-    private static final Logger log = LoggerFactory.getLogger(Hello.class);
+public class SimpleCallable implements Callable<Double> {
+    private static final Logger log = LoggerFactory.getLogger(SimpleCallable.class);
 
     @Override
     public Double call() throws Exception {

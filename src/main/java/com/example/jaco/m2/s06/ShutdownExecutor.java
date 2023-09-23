@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * ExecutorService, shutdown() vs shutdownNow()
- * 
+ * <p>
  * Single Thread Executor on Runnables
  */
 public class ShutdownExecutor {
@@ -24,10 +24,10 @@ public class ShutdownExecutor {
 
     /**
      * Ask to a single thread executor to run TASK_NR Runnables, then shutdown.
+     * <p>
+     * A task can't be added to an executor after shutdown
      * 
-     * A task can't be added to a shutdown executor
-     * 
-     * @param args if at least an argument is passed, call shutdownNow(), otherwise shutdown()
+     * @param args determine if shutdownNow() or shutdown() should be called
      */
     public static void main(String[] args) {
         log.trace("Enter");

@@ -1,5 +1,5 @@
 /*
- * Introduction to Java Thread
+ * Introduction to Java Concurrency
  * 
  * https://github.com/egalli64/jaco
  */
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * ExecutorService::awaitTermination()
- * 
+ * <p>
  * Fixed Thread Pool sized POOL_SIZE for TASK_NR tasks
  */
 public class WaitingTermination {
@@ -29,7 +29,8 @@ public class WaitingTermination {
         log.trace("Enter");
         ExecutorService es = Executors.newFixedThreadPool(POOL_SIZE);
 
-        List<Future<Double>> futures = Stream.generate(Hello::new).map(h -> es.submit(h)).limit(TASK_NR).toList();
+        List<Future<Double>> futures = Stream.generate(SimpleCallable::new) //
+                .map(h -> es.submit(h)).limit(TASK_NR).toList();
         shutdownAndAwaitTermination(es);
 
         // Future::get() throws InterruptedException, ExecutionException
@@ -40,10 +41,11 @@ public class WaitingTermination {
     }
 
     /**
-     * Use of shutdown plus awaitTermination, as seen on Java documentation, with minor changes
+     * Shutdown plus awaitTermination, from Java documentation with minor changes
+     * <p>
+     * Functionality implemented in {@link ExecutorService#close()} (version 19)
      * 
      * @param pool the executor currently running
-     * 
      * @see <a href=
      *      "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/ExecutorService.html">The
      *      ExecutorService Java documentation<a>
