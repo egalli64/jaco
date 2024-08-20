@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m1.s12;
+package com.example.jaco.m2.s5;
 
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
@@ -16,10 +16,10 @@ import org.slf4j.LoggerFactory;
 /**
  * Lock and ReentrantLock.
  * <p>
- * Two resources (double primitives) protected by locks, by lock() and unlock()
+ * COmpare it to LockPlain, here tryLock() is used
  */
-public class LockPlain {
-    private static final Logger log = LoggerFactory.getLogger(LockPlain.class);
+public class LockTry {
+    private static final Logger log = LoggerFactory.getLogger(LockTry.class);
 
     private final Lock lockF;
     private double resourceF;
@@ -30,7 +30,7 @@ public class LockPlain {
     /**
      * Constructor, initialize locks and resources
      */
-    public LockPlain() {
+    public LockTry() {
         this.lockF = new ReentrantLock();
         this.resourceF = 0.0;
 
@@ -46,14 +46,13 @@ public class LockPlain {
      */
     public static void main(String[] args) throws InterruptedException {
         log.trace("Enter");
-
-        LockPlain lp = new LockPlain();
+        LockTry lt = new LockTry();
 
         Thread[] threads = { //
-                new Thread(lp::syncOnF, "F1"), //
-                new Thread(lp::syncOnG, "G1"), //
-                new Thread(lp::syncOnF, "F2"), //
-                new Thread(lp::syncOnG, "G2") //
+                new Thread(lt::syncOnF, "F1"), //
+                new Thread(lt::syncOnG, "G1"), //
+                new Thread(lt::syncOnF, "F2"), //
+                new Thread(lt::syncOnG, "G2") //
         };
 
         Arrays.stream(threads).forEach(Thread::start);
@@ -61,9 +60,8 @@ public class LockPlain {
             t.join();
         }
 
-        System.out.printf("Resource F is %f%n", lp.resourceF);
-        System.out.printf("Resource G is %f%n", lp.resourceG);
-
+        System.out.printf("Resource F is %f%n", lt.resourceF);
+        System.out.printf("Resource G is %f%n", lt.resourceG);
         log.trace("Exit");
     }
 
@@ -71,19 +69,22 @@ public class LockPlain {
      * For threads accessing resource F
      */
     public void syncOnF() {
-        log.trace("Enter and lock on F");
+        log.trace("Enter and try-lock on F");
         String name = Thread.currentThread().getName();
 
-        try {
-            lockF.lock();
-            double value = aRiskyJob();
-            System.out.printf("%s is adding %f to F%n", name, value);
-            resourceF += value;
-        } catch (Exception e) {
-            System.out.printf("%s not adding to F: %s%n", name, e.getMessage());
-        } finally {
-            log.trace("Unlock F then exit");
-            lockF.unlock();
+        if (lockF.tryLock()) {
+            try {
+                double value = aRiskyJob();
+                System.out.printf("%s is adding %f to F%n", name, value);
+                resourceF += value;
+            } catch (Exception e) {
+                System.out.printf("%s not adding to F: %s%n", name, e.getMessage());
+            } finally {
+                log.trace("Unlock F then exit");
+                lockF.unlock();
+            }
+        } else {
+            log.warn("Exit without doing anything, lock was not available");
         }
     }
 
@@ -91,19 +92,22 @@ public class LockPlain {
      * For threads accessing resource G
      */
     public void syncOnG() {
-        log.trace("Enter and lock on G");
+        log.trace("Enter and try-lock on G");
         String name = Thread.currentThread().getName();
 
-        try {
-            lockG.lock();
-            double value = aRiskyJob();
-            System.out.printf("%s is adding %f to G%n", name, value);
-            resourceG += value;
-        } catch (Exception e) {
-            System.out.printf("%s not adding to G: %s%n", name, e.getMessage());
-        } finally {
-            log.trace("Unlock G then exit");
-            lockG.unlock();
+        if (lockG.tryLock()) {
+            try {
+                double value = aRiskyJob();
+                System.out.printf("%s is adding %f to G%n", name, value);
+                resourceG += value;
+            } catch (Exception e) {
+                System.out.printf("%s not adding to G: %s%n", name, e.getMessage());
+            } finally {
+                log.trace("Unlock G then exit");
+                lockG.unlock();
+            }
+        } else {
+            log.warn("Exit without doing anything, lock was not available");
         }
     }
 
@@ -116,7 +120,7 @@ public class LockPlain {
         log.trace("Enter");
         try {
             double result = ThreadLocalRandom.current().nextDouble();
-            if (result > 0.5) {
+            if (result > 0.7) {
                 throw new IllegalStateException("wrong value detected");
             }
 

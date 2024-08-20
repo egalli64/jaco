@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m1.s11;
+package com.example.jaco.m2.s4;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.DoubleAdder;
