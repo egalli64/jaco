@@ -8,7 +8,7 @@ package com.example.jaco.m1.s5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.Jobs;
+import com.example.jaco.m1.s3.FakeTask;
 
 /**
  * Working on a thread by derivation
@@ -34,7 +34,7 @@ public class MainForMyThread {
         System.out.printf("%s is %s%n", worker.getName(), worker.getState());
 
         // Doing something else in the main thread
-        Jobs.takeTime(300);
+        FakeTask.takeTime(300);
 
         // Now the worker _should_ be TERMINATED
         System.out.printf("%s is %s%n", worker.getName(), worker.getState());

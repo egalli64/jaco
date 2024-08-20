@@ -8,7 +8,7 @@ package com.example.jaco.m2.s4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.Jobs;
+import com.example.jaco.m1.s3.FakeTask;
 
 /**
  * Thread communication - weak synchronization by volatile.
@@ -45,7 +45,7 @@ public class Volatile {
         worker.start();
 
         // do something in main thread, give time to worker thread to kick in
-        Jobs.takeTime(0);
+        FakeTask.takeTime(0);
 
         // run is written
         run = false;

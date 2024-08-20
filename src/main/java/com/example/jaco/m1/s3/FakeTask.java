@@ -9,20 +9,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utility class
+ * Fake task
  */
-public class Jobs {
-    private static final Logger log = LoggerFactory.getLogger(Jobs.class);
+public class FakeTask {
+    private static final Logger log = LoggerFactory.getLogger(FakeTask.class);
 
     /**
-     * Fake to be busy doing something for a while.
+     * Simulate to be busy doing something for a while
      * 
-     * @param millis required duration for this fake job
+     * @param millis required duration
      */
     public static void takeTime(long millis) {
         try {
             log.trace("Do something for (about) {} ms", millis);
-            // In production code you won't see often calls to Thread::sleep()
+            // In production code you won't see often calls to Thread.sleep()
             Thread.sleep(millis);
         } catch (InterruptedException e) {
             throw new IllegalStateException(e);

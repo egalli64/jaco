@@ -28,18 +28,18 @@ public class BaseCase {
         System.out.printf("- Check the current state of thread '%s' -%n", tName);
 
         // Create a thread with a given name, the passed runnable is its task
-        Thread t = new Thread(() -> System.out.printf("A message from %s: Hello!%n", tName), tName);
+        Thread t = new Thread(() -> System.out.printf("A message from %s: Hello!\n", tName), tName);
 
         // The thread is NEW, not already started
         assert t.getState() == State.NEW;
-        System.out.printf("Thread %s is %s%n", t.getName(), t.getState());
+        System.out.printf("Thread %s is %s\n", t.getName(), t.getState());
 
         // Starting the thread, transition from NEW to RUNNABLE state
         t.start();
 
         // The worker could be running or maybe already terminated
         assert t.getState() == State.RUNNABLE || t.getState() == State.TERMINATED;
-        System.out.printf("Thread %s is %s%n", t.getName(), t.getState());
+        System.out.printf("Thread %s is %s\n", t.getName(), t.getState());
         if (t.isAlive()) {
             log.info("After start, a thread is said to be alive");
         } else {
@@ -47,14 +47,12 @@ public class BaseCase {
         }
 
         // Some other task executed by the main thread
-        Jobs.takeTime(100);
+        FakeTask.takeTime(100);
 
         // Now we could reasonably expect the worker thread to be terminated
-        assert t.getState() == State.TERMINATED && !t.isAlive();
-        System.out.printf("Thread %s is %s%n", t.getName(), t.getState());
-        if (!t.isAlive()) {
-            log.info("After termination, a thread is no more alive");
-        }
+        assert !t.isAlive();
+        System.out.printf("Thread %s is %s\n", t.getName(), t.getState());
+        log.info("After termination, a thread is no more alive");
 
         System.out.println("- Main is about to terminate -");
     }

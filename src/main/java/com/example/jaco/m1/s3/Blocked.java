@@ -31,21 +31,21 @@ public class Blocked {
         new Thread(Blocked::aSynchronizedMethod, "blocking").start();
 
         // Waste some time before creating and starting another thread
-        Jobs.takeTime(50);
+        FakeTask.takeTime(50);
 
         // Create and start another thread on the same method of blocking one
         Thread t1 = new Thread(Blocked::aSynchronizedMethod, "blocked");
         t1.start();
 
         // Waste some other time, so that the new thread has time to kick in
-        Jobs.takeTime(50);
+        FakeTask.takeTime(50);
 
         // The second child thread should be blocked from the blocking thread
         assert t1.getState() == State.BLOCKED;
         System.out.printf("Thread %s is %s%n", t1.getName(), t1.getState());
 
         // Keep the main thread busy in a long job
-        Jobs.takeTime(900);
+        FakeTask.takeTime(900);
 
         // Now both children should have ended their job
         assert t1.getState() == State.TERMINATED;

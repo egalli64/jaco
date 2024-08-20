@@ -33,7 +33,7 @@ public class Waiting {
         t1.start();
 
         // Do something else on main thread, so we can safely assume t1 kicks in
-        Jobs.takeTime(50);
+        FakeTask.takeTime(50);
 
         // Now t1 is expected to be timed waiting
         assert t1.getState() == State.TIMED_WAITING;

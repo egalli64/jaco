@@ -10,7 +10,7 @@ import java.util.stream.DoubleStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.Jobs;
+import com.example.jaco.m1.s3.FakeTask;
 
 /**
  * What happens when an interrupt is sent to a waiting (here, sleeping) thread
@@ -61,7 +61,7 @@ public class CheckInterruptedExceptional {
         worker.start();
 
         // Let the worker kick in
-        Jobs.takeTime(20);
+        FakeTask.takeTime(20);
 
         // the worker could be running or waiting
         System.out.println("Worker state now is " + worker.getState());
@@ -70,7 +70,7 @@ public class CheckInterruptedExceptional {
         worker.interrupt();
 
         // Let the worker time to manage the interrupt
-        Jobs.takeTime(5);
+        FakeTask.takeTime(5);
         System.out.println("Worker state now is " + worker.getState());
 
         log.trace("Exit");

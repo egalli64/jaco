@@ -8,7 +8,7 @@ package com.example.jaco.m1.s5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.Jobs;
+import com.example.jaco.m1.s3.FakeTask;
 
 /**
  * A runnable, to be used for creating and running threads
@@ -22,7 +22,7 @@ public class MyRunnable implements Runnable {
     public void run() {
         log.trace("Enter");
 
-        Jobs.takeTime(100);
+        FakeTask.takeTime(100);
 
         log.trace("Exit");
     }
