@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m1.s8;
+package com.example.jaco.m2.s2;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -11,27 +11,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Avoid race condition even though more threads access the same resource
+ * An example of race condition. More threads have access to the same resource.
  */
-public class Synchro {
-    private static final Logger log = LoggerFactory.getLogger(Synchro.class);
+public class NoSynchro {
+    private static final Logger log = LoggerFactory.getLogger(NoSynchro.class);
 
     /**
-     * Four threads using System.out in a synchronized method
+     * Four threads using System.out with no synchronization
      * 
      * @param args not used
      * @throws InterruptedException when join is interrupted
      */
     public static void main(String[] args) throws InterruptedException {
         log.trace("Enter");
-        System.out.println("Threads competing on console _with_ synchronization");
+        System.out.println("!!! Threads competing on console with no synchronization !!!");
 
-        Synchro synchro = new Synchro();
+        NoSynchro noSync = new NoSynchro();
         Thread[] threads = { //
-                new Thread(() -> synchro.printStatus("Tom")), //
-                new Thread(() -> synchro.printStatus("Kim")), //
-                new Thread(() -> synchro.printStatus("Sal")), //
-                new Thread(() -> synchro.printStatus("Bob")) //
+                new Thread(() -> noSync.printStatus("Tom")), //
+                new Thread(() -> noSync.printStatus("Kim")), //
+                new Thread(() -> noSync.printStatus("Sal")), //
+                new Thread(() -> noSync.printStatus("Bob")) //
         };
 
         for (Thread thread : threads) {
@@ -45,14 +45,13 @@ public class Synchro {
     }
 
     /**
-     * Simulate access to user status and data print.
+     * !!! BUGGED !!! Simulate access to user status and data print.
      * <p>
-     * It is synchronized to protect the changes to System.out. If a thread enter
-     * this code, other threads should wait their turn.
+     * The output is done on a shared unprotected resource, expect garbling
      * 
      * @param name the user name
      */
-    public synchronized void printStatus(String name) {
+    public void printStatus(String name) {
         System.out.printf("Hello, %s. ", name);
         int score = ThreadLocalRandom.current().nextInt(100);
         if (score > 50) {

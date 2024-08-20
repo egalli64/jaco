@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m2.s5;
+package com.example.jaco.m2.s6;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;

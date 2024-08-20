@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m2.s6;
+package com.example.jaco.m2.s7;
 
 import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Finer synchronization, using ReentrantLock.
  * <p>
- * Compare it to {@link com.example.jaco.m1.s8.SynchroOnObjects}
+ * Compare it to {@link com.example.jaco.m2.s2.SynchroOnObjects}
  */
 public class LocksForSynchro {
     private static final Logger log = LoggerFactory.getLogger(LocksForSynchro.class);

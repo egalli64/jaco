@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m2.s6;
+package com.example.jaco.m2.s7;
 
 import java.util.Arrays;
 import java.util.concurrent.locks.Condition;
