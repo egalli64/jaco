@@ -8,7 +8,7 @@ package com.example.jaco.m2.s4;
 import java.util.Arrays;
 import java.util.concurrent.atomic.DoubleAdder;
 
-import com.example.jaco.m1.s07.adder.Problem;
+import com.example.jaco.m1.s7.adder.Problem;
 
 /**
  * A more interesting use of an atomic variable

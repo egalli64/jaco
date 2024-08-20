@@ -8,7 +8,7 @@ package com.example.jaco.m2.s3;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s03.Jobs;
+import com.example.jaco.m1.s3.Jobs;
 
 /**
  * Thread communication - weak synchronization by volatile.
