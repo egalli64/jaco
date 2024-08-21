@@ -17,12 +17,13 @@ public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
-        System.out.printf("The thread running the main method is named %s%n", Thread.currentThread().getName());
+        System.out.printf("The thread running the main method is named %s\n", Thread.currentThread().getName());
 
-        System.out.printf("About to sleep @ %d%n", System.currentTimeMillis());
+        final long delta = 1_000;
+        System.out.printf("About to sleep @ %d for %d millis\n", System.currentTimeMillis(), delta);
         try {
-            // Thread::sleep() is seldom seen in production code
-            Thread.sleep(1_000);
+            // Thread.sleep() is seldom seen in production code!
+            Thread.sleep(delta);
         } catch (InterruptedException e) {
             log.error("Sleep interrupted", e);
         }
