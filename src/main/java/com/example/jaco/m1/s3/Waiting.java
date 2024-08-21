@@ -26,7 +26,7 @@ public class Waiting {
      * @param args not used
      */
     public static void main(String[] args) throws InterruptedException {
-        System.out.println("- A thread that would wait and be waited -");
+        System.out.println("- Main starts a worker thread -");
 
         // Create and start a thread that runs on a specified method
         Thread t1 = new Thread(Waiting::aMethod, "worker");
@@ -37,12 +37,13 @@ public class Waiting {
 
         // Now t1 is expected to be timed waiting
         assert t1.getState() == State.TIMED_WAITING;
-        System.out.printf("Checking %s from main: it is %s%n", t1.getName(), t1.getState());
+        System.out.printf("Checking %s from main: it is %s\n", t1.getName(), t1.getState());
 
         log.info("Wait {} to terminate", t1.getName());
         // when join() enters, the main thread is going to WAIT
         t1.join();
 
+        System.out.printf("Checking %s from main: it is %s\n", t1.getName(), t1.getState());
         System.out.println("- Main is about to terminate -");
     }
 
@@ -55,15 +56,14 @@ public class Waiting {
     public static void aMethod() {
         log.info("Simulating a timed wait on a resource");
         try {
-            // This is just a simulation! The use of sleep() in production code is very
-            // limited!
+            // This is just a simulation! Thread.sleep() is rarely seen in production code!
             Thread.sleep(500);
             log.trace("Resource acquired");
 
             System.out.printf("Checking main from %s: ", Thread.currentThread().getName());
             Thread[] ts = new Thread[2];
-            // Thread::enumerate() should be used for debugging and monitoring purposes only
-            int count = Thread.enumerate(ts);
+            // Thread.enumerate() should be used for debugging and monitoring purposes only
+            final int count = Thread.enumerate(ts);
             for (int i = 0; i < count; i++) {
                 if (ts[i].getName().equals("main")) {
                     State state = ts[i].getState();
