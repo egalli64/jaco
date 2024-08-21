@@ -29,7 +29,7 @@ public class CheckInterruptedExceptional {
     public static void main(String[] args) {
         log.trace("Enter");
 
-        // Behavior of the other thread, run until interrupted
+        // Behavior of the worker thread, it runs until interrupted
         Runnable runnable = () -> {
             log.trace("Enter");
             final Thread cur = Thread.currentThread();
@@ -37,16 +37,17 @@ public class CheckInterruptedExceptional {
             try {
                 while (!cur.isInterrupted()) {
                     System.out.print("(Fake) wait on a resource ... ");
-                    // Just a simulation! Thread::sleep() in seldom seen in production code
+                    // Just a simulation! Thread.sleep() in seldom seen in production code
+                    // Put the current thread in TIMED_WAITING state
                     Thread.sleep(2);
 
                     double value = DoubleStream.generate(Math::random).limit(10).sum();
                     System.out.println("The result is " + value);
                 }
-                // thread interrupted when runnable
+                // thread interrupted when in RUNNING state
                 log.info("(Fake) resource elaboration interrupted");
             } catch (InterruptedException e) {
-                // thread interrupted when waiting, sleeping, or otherwise occupied
+                // thread interrupted when in blocked or waiting state
                 log.info("(Fake) wait on resource acquisition interrupted", e);
                 // reset the flag on the current thread as interrupted
                 cur.interrupt();
@@ -71,7 +72,8 @@ public class CheckInterruptedExceptional {
 
         // Let the worker time to manage the interrupt
         FakeTask.takeTime(5);
-        System.out.println("Worker state now is " + worker.getState());
+        System.out.printf("Worker is interrupted (%b) and its state is %s\n", //
+                worker.isInterrupted(), worker.getState());
 
         log.trace("Exit");
     }
