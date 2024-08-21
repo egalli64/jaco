@@ -22,9 +22,9 @@ public abstract class Problem {
     public static final int NR = 10;
 
     /** Each run would generate a result, hopefully, always the same one */
-    protected Set<Double> results = new HashSet<>();
-    /** Each run would take same time, reported here */
-    protected List<Long> times = new ArrayList<>();
+    protected Set<Double> results = new HashSet<>(NR);
+    /** Each run would take some time, reported here */
+    protected List<Long> times = new ArrayList<>(NR);
     /** Data sample */
     protected int[] data;
 
