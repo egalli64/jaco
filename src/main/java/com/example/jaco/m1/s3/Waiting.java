@@ -37,7 +37,7 @@ public class Waiting {
 
         // Now t1 is expected to be timed waiting
         assert t1.getState() == State.TIMED_WAITING;
-        System.out.printf("Checking %s from main: it is %s\n", t1.getName(), t1.getState());
+        System.out.printf("Thread %s is %s\n", t1.getName(), t1.getState());
 
         log.info("Wait {} to terminate", t1.getName());
         // when join() enters, the main thread is going to WAIT
@@ -55,28 +55,8 @@ public class Waiting {
      */
     public static void aMethod() {
         log.info("Simulating a timed wait on a resource");
-        try {
-            // This is just a simulation! Thread.sleep() is rarely seen in production code!
-            Thread.sleep(500);
-            log.trace("Resource acquired");
 
-            System.out.printf("Checking main from %s: ", Thread.currentThread().getName());
-            Thread[] ts = new Thread[2];
-            // Thread.enumerate() should be used for debugging and monitoring purposes only
-            final int count = Thread.enumerate(ts);
-            for (int i = 0; i < count; i++) {
-                if (ts[i].getName().equals("main")) {
-                    State state = ts[i].getState();
-
-                    // the main thread state should be waiting - being in join on this thread
-                    assert state == State.WAITING;
-                    System.out.println("it is " + state);
-                    break;
-                }
-            }
-        } catch (InterruptedException e) {
-            throw new IllegalStateException(e);
-        }
+        FakeTask.takeTimeAndCheckMain(500);
 
         log.trace("Exit");
     }
