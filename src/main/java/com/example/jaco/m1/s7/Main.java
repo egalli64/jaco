@@ -10,6 +10,8 @@ import java.lang.Thread.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.jaco.m1.s3.FakeTask;
+
 /**
  * Using Thread::isAlive() and Thread::join()
  * 
@@ -21,7 +23,8 @@ public class Main {
     /**
      * Create, start, and join thread, checking if it is alive now and there.
      * 
-     * @param args not used
+     * @param args if at least an argument is passed, the main thread run a (fake)
+     *             task to give time the worker to kick in
      */
     public static void main(String[] args) {
         log.trace("Enter");
@@ -37,14 +40,16 @@ public class Main {
 
         worker.start();
 
-        // Uncomment next line to let the worker kick in
-//        Jobs.takeTime(10);
+        if (args.length > 0) {
+            // in this case the worker should have time to terminate
+            FakeTask.takeTime(10);
+        }
 
         assert worker.getState() == State.RUNNABLE || worker.getState() == State.TERMINATED;
         if (worker.isAlive()) {
-            log.trace("After start, the worker could be alive (or terminated)");
+            log.trace("After start, and the worker is alive (it could have been terminated)");
         } else {
-            log.trace("After start, the worker could be terminated (or alive)");
+            log.trace("After start, and the worker is terminated (it could have been alive)");
         }
 
         try {
