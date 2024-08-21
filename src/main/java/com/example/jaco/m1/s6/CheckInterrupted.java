@@ -31,13 +31,14 @@ public class CheckInterrupted {
 
             int i = 0;
             while (!cur.isInterrupted()) {
-                System.out.print("Simulating a job in ");
+                System.out.print("In thread ");
                 System.out.print(cur.getName());
                 System.out.print(" ... ");
-                System.out.println(i++);
+                System.out.println(i);
+                i += 1;
             }
 
-            log.trace("Exit");
+            log.trace("Worker interrupted");
         };
 
         Thread worker = new Thread(runnable, "worker");
@@ -47,13 +48,13 @@ public class CheckInterrupted {
         worker.start();
 
         for (int i = 0; i < 50; i++) {
-            System.out.print("Simulating a job in ");
+            System.out.print("In thread ");
             System.out.print(Thread.currentThread().getName());
             System.out.print(" ... ");
             System.out.println(i);
         }
 
-        System.out.println("Thread main decides it it time to cut it off");
+        System.out.println("Thread main asks the worker to terminate");
         worker.interrupt();
 
         log.trace("Exit");
