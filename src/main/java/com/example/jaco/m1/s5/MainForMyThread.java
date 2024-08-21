@@ -28,16 +28,18 @@ public class MainForMyThread {
 
         // Create another thread defined as extension of class Thread
         Thread worker = new MyThread();
-        System.out.printf("%s is %s%n", worker.getName(), worker.getState());
+        // The thread state is NEW
+        System.out.println("After creation, the worker thread state is " + worker.getState());
 
         worker.start();
-        System.out.printf("%s is %s%n", worker.getName(), worker.getState());
+        // The thread state should be RUNNABLE
+        System.out.println("After starting, the worker thread state is " + worker.getState());
 
         // Doing something else in the main thread
         FakeTask.takeTime(300);
 
-        // Now the worker _should_ be TERMINATED
-        System.out.printf("%s is %s%n", worker.getName(), worker.getState());
+        // At this point the worker state should be TERMINATED
+        System.out.println("The worker thread state is now " + worker.getState());
         log.trace("Exit");
     }
 }
