@@ -27,7 +27,7 @@ public class MainLongRunner {
             log.trace("Enter");
 
             double result = IntStream.range(2, 1_000).mapToDouble(i -> Math.cbrt(i)).sum();
-            System.out.printf("Result is %f%n", result);
+            System.out.printf("Worker result is %f\n", result);
 
             log.trace("Exit");
         });
@@ -36,7 +36,7 @@ public class MainLongRunner {
 
         try {
             log.trace("Waiting a while for the worker, then go back to do other stuff");
-            // Try changing the wait time to get different behavior
+            // Change the join argument to get different behavior
             worker.join(5);
         } catch (InterruptedException ex) {
             log.warn("This should not happen", ex);
@@ -50,6 +50,7 @@ public class MainLongRunner {
             log.trace("After timed joining in, the worker was faster than main thread");
         }
 
+        System.out.println("Worker is " + worker.getState());
         log.trace("Exit");
     }
 }
