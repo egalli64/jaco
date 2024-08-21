@@ -15,7 +15,12 @@ import org.slf4j.LoggerFactory;
 public class MyInterruptibleThread extends Thread {
     private static final Logger log = LoggerFactory.getLogger(MyInterruptibleThread.class);
 
-    /** Used as the interrupted flag */
+    /**
+     * Used as the interrupted flag
+     * 
+     * @implNote do not call it "interrupted", as the original flag in Thread. It
+     *           would be legal but confusing
+     */
     private volatile boolean done;
 
     /**
@@ -30,7 +35,7 @@ public class MyInterruptibleThread extends Thread {
 
     /**
      * Accept a termination request.
-     * 
+     * <p>
      * Package private method, only from this package a MyInterruptibleThread could
      * be terminated.
      */
@@ -47,7 +52,7 @@ public class MyInterruptibleThread extends Thread {
         while (!done) {
             System.out.print("(Fake) wait on a resource ... ");
             try {
-                // Just a simulation! Thread::sleep() in seldom seen in production code
+                // Just a simulation! Thread.sleep() in seldom seen in production code
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 log.warn("Interrupted ignored!");
