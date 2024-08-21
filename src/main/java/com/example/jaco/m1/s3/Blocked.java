@@ -26,30 +26,34 @@ public class Blocked {
      * @param args not used
      */
     public static void main(String[] args) {
-        System.out.println("- Main starts a blocking thread, than another that gets blocked -");
+        System.out.println("- Main starts a first thread -");
         // Create and start the blocking thread
-        new Thread(Blocked::aSynchronizedMethod, "blocking").start();
+        Thread t1 = new Thread(Blocked::aSynchronizedMethod, "first");
+        t1.start();
+        System.out.printf("Thread %s is %s\n", t1.getName(), t1.getState());
 
         // Waste some time before creating and starting another thread
         FakeTask.takeTime(50);
 
         // Create and start another thread on the same method of blocking one
-        Thread t1 = new Thread(Blocked::aSynchronizedMethod, "blocked");
-        t1.start();
+        System.out.println("- Main starts a second thread that should be blocked waiting for the first -");
+        Thread t2 = new Thread(Blocked::aSynchronizedMethod, "second");
+        t2.start();
 
         // Waste some other time, so that the new thread has time to kick in
         FakeTask.takeTime(50);
 
         // The second child thread should be blocked from the blocking thread
-        assert t1.getState() == State.BLOCKED;
-        System.out.printf("Thread %s is %s%n", t1.getName(), t1.getState());
+        assert t2.getState() == State.BLOCKED;
+        System.out.printf("Thread %s is %s\n", t2.getName(), t2.getState());
 
         // Keep the main thread busy in a long job
         FakeTask.takeTime(900);
 
         // Now both children should have ended their job
-        assert t1.getState() == State.TERMINATED;
-        System.out.printf("Thread %s is %s%n", t1.getName(), t1.getState());
+        assert !t1.isAlive() && !t2.isAlive();
+        System.out.printf("Thread %s is %s\n", t1.getName(), t1.getState());
+        System.out.printf("Thread %s is %s\n", t2.getName(), t2.getState());
 
         System.out.println("- Main is about to terminate -");
     }
@@ -62,12 +66,7 @@ public class Blocked {
     public static synchronized void aSynchronizedMethod() {
         log.trace("Enter");
 
-        try {
-            // Just a simulation! The use of sleep() in production code is very limited!
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            throw new IllegalStateException(e);
-        }
+        FakeTask.takeTime(300);
 
         log.trace("Exit");
     }
