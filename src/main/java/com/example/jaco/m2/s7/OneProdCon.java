@@ -6,6 +6,7 @@
 package com.example.jaco.m2.s7;
 
 import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -21,16 +22,15 @@ import org.slf4j.LoggerFactory;
 public class OneProdCon {
     private static final Logger log = LoggerFactory.getLogger(OneProdCon.class);
 
-    private double product;
+    private int product;
     private boolean produced;
-    private Lock lock;
-    private Condition availability;
+    private final Lock lock;
+    private final Condition availability;
 
     /**
      * Constructor
      */
     public OneProdCon() {
-        this.product = 0.0;
         this.produced = false;
         this.lock = new ReentrantLock();
         this.availability = lock.newCondition();
@@ -47,11 +47,10 @@ public class OneProdCon {
         lock.lock();
         try {
             log.trace("Lock acquired");
-            // Since a unique producer is expected, no need of ThreadLocalRandom
-            product = Math.random();
+            product = ThreadLocalRandom.current().nextInt(1, 7);
             produced = true;
 
-            System.out.printf("%s signal availability of %f%n", Thread.currentThread().getName(), product);
+            System.out.println(Thread.currentThread().getName() + " signal availability of " + product);
             availability.signal();
         } finally {
             lock.unlock();
@@ -76,7 +75,7 @@ public class OneProdCon {
                 log.trace("Signaled availability");
             }
 
-            System.out.printf("%s consumes %f%n", Thread.currentThread().getName(), product);
+            System.out.println(Thread.currentThread().getName() + " consumes " + product);
         } catch (InterruptedException e) {
             throw new IllegalStateException(e);
         } finally {
