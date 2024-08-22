@@ -61,8 +61,8 @@ public class LockPlain {
             t.join();
         }
 
-        System.out.printf("Resource F is %f%n", lp.resourceF);
-        System.out.printf("Resource G is %f%n", lp.resourceG);
+        System.out.println("Resource F is " + lp.resourceF);
+        System.out.println("Resource G is " + lp.resourceG);
 
         log.trace("Exit");
     }
@@ -77,10 +77,10 @@ public class LockPlain {
         try {
             lockF.lock();
             double value = aRiskyJob();
-            System.out.printf("%s is adding %f to F%n", name, value);
+            System.out.printf("%s is adding %f to F\n", name, value);
             resourceF += value;
         } catch (Exception e) {
-            System.out.printf("%s not adding to F: %s%n", name, e.getMessage());
+            System.out.println(name + " not adding to F: " + e.getMessage());
         } finally {
             log.trace("Unlock F then exit");
             lockF.unlock();
@@ -97,10 +97,10 @@ public class LockPlain {
         try {
             lockG.lock();
             double value = aRiskyJob();
-            System.out.printf("%s is adding %f to G%n", name, value);
+            System.out.printf("%s is adding %f to G\n", name, value);
             resourceG += value;
         } catch (Exception e) {
-            System.out.printf("%s not adding to G: %s%n", name, e.getMessage());
+            System.out.println(name + " not adding to G: " + e.getMessage());
         } finally {
             log.trace("Unlock G then exit");
             lockG.unlock();
