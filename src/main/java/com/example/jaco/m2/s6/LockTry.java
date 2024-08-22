@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Lock and ReentrantLock.
  * <p>
- * COmpare it to LockPlain, here tryLock() is used
+ * Compare it to LockPlain, here tryLock() is used
  */
 public class LockTry {
     private static final Logger log = LoggerFactory.getLogger(LockTry.class);
@@ -60,8 +60,8 @@ public class LockTry {
             t.join();
         }
 
-        System.out.printf("Resource F is %f%n", lt.resourceF);
-        System.out.printf("Resource G is %f%n", lt.resourceG);
+        System.out.println("Resource F is " + lt.resourceF);
+        System.out.println("Resource G is " + lt.resourceG);
         log.trace("Exit");
     }
 
@@ -75,10 +75,10 @@ public class LockTry {
         if (lockF.tryLock()) {
             try {
                 double value = aRiskyJob();
-                System.out.printf("%s is adding %f to F%n", name, value);
+                System.out.printf("%s is adding %f to F\n", name, value);
                 resourceF += value;
             } catch (Exception e) {
-                System.out.printf("%s not adding to F: %s%n", name, e.getMessage());
+                System.out.printf(name + " not adding to F: " + e.getMessage());
             } finally {
                 log.trace("Unlock F then exit");
                 lockF.unlock();
@@ -98,10 +98,10 @@ public class LockTry {
         if (lockG.tryLock()) {
             try {
                 double value = aRiskyJob();
-                System.out.printf("%s is adding %f to G%n", name, value);
+                System.out.printf("%s is adding %f to G\n", name, value);
                 resourceG += value;
             } catch (Exception e) {
-                System.out.printf("%s not adding to G: %s%n", name, e.getMessage());
+                System.out.println(name + " not adding to G: " + e.getMessage());
             } finally {
                 log.trace("Unlock G then exit");
                 lockG.unlock();
