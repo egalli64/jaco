@@ -20,7 +20,7 @@ public class AtomicHello {
         AtomicInteger ai = new AtomicInteger(42);
 
         final int i42 = ai.get();
-        System.out.printf("An AtomicInteger (%s) is a wrapper around a volatile int (%d)%n", ai, i42);
+        System.out.printf("An AtomicInteger (%s) is a wrapper around a volatile int (%d)\n", ai, i42);
 
         final int i1 = 1;
         ai.set(i1);
@@ -28,8 +28,8 @@ public class AtomicHello {
 
         final int i2 = 2;
         final int j1 = ai.getAndSet(i2);
-        System.out.printf("Call getAndSet(%d) gives %d [previous value], get() gives %s%n", i2, j1, ai.get());
-        System.out.printf("Call incrementAndGet() gives %d [new value]%n", ai.incrementAndGet());
-        System.out.printf("Call addAndGet(%d) gives %d [new value]%n", i2, ai.addAndGet(i2));
+        System.out.printf("Call getAndSet(%d) gives %d [previous value], get() gives %s\n", i2, j1, ai.get());
+        System.out.printf("Call incrementAndGet() gives %d [new value]\n", ai.incrementAndGet());
+        System.out.printf("Call addAndGet(%d) gives %d [new value]\n", i2, ai.addAndGet(i2));
     }
 }
