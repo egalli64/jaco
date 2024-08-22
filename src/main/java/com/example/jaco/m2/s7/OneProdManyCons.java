@@ -6,6 +6,7 @@
 package com.example.jaco.m2.s7;
 
 import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -14,27 +15,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Lock and Condition
+ * Fair Lock and Condition
  * <p>
  * A simple exchange between a producer and a few consumers
  */
 public class OneProdManyCons {
     private static final Logger log = LoggerFactory.getLogger(OneProdManyCons.class);
 
-    private double product;
+    private int product;
     /** true when the product is not valid (anymore) */
     private boolean consumed;
-    private Lock lock;
-    private Condition availability;
-    private Condition consumption;
+    private final Lock lock;
+    private final Condition availability;
+    private final Condition consumption;
 
     /**
      * Constructor
      */
     public OneProdManyCons() {
-        this.product = 0.0;
         this.consumed = true;
-        this.lock = new ReentrantLock();
+        this.lock = new ReentrantLock(true);
         this.availability = lock.newCondition();
         this.consumption = lock.newCondition();
     }
@@ -57,16 +57,19 @@ public class OneProdManyCons {
                     log.trace("Consumption has been signaled");
                 }
 
-                // Since a unique producer is expected, no need of ThreadLocalRandom
-                product = Math.random();
+                product = ThreadLocalRandom.current().nextInt(1, 7);
                 consumed = false;
-                System.out.printf("Producer signals availability of %f%n", product);
+                System.out.println("Producer signals availability of " + product);
                 availability.signalAll();
             } catch (InterruptedException ex) {
-                log.trace("Exit caused by interrupt while waiting on consumption");
+                Thread.currentThread().interrupt();
+                log.warn("Exit caused by interrupt while waiting on consumption");
                 return;
             } finally {
                 lock.unlock();
+                if (!consumed) {
+                    System.out.println("The last produced product was still pending");
+                }
                 log.trace("Lock released");
             }
         }
@@ -91,10 +94,11 @@ public class OneProdManyCons {
                 log.trace("Availablility has been signaled");
             }
 
-            System.out.printf("%s signals consumption of %f%n", name, product);
+            System.out.println(name + " signals consumption of " + product);
             consumed = true;
             consumption.signal();
         } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
             log.warn("Exit with an unexpected interruption when waiting on availability", ex);
             return;
         } finally {
