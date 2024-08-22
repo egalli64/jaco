@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Lock and ReentrantLock.
  * <p>
- * COmpare it to LockTry, here tryLock() is used
+ * Compare it to LockTry, here tryLock() is used
  */
 public class LockTryWait {
     private static final Logger log = LoggerFactory.getLogger(LockTryWait.class);
@@ -61,8 +61,8 @@ public class LockTryWait {
             t.join();
         }
 
-        System.out.printf("Resource F is %f%n", ltw.resourceF);
-        System.out.printf("Resource G is %f%n", ltw.resourceG);
+        System.out.println("Resource F is " + ltw.resourceF);
+        System.out.println("Resource G is " + ltw.resourceG);
         log.trace("Exit");
     }
 
@@ -80,7 +80,7 @@ public class LockTryWait {
             locked = lockF.tryLock(50, TimeUnit.MILLISECONDS);
             if (locked) {
                 double value = aLongishJob();
-                System.out.printf("%s is adding %f to F%n", name, value);
+                System.out.printf("%s is adding %f to F\n", name, value);
                 resourceF += value;
             }
         } catch (InterruptedException ex) {
@@ -109,7 +109,7 @@ public class LockTryWait {
             locked = lockG.tryLock(5, TimeUnit.MILLISECONDS);
             if (locked) {
                 double value = aLongishJob();
-                System.out.printf("%s is adding %f to G%n", name, value);
+                System.out.printf("%s is adding %f to G\n", name, value);
                 resourceG += value;
             }
         } catch (InterruptedException ex) {
