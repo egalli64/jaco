@@ -29,7 +29,7 @@ public class Volatile {
      * synchronization.
      * 
      * @param args not used
-     * @throws InterruptedException
+     * @throws InterruptedException - no interrupt is expected
      */
     public static void main(String[] args) throws InterruptedException {
         log.trace("Enter");
