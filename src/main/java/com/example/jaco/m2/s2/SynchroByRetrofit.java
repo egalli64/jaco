@@ -25,27 +25,27 @@ public class SynchroByRetrofit {
         log.trace("Enter");
         System.out.println("Synchronizing on the object before running a non-synchronized method");
 
-        NoSynchro noSync = new NoSynchro();
+        Race race = new Race();
 
         // Each thread runs a synchronized block containing just the call to the
         // non-synchronized method
         // !!! Assume this is legacy code, see Lock for modern implementation !!!
         Thread[] threads = { //
                 new Thread(() -> {
-                    synchronized (noSync) {
-                        noSync.printStatus("Tom");
+                    synchronized (race) {
+                        race.printStatus("Tom");
                     }
                 }), new Thread(() -> {
-                    synchronized (noSync) {
-                        noSync.printStatus("Kim");
+                    synchronized (race) {
+                        race.printStatus("Kim");
                     }
                 }), new Thread(() -> {
-                    synchronized (noSync) {
-                        noSync.printStatus("Sal");
+                    synchronized (race) {
+                        race.printStatus("Sal");
                     }
                 }), new Thread(() -> {
-                    synchronized (noSync) {
-                        noSync.printStatus("Bob");
+                    synchronized (race) {
+                        race.printStatus("Bob");
                     }
                 }) //
         };

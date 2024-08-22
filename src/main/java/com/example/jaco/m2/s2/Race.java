@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 /**
  * An example of race condition. More threads have access to the same resource.
  */
-public class NoSynchro {
-    private static final Logger log = LoggerFactory.getLogger(NoSynchro.class);
+public class Race {
+    private static final Logger log = LoggerFactory.getLogger(Race.class);
 
     /**
      * Four threads using System.out with no synchronization
@@ -26,7 +26,7 @@ public class NoSynchro {
         log.trace("Enter");
         System.out.println("!!! Threads competing on console with no synchronization !!!");
 
-        NoSynchro noSync = new NoSynchro();
+        Race noSync = new Race();
         Thread[] threads = { //
                 new Thread(() -> noSync.printStatus("Tom")), //
                 new Thread(() -> noSync.printStatus("Kim")), //
@@ -57,6 +57,6 @@ public class NoSynchro {
         if (score > 50) {
             System.out.print("Well done! ");
         }
-        System.out.printf("Your current score is %d.%n", score);
+        System.out.printf("Your current score is %d.\n", score);
     }
 }
