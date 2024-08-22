@@ -5,6 +5,7 @@
  */
 package com.example.jaco.m2.s7;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -21,21 +22,20 @@ import org.slf4j.LoggerFactory;
 public class OneProdConChain {
     private static final Logger log = LoggerFactory.getLogger(OneProdConChain.class);
 
-    /** How many product the producer is going to produce */
+    /** Number of products the producer is going to produce */
     private static final int PRODUCT_NR = 3;
 
-    private double product;
+    private int product;
     /** false if the product is not ready for consumption */
     private boolean produced;
-    private Lock lock;
-    private Condition availablility;
-    private Condition consumption;
+    private final Lock lock;
+    private final Condition availablility;
+    private final Condition consumption;
 
     /**
      * Constructor
      */
     public OneProdConChain() {
-        this.product = 0.0;
         this.produced = false;
         this.lock = new ReentrantLock();
         this.availablility = lock.newCondition();
@@ -61,12 +61,12 @@ public class OneProdConChain {
                     log.trace("Consumption has been signaled");
                 }
 
-                // Since a unique producer is expected, no need of ThreadLocalRandom
-                product = Math.random();
+                product = ThreadLocalRandom.current().nextInt(1, 7);
                 produced = true;
-                System.out.printf("Producer signals production of %f%n", product);
+                System.out.println("Producer signals production of " + product);
                 availablility.signal();
             } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
                 log.warn("Exit with an unexpected interruption when waiting on consumption", ex);
                 return;
             } finally {
@@ -97,10 +97,11 @@ public class OneProdConChain {
                     log.trace("Availablility has been signaled");
                 }
 
-                System.out.printf("%s signals that %f has been consumed%n", name, product);
+                System.out.printf("%s signals that %d has been consumed\n", name, product);
                 produced = false;
                 consumption.signal();
             } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
                 log.trace("Exit caused by interrupt while waiting on production");
                 return;
             } finally {
@@ -139,6 +140,6 @@ public class OneProdConChain {
         consumer.interrupt();
         consumer.join();
 
-        log.trace("Enter");
+        log.trace("Exit");
     }
 }
