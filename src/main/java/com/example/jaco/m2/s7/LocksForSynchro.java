@@ -22,7 +22,7 @@ public class LocksForSynchro {
 
     private final Lock lockA;
     private int resourceA;
-    private Lock lockB;
+    private final Lock lockB;
     private int resourceB;
 
     /**
@@ -76,7 +76,7 @@ public class LocksForSynchro {
      */
     public synchronized void syncThis() {
         log.trace("Enter");
-        System.out.printf("%s A is %d, B is %d%n", Thread.currentThread().getName(), resourceA, resourceB);
+        System.out.printf("%s A is %d, B is %d\n", Thread.currentThread().getName(), resourceA, resourceB);
         log.trace("Exit");
     }
 
