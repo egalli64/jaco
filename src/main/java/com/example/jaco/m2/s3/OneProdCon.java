@@ -31,16 +31,18 @@ public class OneProdCon {
      */
     private synchronized void producer() {
         log.trace("Enter");
+
         product = ThreadLocalRandom.current().nextInt(1, 7);
-        System.out.printf("%s has produced %d%n", Thread.currentThread().getName(), product);
-        // Since there is just one consumer, here notifyAll() would be an overkill
+        System.out.printf("%s has produced %d\n", Thread.currentThread().getName(), product);
+        // Since there is just one consumer, notifyAll() is not required
         notify();
+
         log.trace("Exit");
     }
 
     /**
      * The consumer thread runs this method.
-     * 
+     * <p>
      * It waits the producer to set the product, then consumes it.
      */
     private synchronized void consumer() {
@@ -49,7 +51,7 @@ public class OneProdCon {
         try {
             System.out.println(tName + " requires a product");
 
-            // Wait until the product is available
+            // Wait until the product is available - loop to avoid a spurious wake-up
             while (product == PRODUCT_NOT_READY) {
                 System.out.println(tName + " waits for the result");
                 wait();
@@ -57,7 +59,7 @@ public class OneProdCon {
             }
 
             // It is safe to assume that now product is ready to be consumed
-            System.out.printf("%s consumes %d%n", tName, product);
+            System.out.printf("%s consumes %d\n", tName, product);
             product = PRODUCT_NOT_READY;
         } catch (InterruptedException e) {
             // In this simple case, it is not legal interrupting a consumer
@@ -74,10 +76,10 @@ public class OneProdCon {
      */
     public static void main(String[] args) throws InterruptedException {
         log.trace("Enter");
-        OneProdCon wn = new OneProdCon();
+        OneProdCon pc = new OneProdCon();
 
         System.out.println("Create and start consumer and producer");
-        Thread[] threads = { new Thread(wn::consumer, "consumer"), new Thread(wn::producer, "producer") };
+        Thread[] threads = { new Thread(pc::consumer, "consumer"), new Thread(pc::producer, "producer") };
         Arrays.stream(threads).forEach(Thread::start);
 
         System.out.println("Nothing else to do in main");
