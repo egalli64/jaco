@@ -27,17 +27,19 @@ public class CFutureCommon {
         log.trace("Enter");
 
         CompletableFuture<Double> cf = new CompletableFuture<>();
-        new Thread(() -> cf.complete(Jobs.job(10)), "CF").start();
+        new Thread(() -> cf.complete(Jobs.job(10)), "worker").start();
 
         if (!cf.isDone()) {
-            log.trace("If the future job is not done, do something else");
-            System.out.printf("Main thread result: %f%n", Jobs.job(3));
+            log.trace("The future is not done, do something else in the main thread");
+            System.out.println("Main thread result: " + Jobs.job(3));
+        } else {
+            log.trace("The future has been already completed!");
         }
 
-        log.trace("Then join on the future");
+        log.trace("Join on the future");
         Double result = cf.join();
 
-        System.out.printf("Worker result: %f%n", result);
+        System.out.println("Worker result: " + result);
         log.trace("Exit");
     }
 }
