@@ -6,6 +6,7 @@
 package com.example.jaco.m2.s6;
 
 import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -131,6 +132,6 @@ public class LockTryWait {
      */
     private double aLongishJob() {
         log.trace("Enter");
-        return DoubleStream.generate(() -> Math.cbrt(Math.random())).limit(100).sum();
+        return DoubleStream.generate(() -> Math.cbrt(ThreadLocalRandom.current().nextDouble())).limit(1_000).sum();
     }
 }
