@@ -5,6 +5,7 @@
  */
 package com.example.jaco.m3.s2;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.DoubleStream;
 
 import org.slf4j.Logger;
@@ -19,8 +20,8 @@ public class Hello implements Runnable {
     @Override
     public void run() {
         log.trace("Enter");
-        System.out.printf("On %s generated value is %f%n", Thread.currentThread().getName(),
-                DoubleStream.generate(Math::random).limit(100).map(Math::cbrt).sum());
+        System.out.printf("On %s generated value is %f\n", Thread.currentThread().getName(),
+                DoubleStream.generate(ThreadLocalRandom.current()::nextDouble).limit(100).map(Math::cbrt).sum());
         log.trace("Exit");
     }
 }
