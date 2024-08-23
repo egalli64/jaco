@@ -7,6 +7,7 @@ package com.example.jaco.m3.s3;
 
 import java.util.Arrays;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.DoubleStream;
 
 /**
@@ -65,27 +66,27 @@ public class CubeAdder {
      * @param args not used
      */
     public static void main(String[] args) {
-        double[] data = DoubleStream.generate(Math::random).limit(8_000_000).toArray();
+        double[] data = DoubleStream.generate(ThreadLocalRandom.current()::nextDouble).limit(8_000_000).toArray();
 
         System.out.println("Plain adder");
         for (int i = 0; i < 10; i++) {
             long start = System.currentTimeMillis();
             double result = plain(data);
-            System.out.printf("Sum %f computed in ~ %d ms%n", result, (System.currentTimeMillis() - start));
+            System.out.printf("Sum %f computed in ~ %d ms\n", result, (System.currentTimeMillis() - start));
         }
 
         System.out.println("Fork Join Recursive Action");
         for (int i = 0; i < 10; i++) {
             long start = System.currentTimeMillis();
             double result = recursiveAction(data);
-            System.out.printf("Sum %f computed in ~ %d ms%n", result, (System.currentTimeMillis() - start));
+            System.out.printf("Sum %f computed in ~ %d ms\n", result, (System.currentTimeMillis() - start));
         }
 
         System.out.println("Parallel stream adder");
         for (int i = 0; i < 10; i++) {
             long start = System.currentTimeMillis();
             double result = parallelStream(data);
-            System.out.printf("Sum %f computed in ~ %d ms%n", result, (System.currentTimeMillis() - start));
+            System.out.printf("Sum %f computed in ~ %d ms\n", result, (System.currentTimeMillis() - start));
         }
     }
 }
