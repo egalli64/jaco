@@ -7,6 +7,7 @@ package com.example.jaco.m3.s2;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.function.IntToDoubleFunction;
 import java.util.stream.DoubleStream;
@@ -37,7 +38,7 @@ public class CachedThreadPoolExecutorImplicit {
             // Pass n Hello runnable to the executor
             Consumer<Integer> batch = n -> Stream.generate(Hello::new).limit(n).forEach(executor::execute);
             // Time waster
-            IntToDoubleFunction filler = n -> DoubleStream.generate(Math::random).limit(n).map(Math::cbrt).sum();
+            IntToDoubleFunction filler = n -> DoubleStream.generate(ThreadLocalRandom.current()::nextDouble).limit(n).map(Math::cbrt).sum();
 
             System.out.println("Running the first batch of jobs ...");
             batch.accept(TASK_NR);
