@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Executor, ThreadPoolExecutor via Executors::newCachedThreadPool()
  */
-public class CachedThreadPoolExecutor {
-    private static final Logger log = LoggerFactory.getLogger(CachedThreadPoolExecutor.class);
+public class CachedThreadPoolExecutorExplicit {
+    private static final Logger log = LoggerFactory.getLogger(CachedThreadPoolExecutorExplicit.class);
     private static final int TASK_NR = 3;
 
     /**
@@ -52,7 +52,7 @@ public class CachedThreadPoolExecutor {
         System.out.println("Running the third batch of jobs (double size) ...");
         batch.accept(TASK_NR * 2);
 
-        // explicit shutdown
+        // explicit shutdown - before Java 19
         executor.shutdown();
         log.trace("Exit");
     }
