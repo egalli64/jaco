@@ -32,12 +32,12 @@ public class CFutureCompleted {
 
         if (cf.isDone()) {
             log.trace("The future is done, still I have some job to do");
-            System.out.printf("Main thread result: %f%n", FakeTask.adder(10));
+            System.out.println("Main thread result: " + FakeTask.adder(10));
         } else {
-            throw new IllegalStateException("The future is run in the current thread, no parallelism!");
+            throw new IllegalStateException("The future is expected to be completed");
         }
 
-        System.out.printf("Completable future result: %f%n", cf.join());
+        System.out.println("Completable future result: " + cf.join());
         log.trace("Exit");
     }
 }
