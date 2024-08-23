@@ -5,6 +5,7 @@
  */
 package com.example.jaco.m1.s6;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.DoubleStream;
 
 import org.slf4j.Logger;
@@ -37,11 +38,11 @@ public class CheckInterruptedExceptional {
             try {
                 while (!cur.isInterrupted()) {
                     System.out.print("(Fake) wait on a resource ... ");
-                    // Just a simulation! Thread.sleep() in seldom seen in production code
+                    // This is just a simulation! Thread.sleep() in seldom seen in production code
                     // Put the current thread in TIMED_WAITING state
-                    Thread.sleep(2);
+                    Thread.sleep(1);
 
-                    double value = DoubleStream.generate(Math::random).limit(10).sum();
+                    double value = DoubleStream.generate(ThreadLocalRandom.current()::nextDouble).limit(10_000).sum();
                     System.out.println("The result is " + value);
                 }
                 // thread interrupted when in RUNNING state
