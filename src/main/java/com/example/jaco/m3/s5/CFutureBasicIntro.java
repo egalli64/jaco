@@ -30,19 +30,24 @@ public class CFutureBasicIntro {
         CompletableFuture<String> cf = new CompletableFuture<>();
 
         if (!cf.isDone()) {
-            System.out.println("cf has to be completed");
+            System.out.println("cf is not done yet");
+        } else {
+            System.out.println("Unexpected!");
         }
 
+        log.debug("Completing cf");
         cf.complete("Completed in the main thread");
 
         if (cf.isDone()) {
             System.out.println("cf has been completed");
+        } else {
+            System.out.println("Unexpected!");
         }
 
         try {
             System.out.println("cf value by get: " + cf.get());
         } catch (InterruptedException | ExecutionException e) {
-            System.out.println(e.getMessage());
+            log.warn("You should not get here", e);
         }
 
         System.out.println("cf value by join: " + cf.join());
