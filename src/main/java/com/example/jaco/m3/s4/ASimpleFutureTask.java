@@ -6,6 +6,7 @@
 package com.example.jaco.m3.s4;
 
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.DoubleStream;
 
 import org.slf4j.Logger;
@@ -50,6 +51,6 @@ public class ASimpleFutureTask {
      */
     private static double aJob(int size) {
         log.trace("Enter");
-        return DoubleStream.generate(() -> Math.cbrt(Math.random())).limit(size).sum();
+        return DoubleStream.generate(() -> Math.cbrt(ThreadLocalRandom.current().nextDouble())).limit(size).sum();
     }
 }
