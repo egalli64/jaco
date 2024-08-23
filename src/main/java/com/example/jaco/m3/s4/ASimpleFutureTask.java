@@ -39,6 +39,7 @@ public class ASimpleFutureTask {
         }
 
         System.out.println(myTask.get());
+        log.trace("Exit");
     }
 
     /**

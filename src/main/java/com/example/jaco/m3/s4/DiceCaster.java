@@ -6,10 +6,10 @@
 package com.example.jaco.m3.s4;
 
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 public class DiceCaster {
     private static final Logger log = LoggerFactory.getLogger(DiceCaster.class);
 
-    private static final int NR = 3;
+    private static final int NR = 5;
     private static final int MAX = 6;
 
     /**
@@ -38,13 +38,13 @@ public class DiceCaster {
         // The callable for the future tasks
         Callable<Integer> cast = () -> {
             log.trace("Enter");
-            Random random = new Random();
+
             // sometimes a die get lost
-            if (random.nextDouble() > 0.75) {
+            if (ThreadLocalRandom.current().nextDouble() > 0.75) {
                 log.trace("Lost die");
                 throw new IllegalStateException("A lost die!");
             }
-            int result = random.nextInt(1, MAX + 1);
+            int result = ThreadLocalRandom.current().nextInt(1, MAX + 1);
             log.trace("This cast generated a {} as result", result);
             return result;
         };
