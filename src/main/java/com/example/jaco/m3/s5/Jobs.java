@@ -5,6 +5,7 @@
  */
 package com.example.jaco.m3.s5;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.DoubleStream;
 
 import org.slf4j.Logger;
@@ -23,8 +24,7 @@ public class Jobs {
      * @return a double
      */
     public static double job(int size) {
-        log.trace("Enter");
-        double result = DoubleStream.generate(() -> Math.random()).limit(size).sum();
+        double result = DoubleStream.generate(ThreadLocalRandom.current()::nextDouble).limit(size).sum();
         log.trace("Returning {}", result);
         return result;
     }
