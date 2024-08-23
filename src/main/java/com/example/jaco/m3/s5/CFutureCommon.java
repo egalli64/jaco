@@ -10,6 +10,8 @@ import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.jaco.m1.s3.FakeTask;
+
 /**
  * A simple common use for a CompletableFuture.
  * <p>
@@ -27,11 +29,11 @@ public class CFutureCommon {
         log.trace("Enter");
 
         CompletableFuture<Double> cf = new CompletableFuture<>();
-        new Thread(() -> cf.complete(Jobs.job(10)), "worker").start();
+        new Thread(() -> cf.complete(FakeTask.adder(10)), "worker").start();
 
         if (!cf.isDone()) {
             log.trace("The future is not done, do something else in the main thread");
-            System.out.println("Main thread result: " + Jobs.job(3));
+            System.out.println("Main thread result: " + FakeTask.adder(3));
         } else {
             log.trace("The future has been already completed!");
         }

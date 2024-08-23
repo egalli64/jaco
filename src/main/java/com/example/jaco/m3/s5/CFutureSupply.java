@@ -10,6 +10,8 @@ import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.jaco.m1.s3.FakeTask;
+
 /**
  * A CompletableFuture created by supplyAsync()
  */
@@ -18,11 +20,11 @@ public class CFutureSupply {
 
     public static void main(String[] args) {
         log.trace("Enter");
-        CompletableFuture<Double> cf = CompletableFuture.supplyAsync(() -> Jobs.job(10));
+        CompletableFuture<Double> cf = CompletableFuture.supplyAsync(() -> FakeTask.adder(10));
 
         if (!cf.isDone()) {
             log.trace("The future job is not done, do something else");
-            System.out.printf("Main thread result: %f%n", Jobs.job(10));
+            System.out.printf("Main thread result: %f%n", FakeTask.adder(10));
         }
 
         log.trace("Wait the future to complete");

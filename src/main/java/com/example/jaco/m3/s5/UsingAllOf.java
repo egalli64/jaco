@@ -10,6 +10,8 @@ import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.jaco.m1.s3.FakeTask;
+
 /**
  * CompletableFuture::allOf()
  */
@@ -23,8 +25,8 @@ public class UsingAllOf {
      */
     public static void main(String[] args) {
         log.trace("Enter");
-        CompletableFuture<Double> cf1 = CompletableFuture.supplyAsync(() -> Jobs.job(10));
-        CompletableFuture<Double> cf2 = CompletableFuture.supplyAsync(() -> Jobs.job(10));
+        CompletableFuture<Double> cf1 = CompletableFuture.supplyAsync(() -> FakeTask.adder(10));
+        CompletableFuture<Double> cf2 = CompletableFuture.supplyAsync(() -> FakeTask.adder(10));
 
         CompletableFuture.allOf(cf1, cf2).join();
 

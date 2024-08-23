@@ -10,6 +10,8 @@ import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.jaco.m1.s3.FakeTask;
+
 /**
  * A completed future created by CompletableFuture::completedFuture()
  * <p>
@@ -26,11 +28,11 @@ public class CFutureCompleted {
      */
     public static void main(String[] args) {
         log.trace("Main");
-        CompletableFuture<Double> cf = CompletableFuture.completedFuture(Jobs.job(100));
+        CompletableFuture<Double> cf = CompletableFuture.completedFuture(FakeTask.adder(100));
 
         if (cf.isDone()) {
             log.trace("The future is done, still I have some job to do");
-            System.out.printf("Main thread result: %f%n", Jobs.job(10));
+            System.out.printf("Main thread result: %f%n", FakeTask.adder(10));
         } else {
             throw new IllegalStateException("The future is run in the current thread, no parallelism!");
         }

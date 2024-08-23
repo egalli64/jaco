@@ -10,6 +10,8 @@ import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.jaco.m1.s3.FakeTask;
+
 /**
  * CompletableFuture::thenRun()
  * <p>
@@ -26,12 +28,12 @@ public class ThenRun {
      */
     public static void main(String[] args) {
         log.trace("Enter");
-        CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> Jobs.job(5_000)) //
+        CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> FakeTask.adder(5_000)) //
                 .thenRun(() -> log.trace("In the runner"));
 
         log.trace("Do something else until the future is not completed");
         while (!cf.isDone()) {
-            System.out.printf("Main thread result: %f%n", Jobs.job(10));
+            System.out.printf("Main thread result: %f%n", FakeTask.adder(10));
         }
 
         System.out.println("The CompletableFuture returned by thenRun() is Void: " + cf.join());

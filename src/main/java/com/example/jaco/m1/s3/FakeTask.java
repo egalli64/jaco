@@ -6,6 +6,8 @@
 package com.example.jaco.m1.s3;
 
 import java.lang.Thread.State;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.DoubleStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,5 +55,17 @@ public class FakeTask {
                 break;
             }
         }
+    }
+
+    /**
+     * Sum up a few random doubles
+     * 
+     * @param size number of items used to generate the result
+     * @return a double
+     */
+    public static double adder(int size) {
+        double result = DoubleStream.generate(ThreadLocalRandom.current()::nextDouble).limit(size).sum();
+        log.trace("Returning {}", result);
+        return result;
     }
 }

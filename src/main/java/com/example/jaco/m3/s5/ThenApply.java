@@ -10,6 +10,8 @@ import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.jaco.m1.s3.FakeTask;
+
 /**
  * CompletableFuture::thenApply()
  * <p>
@@ -27,12 +29,12 @@ public class ThenApply {
      */
     public static void main(String[] args) {
         log.trace("Enter");
-        CompletableFuture<String> cf = CompletableFuture.supplyAsync(() -> Jobs.job(10)) //
+        CompletableFuture<String> cf = CompletableFuture.supplyAsync(() -> FakeTask.adder(10)) //
                 .thenApply(x -> String.format("Worker: %f", x));
 
         log.trace("Do something else until the future is not completed");
         while (!cf.isDone()) {
-            System.out.printf("Main: %f%n", Jobs.job(10));
+            System.out.printf("Main: %f%n", FakeTask.adder(10));
         }
 
         log.trace("Then join on the future");

@@ -10,6 +10,8 @@ import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.jaco.m1.s3.FakeTask;
+
 /**
  * CompletableFuture::thenCompose()
  */
@@ -45,7 +47,7 @@ public class ThenCompose {
      */
     private static CompletableFuture<Double> completable(int size) {
         log.trace("Enter with size {}", size);
-        return CompletableFuture.supplyAsync(() -> Jobs.job(size));
+        return CompletableFuture.supplyAsync(() -> FakeTask.adder(size));
     }
 
     /**
