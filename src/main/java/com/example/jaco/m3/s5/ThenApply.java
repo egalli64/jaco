@@ -29,12 +29,12 @@ public class ThenApply {
      */
     public static void main(String[] args) {
         log.trace("Enter");
-        CompletableFuture<String> cf = CompletableFuture.supplyAsync(() -> FakeTask.adder(10)) //
-                .thenApply(x -> String.format("Worker: %f", x));
+        CompletableFuture<String> cf = CompletableFuture.supplyAsync(() -> FakeTask.adder(2)) //
+                .thenApply(x -> "Worker: " + x + ", " + FakeTask.adder(10));
 
         log.trace("Do something else until the future is not completed");
         while (!cf.isDone()) {
-            System.out.printf("Main: %f%n", FakeTask.adder(10));
+            System.out.println("Main: " + FakeTask.adder(2));
         }
 
         log.trace("Then join on the future");
