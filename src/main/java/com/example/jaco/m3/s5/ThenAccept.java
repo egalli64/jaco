@@ -29,12 +29,12 @@ public class ThenAccept {
      */
     public static void main(String[] args) {
         log.trace("Enter");
-        CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> FakeTask.adder(10)) //
-                .thenAccept(x -> System.out.println("Worker: " + x + ", " + FakeTask.adder(10)));
+        CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> FakeTask.adder(2)) //
+                .thenAccept(x -> System.out.printf("Worker: %f, %f\n", x, FakeTask.adder(10)));
 
         log.trace("Do something else until the future is not completed");
         while (!cf.isDone()) {
-            System.out.println("Main: " + FakeTask.adder(2));
+            System.out.printf("Main: %f\n", FakeTask.adder(2));
         }
 
         System.out.println("Joining on a Void CompletableFuture gives ... " + cf.join());
