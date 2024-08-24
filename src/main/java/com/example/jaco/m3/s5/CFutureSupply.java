@@ -23,8 +23,10 @@ public class CFutureSupply {
         CompletableFuture<Double> cf = CompletableFuture.supplyAsync(() -> FakeTask.adder(10));
 
         if (!cf.isDone()) {
-            log.trace("The future job is not done, do something else");
-            System.out.printf("Main thread result: %f%n", FakeTask.adder(10));
+            log.trace("The future is not done, do something else");
+            System.out.println("Main thread result: " + FakeTask.adder(10));
+        } else {
+            log.info("It could happen that the future is done, but it would be quite rare");
         }
 
         log.trace("Wait the future to complete");
