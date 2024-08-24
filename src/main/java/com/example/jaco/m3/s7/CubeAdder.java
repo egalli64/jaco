@@ -14,9 +14,9 @@ import java.util.stream.DoubleStream;
  */
 public class CubeAdder {
     /**
+     * <ul>
      * <li>Define a RecursiveTask, pass the data to it
-     * <li>On a Fork Join Pool, call invoke on the recursive action - notice that
-     * since Java 19 ExecutorService is AutoCloseable
+     * <li>On a Fork Join Pool, call invoke on the recursive action
      * <li>Extract the result from the recursive action
      * 
      * @param data the values to evaluate
