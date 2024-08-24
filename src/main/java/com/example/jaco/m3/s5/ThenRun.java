@@ -28,12 +28,12 @@ public class ThenRun {
      */
     public static void main(String[] args) {
         log.trace("Enter");
-        CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> FakeTask.adder(5_000)) //
+        CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> FakeTask.adder(100)) //
                 .thenRun(() -> log.trace("In the runner"));
 
         log.trace("Do something else until the future is not completed");
         while (!cf.isDone()) {
-            System.out.printf("Main thread result: %f%n", FakeTask.adder(10));
+            System.out.printf("Main thread result: %f\n", FakeTask.adder(10));
         }
 
         System.out.println("The CompletableFuture returned by thenRun() is Void: " + cf.join());
