@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m2.s2;
+package com.example.jaco.m2.s4;
 
 import java.util.concurrent.ThreadLocalRandom;
 

@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m2.s2.reentrant;
+package com.example.jaco.m2.s4.reentrant;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,17 +11,20 @@ import org.slf4j.LoggerFactory;
 /**
  * Reentrant lock
  */
-public class Dog {
-    private static final Logger log = LoggerFactory.getLogger(Dog.class);
+public class Poodle extends Dog {
+    private static final Logger log = LoggerFactory.getLogger(Poodle.class);
 
     /**
-     * Let a dog bark.
+     * Let the poodle bark.
      * <p>
      * Being synchronized only one thread could run this code in a given moment.
      */
+    @Override
     public synchronized void bark() {
         log.trace("Enter");
-        System.out.println("Barking as a dog");
+        // if the synchronization was not reentrant the thread would hang here!
+        super.bark();
+        System.out.println("Bark variation as a poodle");
         log.trace("Exit");
     }
 }
