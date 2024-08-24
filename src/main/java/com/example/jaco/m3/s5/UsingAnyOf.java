@@ -29,7 +29,7 @@ public class UsingAnyOf {
         CompletableFuture<Double> cf2 = CompletableFuture.supplyAsync(() -> FakeTask.adder(10));
 
         CompletableFuture<Object> completed = CompletableFuture.anyOf(cf1, cf2);
-        System.out.printf("A result is %f%n", completed.join());
+        System.out.println("The first available result is " + completed.join());
         log.trace("Exit");
     }
 }
