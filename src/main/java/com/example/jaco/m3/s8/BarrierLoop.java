@@ -42,7 +42,7 @@ public class BarrierLoop extends ProblemFrame {
         Runnable worker = () -> {
             log.trace("Enter");
 
-            double value = job(100);
+            double value = adder(100);
             log.debug("Value {}", value);
             accumulator.add(value);
             try {
@@ -50,7 +50,7 @@ public class BarrierLoop extends ProblemFrame {
             } catch (InterruptedException | BrokenBarrierException ex) {
                 String name = Thread.currentThread().getName();
                 long time = System.nanoTime() / 1000 % 10_000;
-                System.out.printf("%s, wait interrupted @%d %s %n", name, time, ex);
+                System.out.printf("%s, wait interrupted @%d %s\n", name, time, ex);
             }
 
             log.trace("Exit");
@@ -67,7 +67,7 @@ public class BarrierLoop extends ProblemFrame {
                 log.warn("Wait on barrier interrupted", ex);
             }
 
-            System.out.printf("In %s: %f (%d)%n", name, accumulator.sum(), i);
+            System.out.printf("In %s: %f (%d)\n", name, accumulator.sum(), i);
         }
 
         // Prepare another loop, but then reset it
@@ -75,7 +75,7 @@ public class BarrierLoop extends ProblemFrame {
         new Thread(worker, "B2").start();
 
         // BrokenBarrierException expected for both B1 and B2
-        System.out.println("Giving time for the workers to kick in: " + job(10));
+        System.out.println("Giving time for the workers to kick in: " + adder(10));
         barrier.reset();
 
         // Prepare another loop, but then interrupt a worker

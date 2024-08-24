@@ -37,7 +37,7 @@ public class Barrier extends ProblemFrame {
         Runnable worker = () -> {
             log.trace("Enter");
 
-            double value = job(100);
+            double value = adder(100);
             log.debug("Value is {}", value);
             accumulator.add(value);
             try {
@@ -57,7 +57,7 @@ public class Barrier extends ProblemFrame {
             log.warn("Wait on barrier interrupted", ex);
         }
 
-        System.out.printf("Total: %f%n", accumulator.sum());
+        System.out.printf("Total: %f\n", accumulator.sum());
         log.trace("Exit");
     }
 }

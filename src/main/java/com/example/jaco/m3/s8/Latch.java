@@ -36,7 +36,7 @@ public class Latch extends ProblemFrame {
         Runnable worker = () -> {
             log.trace("Enter");
 
-            double value = job(100);
+            double value = adder(100);
             accumulator.add(value);
             cdl.countDown();
 
@@ -53,7 +53,7 @@ public class Latch extends ProblemFrame {
             log.warn("Wait unexpectedly interrupted", ex);
             return;
         }
-        System.out.printf("Result: %f%n", accumulator.sum());
+        System.out.printf("Result: %f\n", accumulator.sum());
 
         log.trace("Exit");
     }
