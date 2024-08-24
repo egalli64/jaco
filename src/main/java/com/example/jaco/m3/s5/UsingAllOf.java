@@ -30,7 +30,7 @@ public class UsingAllOf {
 
         CompletableFuture.allOf(cf1, cf2).join();
 
-        System.out.printf("Adding up the future results: %f%n", cf1.join() + cf1.join());
+        System.out.println("Adding up the future results: " + (cf1.join() + cf1.join()));
         log.trace("Exit");
     }
 }
