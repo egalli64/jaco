@@ -14,8 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.example.jaco.m1.s3.FakeTask;
 
 /**
- * A semaphore that allows two threads at a time to access a critical area
- * <p>
+ * A semaphore that allows PERMIT_NR threads at a time to access a critical area
  */
 public class SemaphoreExample {
     private static final Logger log = LoggerFactory.getLogger(SemaphoreExample.class);
