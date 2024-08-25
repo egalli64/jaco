@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m5.s8;
+package com.example.jaco.m4.s3;
 
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
@@ -13,12 +13,15 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.jaco.m1.s3.FakeTask;
+
 /**
  * Using a CyclicBarrier in a loop, plus interrupting workers and reset barrier.
  */
-public class BarrierLoop extends ProblemFrame {
+public class BarrierLoop {
     private static final Logger log = LoggerFactory.getLogger(BarrierLoop.class);
     private static final int LOOP_NR = 3;
+    public static final int TASK_NR = 3;
 
     /**
      * Create a CyclicBarrier for the workers and the main thread.
@@ -42,7 +45,7 @@ public class BarrierLoop extends ProblemFrame {
         Runnable worker = () -> {
             log.trace("Enter");
 
-            double value = adder(100);
+            double value = FakeTask.adder(100);
             log.debug("Value {}", value);
             accumulator.add(value);
             try {
@@ -75,7 +78,7 @@ public class BarrierLoop extends ProblemFrame {
         new Thread(worker, "B2").start();
 
         // BrokenBarrierException expected for both B1 and B2
-        System.out.println("Giving time for the workers to kick in: " + adder(10));
+        System.out.println("Giving time for the workers to kick in: " + FakeTask.adder(10));
         barrier.reset();
 
         // Prepare another loop, but then interrupt a worker

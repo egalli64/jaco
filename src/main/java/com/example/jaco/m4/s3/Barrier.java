@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m5.s8;
+package com.example.jaco.m4.s3;
 
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
@@ -13,11 +13,14 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.jaco.m1.s3.FakeTask;
+
 /**
  * CyclicBarrier
  */
-public class Barrier extends ProblemFrame {
+public class Barrier {
     private static final Logger log = LoggerFactory.getLogger(Barrier.class);
+    public static final int TASK_NR = 3;
 
     /**
      * Create a CyclicBarrier for the workers and the main thread. Create a thread
@@ -31,16 +34,19 @@ public class Barrier extends ProblemFrame {
      */
     public static void main(String[] args) {
         log.trace("Enter");
-        CyclicBarrier barrier = new CyclicBarrier(TASK_NR + 1);
+        // put workers and main thread on the barrier
+        CyclicBarrier barrier = new CyclicBarrier(TASK_NR + 1, () -> log.info("Tripping!"));
+        // an atomic double keeps the total
         DoubleAdder accumulator = new DoubleAdder();
 
         Runnable worker = () -> {
             log.trace("Enter");
 
-            double value = adder(100);
+            double value = FakeTask.adder(100);
             log.debug("Value is {}", value);
             accumulator.add(value);
             try {
+                // the current worker thread waits on the barrier
                 barrier.await();
             } catch (InterruptedException | BrokenBarrierException ex) {
                 log.warn("Wait on barrier interrupted", ex);
@@ -49,15 +55,17 @@ public class Barrier extends ProblemFrame {
             log.trace("Exit");
         };
 
+        // run the workers
         Stream.generate(() -> new Thread(worker)).limit(TASK_NR).forEach(Thread::start);
 
         try {
+            // the main thread waits on the barrier
             barrier.await();
         } catch (InterruptedException | BrokenBarrierException ex) {
             log.warn("Wait on barrier interrupted", ex);
         }
 
-        System.out.printf("Total: %f\n", accumulator.sum());
+        System.out.println("Total is " + accumulator.sum());
         log.trace("Exit");
     }
 }
