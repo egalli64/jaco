@@ -68,4 +68,14 @@ public class FakeTask {
         log.trace("Returning {}", result);
         return result;
     }
+
+    /**
+     * Taking some time performing a useless calculation
+     * 
+     * @param size number of items used to generate the result
+     * @return a double
+     */
+    public static double calc(int size) {
+        return DoubleStream.generate(ThreadLocalRandom.current()::nextDouble).limit(size).map(Math::cbrt).sum();
+    }
 }
