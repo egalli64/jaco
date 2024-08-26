@@ -12,11 +12,13 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.jaco.m1.s3.FakeTask;
+
 /**
  * Executor, ThreadPoolExecutor via Executors::newSingleThreadExecutor()
  */
-public class SingleThreadExecutor {
-    private static final Logger log = LoggerFactory.getLogger(SingleThreadExecutor.class);
+public class Executor1SingleThread {
+    private static final Logger log = LoggerFactory.getLogger(Executor1SingleThread.class);
 
     /**
      * In a Single Thread Executor the tasks are serialized to its single thread
@@ -26,9 +28,14 @@ public class SingleThreadExecutor {
     public static void main(String[] args) {
         log.trace("Enter");
 
-        // implicit executor shutdown, on close() by try with resource (Java 19)
+        Runnable task = () -> {
+            log.trace("Enter");
+            System.out.printf("On %s generated value is %f\n", Thread.currentThread().getName(), FakeTask.calc(100));
+            log.trace("Exit");
+        };
+
         try (ExecutorService executor = Executors.newSingleThreadExecutor()) {
-            Stream.generate(Hello::new).limit(5).forEach(executor::execute);
+            Stream.generate(() -> new Thread(task)).limit(5).forEach(executor::execute);
         }
 
         log.trace("Exit");
