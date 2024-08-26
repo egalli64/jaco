@@ -16,8 +16,8 @@ public class BasicPhaserUsage {
     private static final Logger log = LoggerFactory.getLogger(BasicPhaserUsage.class);
 
     public static void main(String[] args) {
-        // create a phaser with two registered parties
-        Phaser phaser = new Phaser(2);
+        // create a phaser with one registered party
+        Phaser phaser = new Phaser(1);
 
         // the phase number is zero
         log.info("The phaser hasn't trip any barrier (phase) yet, the phase number is {}", phaser.getPhase());
@@ -25,6 +25,10 @@ public class BasicPhaserUsage {
         log.info("The number of required threads (parties) is {}", phaser.getRegisteredParties());
         // arrived parties is zero
         log.info("The number of parties already arrived is {}", phaser.getArrivedParties());
+
+        // I've changed my mind, let's increase the number of registered parties
+        phaser.register();
+        log.info(phaser.toString());
 
         new Thread(() -> {
             try {
