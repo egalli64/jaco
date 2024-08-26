@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m5.s8;
+package com.example.jaco.m4.s4;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.DoubleAdder;
@@ -12,10 +12,13 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.jaco.m1.s3.FakeTask;
+
 /**
  * CountDownLatch
  */
-public class Latch extends ProblemFrame {
+public class Latch {
+    private static final int TASK_NR = 3;
     private static final Logger log = LoggerFactory.getLogger(Latch.class);
 
     /**
@@ -31,29 +34,29 @@ public class Latch extends ProblemFrame {
         log.trace("Enter");
 
         DoubleAdder accumulator = new DoubleAdder();
-        CountDownLatch cdl = new CountDownLatch(TASK_NR);
+        CountDownLatch latch = new CountDownLatch(TASK_NR);
 
         Runnable worker = () -> {
             log.trace("Enter");
 
-            double value = adder(100);
+            double value = FakeTask.adder(100);
             accumulator.add(value);
-            cdl.countDown();
+            latch.countDown();
 
-            log.trace("Exit value {}, latch {}", value, cdl.getCount());
+            log.trace("Exit value {}, latch {}", value, latch.getCount());
         };
 
         Stream.generate(() -> new Thread(worker)).limit(TASK_NR).forEach(t -> t.start());
 
         try {
-            log.trace("Main waits on latch: {}", cdl.getCount());
-            cdl.await();
-            log.trace("Main sees countdown completed: {}", cdl.getCount());
+            log.trace("Main waits on latch: {}", latch.getCount());
+            latch.await();
+            log.trace("Main sees countdown completed: {}", latch.getCount());
         } catch (InterruptedException ex) {
-            log.warn("Wait unexpectedly interrupted", ex);
+            log.warn("Wait on latch unexpectedly interrupted", ex);
             return;
         }
-        System.out.printf("Result: %f\n", accumulator.sum());
+        System.out.println("Result: " + accumulator.sum());
 
         log.trace("Exit");
     }
