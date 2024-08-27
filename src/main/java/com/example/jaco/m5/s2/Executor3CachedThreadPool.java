@@ -7,20 +7,19 @@ package com.example.jaco.m5.s2;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
-import java.util.function.IntToDoubleFunction;
-import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.jaco.m1.s3.FakeTask;
+
 /**
  * Executor, ThreadPoolExecutor via Executors::newCachedThreadPool()
  */
-public class CachedThreadPoolExecutorImplicit {
-    private static final Logger log = LoggerFactory.getLogger(CachedThreadPoolExecutorImplicit.class);
+public class Executor3CachedThreadPool {
+    private static final Logger log = LoggerFactory.getLogger(Executor3CachedThreadPool.class);
     private static final int TASK_NR = 3;
 
     /**
@@ -33,22 +32,23 @@ public class CachedThreadPoolExecutorImplicit {
     public static void main(String[] args) {
         log.trace("Enter");
 
-        // implicit executor shutdown, on close() by try with resource (Java 19)
+        Runnable task = () -> {
+            FakeTask.adder(100);
+        };
+
         try (ExecutorService executor = Executors.newCachedThreadPool()) {
             // Pass n Hello runnable to the executor
-            Consumer<Integer> batch = n -> Stream.generate(Hello::new).limit(n).forEach(executor::execute);
-            // Time waster
-            IntToDoubleFunction filler = n -> DoubleStream.generate(ThreadLocalRandom.current()::nextDouble).limit(n).map(Math::cbrt).sum();
+            Consumer<Integer> batch = n -> Stream.generate(() -> new Thread(task)).limit(n).forEach(executor::execute);
 
             System.out.println("Running the first batch of jobs ...");
             batch.accept(TASK_NR);
 
-            System.out.println("Doing something else in main: " + filler.applyAsDouble(1_000_000));
+            System.out.println("Doing something else in main: " + FakeTask.adder(100));
 
             System.out.println("Running the second batch of jobs ...");
             batch.accept(TASK_NR);
 
-            System.out.println("Doing something else in main: " + filler.applyAsDouble(50_000));
+            System.out.println("Doing something else in main: " + FakeTask.adder(100));
 
             System.out.println("Running the third batch of jobs (double size) ...");
             batch.accept(TASK_NR * 2);
