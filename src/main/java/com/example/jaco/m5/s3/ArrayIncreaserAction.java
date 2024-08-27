@@ -41,6 +41,9 @@ class ArrayIncreaserAction extends RecursiveAction {
             right.compute();
             // synchronize the two subtasks
             left.join();
+
+            // or, let the framework do it
+            // invokeAll(List.of(left, right));
         }
     }
 }

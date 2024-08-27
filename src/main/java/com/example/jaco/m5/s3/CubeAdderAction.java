@@ -6,7 +6,6 @@
 package com.example.jaco.m5.s3;
 
 import java.util.List;
-import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveAction;
 
 /**
@@ -48,9 +47,9 @@ public class CubeAdderAction extends RecursiveAction {
             CubeAdderAction left = new CubeAdderAction(data, begin, (begin + end) / 2);
             CubeAdderAction right = new CubeAdderAction(data, (begin + end) / 2, end);
 
-            ForkJoinTask.invokeAll(List.of(left, right));
+            invokeAll(List.of(left, right));
 
-            // same as calling invokeAll, but explicitly applying the fork / join pattern
+            // same as calling ForkJoinTask.invokeAll(), but explicitly applying the fork / join pattern
 //            left.fork();
 //            right.compute();
 //            left.join();
