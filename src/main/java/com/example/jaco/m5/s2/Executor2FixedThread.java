@@ -12,11 +12,13 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.jaco.m1.s3.FakeTask;
+
 /**
  * Executor, ThreadPoolExecutor via Executors::newFixedThreadPool()
  */
-public class FixedThreadExecutor {
-    private static final Logger log = LoggerFactory.getLogger(FixedThreadExecutor.class);
+public class Executor2FixedThread {
+    private static final Logger log = LoggerFactory.getLogger(Executor2FixedThread.class);
     private static final int POOL_SIZE = 2;
     private static final int TASK_NR = 5;
 
@@ -29,9 +31,12 @@ public class FixedThreadExecutor {
     public static void main(String[] args) {
         log.trace("Enter");
 
-        // implicit executor shutdown, on close() by try with resource (Java 19)
+        Runnable task = () -> {
+            FakeTask.adder(100);
+        };
+
         try (ExecutorService executor = Executors.newFixedThreadPool(POOL_SIZE)) {
-            Stream.generate(Hello::new).limit(TASK_NR).forEach(executor::execute);
+            Stream.generate(() -> new Thread(task)).limit(TASK_NR).forEach(executor::execute);
         }
 
         log.trace("Exit");
