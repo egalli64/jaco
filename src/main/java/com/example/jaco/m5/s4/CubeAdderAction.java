@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m5.s3;
+package com.example.jaco.m5.s4;
 
 import java.util.List;
 import java.util.concurrent.RecursiveAction;
