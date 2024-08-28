@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m5.s5;
+package com.example.jaco.m5.s6;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;

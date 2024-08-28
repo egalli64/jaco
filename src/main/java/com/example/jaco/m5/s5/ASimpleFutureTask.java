@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m5.s4;
+package com.example.jaco.m5.s5;
 
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.ThreadLocalRandom;
