@@ -30,12 +30,12 @@ public class SvcSubmit2Callable {
      * 
      * @param args not used
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         log.trace("Enter");
 
         Callable<Double> task = () -> {
             log.trace("Callable started");
-            return FakeTask.adder(50_000);
+            return FakeTask.adder(40_000);
         };
 
         // the future type should match with the callable type
