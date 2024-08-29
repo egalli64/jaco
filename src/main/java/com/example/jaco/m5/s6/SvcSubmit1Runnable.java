@@ -29,7 +29,7 @@ public class SvcSubmit1Runnable {
      * 
      * @param args not used
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         log.trace("Enter");
 
         Runnable task = () -> {
@@ -40,8 +40,8 @@ public class SvcSubmit1Runnable {
         /*
          * We can force submit() to push into the future a result of a given type
          * 
-         * If the result is not used, a Future<?> could be used instead; in this case,
-         * future.get() would return null
+         * If the result type/value is interesting, a Future<?> could be used instead;
+         * in this case, future.get() would return null
          */
         Future<String> future;
         try (ExecutorService executor = Executors.newSingleThreadExecutor()) {
