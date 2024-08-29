@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m5.s8;
+package com.example.jaco.m5.s7;
 
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
