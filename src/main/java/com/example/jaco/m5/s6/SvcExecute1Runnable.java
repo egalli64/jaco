@@ -18,8 +18,8 @@ import com.example.jaco.m1.s3.FakeTask;
 /**
  * Execute a Runnable on an Executor as FutureTask
  */
-public class FutureTask3Execute {
-    private static final Logger log = LoggerFactory.getLogger(FutureTask3Execute.class);
+public class SvcExecute1Runnable {
+    private static final Logger log = LoggerFactory.getLogger(SvcExecute1Runnable.class);
 
     /**
      * Create a future task from a Runnable, execute it on an Executor
@@ -34,7 +34,7 @@ public class FutureTask3Execute {
 
         FutureTask<String> task = new FutureTask<>(() -> {
             log.trace("Runnable started");
-            FakeTask.adder(50_000);
+            FakeTask.adder(40_000);
         }, "OK!");
 
         try (ExecutorService executor = Executors.newSingleThreadExecutor()) {
@@ -42,7 +42,7 @@ public class FutureTask3Execute {
 
             log.trace("While calculating the future task, do something in the main thread");
             while (!task.isDone()) {
-                FakeTask.adder(5);
+                FakeTask.adder(4);
             }
         }
 
