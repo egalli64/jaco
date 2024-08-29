@@ -16,13 +16,13 @@ import org.slf4j.LoggerFactory;
 import com.example.jaco.m1.s3.FakeTask;
 
 /**
- * Execute a Runnable on an Executor as FutureTask
+ * Execute a Callable on an Executor as FutureTask
  */
 public class SvcExecute2Callable {
     private static final Logger log = LoggerFactory.getLogger(SvcExecute2Callable.class);
 
     /**
-     * Create a future task from a Runnable, execute it on an Executor
+     * Create a future task from a Callable, execute it on an Executor
      * <p>
      * Being the task a Runnable, could be passed to execute(), being a Future,
      * could be used by the caller to interact with its execution on the Executor
