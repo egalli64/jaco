@@ -21,10 +21,10 @@ import org.slf4j.LoggerFactory;
 /**
  * An Executor for a list of FutureTask
  * <p>
- * Dice caster, NR dice having values in [1..MAX]
+ * Dice caster for DICE_NR dice each having a value in [1..MAX_VALUE]
  */
-public class XDiceCaster {
-    private static final Logger log = LoggerFactory.getLogger(XDiceCaster.class);
+public class X2DiceCaster {
+    private static final Logger log = LoggerFactory.getLogger(X2DiceCaster.class);
 
     private static final int DICE_NR = 5;
     private static final int MAX_VALUE = 6;
@@ -38,6 +38,7 @@ public class XDiceCaster {
      * <li>All the tasks are submitted to an executor
      * <li>Let the executor shutdown, all the tasks have time to complete
      * <li>Extract the results from the futures
+     * </ul>
      * 
      * @param args not used
      */
@@ -73,7 +74,7 @@ public class XDiceCaster {
                 log.warn("No interruption was expected!", ex);
                 Thread.currentThread().interrupt();
             } catch (ExecutionException ex) {
-                // An exception thrown by a FutureTask is wrapped in an ExecutionException
+                // Lost die - the IllegalStateException is wrapped in an ExecutionException
                 System.out.println("No result");
             }
         }
