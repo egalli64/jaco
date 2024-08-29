@@ -29,7 +29,7 @@ public class SvcExecute2Callable {
      * 
      * @param args not used
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         log.trace("Enter");
 
         FutureTask<Double> task = new FutureTask<>(() -> {
