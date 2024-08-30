@@ -12,13 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.example.jaco.m1.s3.FakeTask;
-import com.example.jaco.m5.s7.CFutureBasicIntro;
 
 /**
  * Simple creation of CompletableFuture by runAsync()
  */
 public class Creation2RunAsync {
-    private static final Logger log = LoggerFactory.getLogger(CFutureBasicIntro.class);
+    private static final Logger log = LoggerFactory.getLogger(Creation2RunAsync.class);
 
     public static void main(String[] args) {
         log.trace("Enter");
