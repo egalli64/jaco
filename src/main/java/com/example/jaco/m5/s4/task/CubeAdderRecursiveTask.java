@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m5.s7;
+package com.example.jaco.m5.s4.task;
 
 import java.util.concurrent.RecursiveTask;
 
@@ -11,7 +11,7 @@ import java.util.concurrent.RecursiveTask;
  * A recursive task for Fork/Join
  */
 @SuppressWarnings("serial")
-public class CubeAdderTask extends RecursiveTask<Double> {
+public class CubeAdderRecursiveTask extends RecursiveTask<Double> {
     /** Where the recursion should stop - it is our responsibility to find a good value */
     private static final int THRESHOLD = 200_000;
 
@@ -26,7 +26,7 @@ public class CubeAdderTask extends RecursiveTask<Double> {
      * @param begin left index in the current interval (included)
      * @param end   right index in the current interval (excluded)
      */
-    public CubeAdderTask(double[] data, int begin, int end) {
+    public CubeAdderRecursiveTask(double[] data, int begin, int end) {
         this.data = data;
         this.begin = begin;
         this.end = end;
@@ -41,8 +41,8 @@ public class CubeAdderTask extends RecursiveTask<Double> {
             }
             return result;
         } else {
-            CubeAdderTask left = new CubeAdderTask(data, begin, (begin + end) / 2);
-            CubeAdderTask right = new CubeAdderTask(data, (begin + end) / 2, end);
+            CubeAdderRecursiveTask left = new CubeAdderRecursiveTask(data, begin, (begin + end) / 2);
+            CubeAdderRecursiveTask right = new CubeAdderRecursiveTask(data, (begin + end) / 2, end);
 
             right.fork();
             return left.compute() + right.join();

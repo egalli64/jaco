@@ -3,10 +3,10 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m5.s7;
+package com.example.jaco.m5.s4.task;
 
+import java.util.Arrays;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.Future;
 import java.util.stream.DoubleStream;
 
 /**
@@ -16,17 +16,17 @@ public class CubeAdder {
     /**
      * <ul>
      * <li>Define a RecursiveTask, pass the data to it
-     * <li>On a Fork Join Pool, call invoke on the recursive action
-     * <li>Extract the result from the recursive action
+     * <li>On a Fork Join Pool, call invoke on the recursive task
+     * <li>Join on the recursive task to get the result
      * 
      * @param data the values to evaluate
      * @return sum of elements cubes
      */
-    public static Future<Double> recursiveAction(double[] data) {
-        CubeAdderTask task = new CubeAdderTask(data, 0, data.length);
+    public static double recursiveTask(double[] data) {
+        CubeAdderRecursiveTask task = new CubeAdderRecursiveTask(data, 0, data.length);
         try (var pool = new ForkJoinPool()) {
             pool.invoke(task);
-            return task;
+            return task.join();
         }
     }
 
@@ -41,12 +41,15 @@ public class CubeAdder {
         System.out.println("-Fork Join Recursive Task-");
         for (int i = 0; i < 10; i++) {
             long start = System.currentTimeMillis();
-            try {
-                Future<Double> result = recursiveAction(data);
-                System.out.printf("Sum %f computed in ~ %d ms%n", result.get(), (System.currentTimeMillis() - start));
-            } catch (Exception e) {
-                throw new IllegalStateException(e);
-            }
+            double result = recursiveTask(data);
+            System.out.printf("Sum %f computed in ~ %d ms%n", result, (System.currentTimeMillis() - start));
+        }
+
+        System.out.println("-Parallel stream adder-");
+        for (int i = 0; i < 10; i++) {
+            long start = System.currentTimeMillis();
+            double result = Arrays.stream(data).parallel().map(x -> Math.pow(x, 3)).sum();
+            System.out.printf("Sum %f computed in ~ %d ms\n", result, (System.currentTimeMillis() - start));
         }
     }
 }
