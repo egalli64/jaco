@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m5.s4;
+package com.example.jaco.m5.s4.action;
 
 import java.util.concurrent.RecursiveAction;
 
@@ -11,13 +11,13 @@ import java.util.concurrent.RecursiveAction;
  * A RecursiveAction
  */
 @SuppressWarnings("serial")
-class ArrayIncreaserAction extends RecursiveAction {
+class ArrayIncreaserRecursiveAction extends RecursiveAction {
     private static final int THRESHOLD = 10;
     private final int[] array;
     private final int first;
     private final int end;
 
-    public ArrayIncreaserAction(int[] array, int first, int end) {
+    public ArrayIncreaserRecursiveAction(int[] array, int first, int end) {
         this.array = array;
         this.first = first;
         this.end = end;
@@ -33,8 +33,8 @@ class ArrayIncreaserAction extends RecursiveAction {
         } else {
             // otherwise split it in two subtasks
             int mid = (first + end) / 2;
-            ArrayIncreaserAction left = new ArrayIncreaserAction(array, first, mid);
-            ArrayIncreaserAction right = new ArrayIncreaserAction(array, mid, end);
+            ArrayIncreaserRecursiveAction left = new ArrayIncreaserRecursiveAction(array, first, mid);
+            ArrayIncreaserRecursiveAction right = new ArrayIncreaserRecursiveAction(array, mid, end);
 
             // asynchronous execute a subtask
             left.fork();
