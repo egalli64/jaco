@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Synchronous completion by complete()
+ * <p>
+ * Only the first call to complete() succeeds, the next ones are ignored
  */
 public class Complete1Plain {
     private static final Logger log = LoggerFactory.getLogger(Complete1Plain.class);
@@ -27,6 +29,8 @@ public class Complete1Plain {
 
         if (cf.isDone()) {
             log.debug("After completing");
+
+            cf.complete("Being already completed, this request is ignored");
         } else {
             log.warn("Unexpected!");
         }
