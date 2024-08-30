@@ -3,16 +3,18 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m5.s4;
+package com.example.jaco.m5.s4.action;
 
 import java.util.List;
 import java.util.concurrent.RecursiveAction;
 
 /**
  * A recursive action for Fork/Join
+ * <p>
+ * For a task like this, a RecursiveTask is a better approach
  */
 @SuppressWarnings("serial")
-public class CubeAdderAction extends RecursiveAction {
+public class CubeAdderRecursiveAction extends RecursiveAction {
     /**
      * it is our responsibility to set where the recursion should stop
      */
@@ -30,7 +32,7 @@ public class CubeAdderAction extends RecursiveAction {
      * @param begin left index in the current interval (included)
      * @param end   right index in the current interval (excluded)
      */
-    public CubeAdderAction(double[] data, int begin, int end) {
+    public CubeAdderRecursiveAction(double[] data, int begin, int end) {
         this.data = data;
         this.begin = begin;
         this.end = end;
@@ -44,12 +46,13 @@ public class CubeAdderAction extends RecursiveAction {
                 result += Math.pow(data[i], 3);
             }
         } else {
-            CubeAdderAction left = new CubeAdderAction(data, begin, (begin + end) / 2);
-            CubeAdderAction right = new CubeAdderAction(data, (begin + end) / 2, end);
+            CubeAdderRecursiveAction left = new CubeAdderRecursiveAction(data, begin, (begin + end) / 2);
+            CubeAdderRecursiveAction right = new CubeAdderRecursiveAction(data, (begin + end) / 2, end);
 
             invokeAll(List.of(left, right));
 
-            // same as calling ForkJoinTask.invokeAll(), but explicitly applying the fork / join pattern
+            // same as calling ForkJoinTask.invokeAll(), but explicitly applying the fork /
+            // join pattern
 //            left.fork();
 //            right.compute();
 //            left.join();
@@ -60,7 +63,8 @@ public class CubeAdderAction extends RecursiveAction {
     }
 
     /**
-     * Getter
+     * Getter - it's a bit unnatural using a RecursiveAction when a result is
+     * expected from the task. Use RecursiveTask instead.
      * 
      * @return the expected result
      */
