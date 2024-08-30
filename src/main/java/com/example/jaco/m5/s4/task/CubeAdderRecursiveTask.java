@@ -5,6 +5,7 @@
  */
 package com.example.jaco.m5.s4.task;
 
+import java.util.List;
 import java.util.concurrent.RecursiveTask;
 
 /**
@@ -44,8 +45,13 @@ public class CubeAdderRecursiveTask extends RecursiveTask<Double> {
             CubeAdderRecursiveTask left = new CubeAdderRecursiveTask(data, begin, (begin + end) / 2);
             CubeAdderRecursiveTask right = new CubeAdderRecursiveTask(data, (begin + end) / 2, end);
 
-            right.fork();
-            return left.compute() + right.join();
+            // explicit fork - compute - join
+//            right.fork();
+//            return left.compute() + right.join();
+            
+            // implicit fork - compute by ForkJoinTask.invokeAll()
+            invokeAll(List.of(left, right));
+            return left.join() + right.join();
         }
     }
 }
