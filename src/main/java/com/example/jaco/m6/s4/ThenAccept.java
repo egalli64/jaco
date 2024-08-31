@@ -34,7 +34,7 @@ public class ThenAccept {
 
         log.info("Do something else until the future is not completed");
         while (!cf.isDone()) {
-            log.info("Main: {}", FakeTask.adder(2));
+            FakeTask.adder(2);
         }
 
         log.info("Joining on a Void CompletableFuture gives ... {}", cf.join());
