@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m5.s7;
+package com.example.jaco.m6.s4;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -31,12 +31,11 @@ public class ThenRun {
         CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> FakeTask.adder(100)) //
                 .thenRun(() -> log.trace("In the runner"));
 
-        log.trace("Do something else until the future is not completed");
+        log.info("Do something else until the future is not completed");
         while (!cf.isDone()) {
-            System.out.printf("Main thread result: %f\n", FakeTask.adder(10));
+            FakeTask.adder(10);
         }
 
-        System.out.println("The CompletableFuture returned by thenRun() is Void: " + cf.join());
-        log.trace("Exit");
+        log.info("Not much to see here: {}", cf.join());
     }
 }
