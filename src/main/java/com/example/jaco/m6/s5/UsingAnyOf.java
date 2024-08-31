@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m5.s7;
+package com.example.jaco.m6.s5;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -19,7 +19,9 @@ public class UsingAnyOf {
     private static final Logger log = LoggerFactory.getLogger(UsingAnyOf.class);
 
     /**
-     * Parallel execution of two CompletableFuture
+     * Create two asynchronous completable futures, create a new completable future
+     * that completes when all of them are completed. Do something else in main
+     * until it is done. Join the original ones.
      * 
      * @param args not used
      */
@@ -28,8 +30,11 @@ public class UsingAnyOf {
         CompletableFuture<Double> cf1 = CompletableFuture.supplyAsync(() -> FakeTask.adder(10));
         CompletableFuture<Double> cf2 = CompletableFuture.supplyAsync(() -> FakeTask.adder(10));
 
-        CompletableFuture<Object> completed = CompletableFuture.anyOf(cf1, cf2);
-        System.out.println("The first available result is " + completed.join());
-        log.trace("Exit");
+        CompletableFuture<Object> any = CompletableFuture.anyOf(cf1, cf2);
+        while (!any.isDone()) {
+            FakeTask.adder(10);
+        }
+
+        log.info("The first available result is {}", any.join());
     }
 }
