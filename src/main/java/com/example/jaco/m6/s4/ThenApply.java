@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m5.s7;
+package com.example.jaco.m6.s4;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -15,8 +15,7 @@ import com.example.jaco.m1.s3.FakeTask;
 /**
  * CompletableFuture::thenApply()
  * <p>
- * The previous stage result is passed to a function return another
- * CompletableFuture
+ * The previous stage result is passed to a function that maps it to a new value
  */
 public class ThenApply {
     private static final Logger log = LoggerFactory.getLogger(ThenApply.class);
@@ -30,15 +29,13 @@ public class ThenApply {
     public static void main(String[] args) {
         log.trace("Enter");
         CompletableFuture<String> cf = CompletableFuture.supplyAsync(() -> FakeTask.adder(2)) //
-                .thenApply(x -> "Worker: " + x + ", " + FakeTask.adder(10));
+                .thenApply(x -> x + ", " + FakeTask.adder(10));
 
-        log.trace("Do something else until the future is not completed");
+        log.info("Do something else until the future is not completed");
         while (!cf.isDone()) {
-            System.out.println("Main: " + FakeTask.adder(2));
+            FakeTask.adder(2);
         }
 
-        log.trace("Then join on the future");
-        System.out.println(cf.join());
-        log.trace("Exit");
+        log.info("Join gives: {}", cf.join());
     }
 }
