@@ -31,12 +31,12 @@ public class Handle {
 
         CompletableFuture<Double> cf = CompletableFuture.supplyAsync(() -> {
             if (ThreadLocalRandom.current().nextBoolean()) {
-                throw new RuntimeException("Something went wrong!");
+                throw new IllegalStateException("Something went wrong!");
             }
             return FakeTask.adder(10);
         }).handle((result, ex) -> {
             if (ex != null) {
-                log.warn("Exception occurred", ex);
+                log.warn("Fallback on exception", ex);
                 return 0.0;
             } else {
                 return result * FakeTask.adder(10);
