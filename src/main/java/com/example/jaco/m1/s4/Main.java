@@ -26,6 +26,7 @@ public class Main {
             Thread.sleep(delta);
         } catch (InterruptedException e) {
             log.error("Sleep interrupted", e);
+            Thread.currentThread().interrupt();
         }
 
         System.out.printf("...sleep ended @ %d%n", System.currentTimeMillis());
