@@ -27,7 +27,7 @@ public class MainForMyThread {
         System.out.println("- Create, start, and check the state of another thread");
 
         // Create another thread defined as extension of class Thread
-        Thread worker = new MyThread();
+        Thread worker = new MyThread("worker");
         // The thread state is NEW
         System.out.println("After creation, the worker thread state is " + worker.getState());
 
@@ -41,5 +41,8 @@ public class MainForMyThread {
         // At this point the worker state should be TERMINATED
         System.out.println("The worker thread state is now " + worker.getState());
         log.trace("Exit");
+
+        // !!! There's no guarantee that the worker thread has completed !!!
+        // We'll see how to ensure that - spoiler: the main thread could join on it
     }
 }
