@@ -43,7 +43,7 @@ public class Waiting {
         // when join() enters, the main thread is going to WAIT
         t1.join();
 
-        System.out.printf("Checking %s from main: it is %s\n", t1.getName(), t1.getState());
+        System.out.printf("From main, checking %s state: %s\n", t1.getName(), t1.getState());
         System.out.println("- Main is about to terminate -");
     }
 
@@ -56,7 +56,17 @@ public class Waiting {
     public static void aMethod() {
         log.info("Simulating a timed wait on a resource");
 
-        FakeTask.takeTimeAndCheckMain(500);
+        FakeTask.takeTime(500);
+
+        // getAllStackTraces() should be used for debugging, monitoring, profiling only!
+        for (Thread t : Thread.getAllStackTraces().keySet()) {
+            if (t.getName().equals("main")) {
+                State state = t.getState();
+                assert state == State.WAITING;
+                System.out.printf("Thread main is %s\n", state);
+                break;
+            }
+        }
 
         log.trace("Exit");
     }
