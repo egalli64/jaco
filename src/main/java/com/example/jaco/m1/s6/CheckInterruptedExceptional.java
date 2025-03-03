@@ -43,7 +43,8 @@ public class CheckInterruptedExceptional {
                     Thread.sleep(1);
 
                     double value = DoubleStream.generate(ThreadLocalRandom.current()::nextDouble).limit(10_000).sum();
-                    System.out.println("The result is " + value);
+                    System.out.print("The result is ");
+                    System.out.println(value);
                 }
                 // thread interrupted when in RUNNING state
                 log.info("(Fake) resource elaboration interrupted");
@@ -68,7 +69,7 @@ public class CheckInterruptedExceptional {
         // the worker could be running or waiting
         System.out.println("Worker state now is " + worker.getState());
 
-        System.out.println("Thread main decides it it time to cut it off");
+        System.out.println("Thread main requests worker interruption");
         worker.interrupt();
 
         // Let the worker time to manage the interrupt
