@@ -16,7 +16,7 @@ public class MyInterruptibleThread extends Thread {
     private static final Logger log = LoggerFactory.getLogger(MyInterruptibleThread.class);
 
     /**
-     * Used as the interrupted flag
+     * Custom termination flag (it is volatile to ensure visibility across threads)
      * 
      * @implNote do not call it "interrupted", as the original flag in Thread. It
      *           would be legal but confusing
@@ -40,6 +40,7 @@ public class MyInterruptibleThread extends Thread {
      * be terminated.
      */
     void shutdown() {
+        log.trace("Enter");
         done = true;
     }
 
@@ -57,7 +58,9 @@ public class MyInterruptibleThread extends Thread {
             } catch (InterruptedException e) {
                 log.warn("Interrupted ignored!");
             }
-            System.out.println(i++ + " calculated");
+            System.out.print(i);
+            i += 1;
+            System.out.println(" calculated");
         }
 
         log.trace("Exit");
