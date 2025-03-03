@@ -11,13 +11,15 @@ import org.slf4j.LoggerFactory;
 import com.example.jaco.m1.s3.FakeTask;
 
 /**
- * User of MyInterruptibleThread, show how to terminate a thread using a custom approach
+ * User of MyInterruptibleThread, show how to terminate a thread using a custom
+ * approach
  */
 public class CustomInterrupt {
     private static final Logger log = LoggerFactory.getLogger(CustomInterrupt.class);
 
     /**
-     * Create and start a MyInterruptibleThread. Standard interrupt is ignored, use shutdown() instead.
+     * Create and start a MyInterruptibleThread. Standard interrupt is ignored, use
+     * shutdown() instead.
      * 
      * @param args not used
      */
@@ -37,13 +39,13 @@ public class CustomInterrupt {
             // Ask the worker to interrupt, but it does not cooperate
             System.out.println("Interrupting worker");
             worker.interrupt();
-            worker.join(50);
+            garbler();
             if (worker.isAlive()) {
                 System.out.println("Interrupt rejected");
             }
 
             // Ask the worker to shutdown, and this approach is accepted
-            System.out.println("Shutting down worker");
+            System.out.println("Shutting down worker ...");
             worker.shutdown();
             worker.join(50);
             if (!worker.isAlive()) {
@@ -54,5 +56,20 @@ public class CustomInterrupt {
         }
 
         log.trace("Exit");
+    }
+
+    /**
+     * Put some garbage on console, to show a race condition at work
+     */
+    private static void garbler() {
+        for (int i = 0; i < 6; i++) {
+            try {
+                // Just a simulation! Thread.sleep() in seldom seen in production code
+                Thread.sleep(7);
+            } catch (InterruptedException e) {
+                log.warn("Interrupted ignored!");
+            }
+            System.out.print((char) ('A' + i));
+        }
     }
 }
