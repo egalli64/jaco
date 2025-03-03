@@ -18,6 +18,15 @@ import com.example.jaco.m1.s3.FakeTask;
 public class MyThread extends Thread {
     private static final Logger log = LoggerFactory.getLogger(MyThread.class);
 
+    /**
+     * Initialize the new thread with a given name
+     * 
+     * @param name the thread name
+     */
+    public MyThread(String name) {
+        super(name);
+    }
+
     @Override
     public void run() {
         log.trace("Enter");
