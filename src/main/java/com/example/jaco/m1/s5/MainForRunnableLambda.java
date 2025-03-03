@@ -36,7 +36,7 @@ public class MainForRunnableLambda {
         };
 
         // Inject a runnable in a thread
-        Thread worker = new Thread(runnable);
+        Thread worker = new Thread(runnable, "worker");
         // The thread state is NEW
         System.out.println("After creation, the worker thread state is " + worker.getState());
 
@@ -50,5 +50,8 @@ public class MainForRunnableLambda {
         // At this point the worker state should be TERMINATED
         System.out.println("The worker thread state is now " + worker.getState());
         log.trace("Exit");
+
+        // !!! There's no guarantee that the worker thread has completed !!!
+        // We'll see how to ensure that - spoiler: the main thread could join on it
     }
 }
