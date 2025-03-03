@@ -30,12 +30,12 @@ public class Main {
         log.trace("Enter");
 
         // Create another thread
-        Thread worker = new Thread(() -> System.out.println("A message from the worker"));
+        Thread worker = new Thread(() -> System.out.println("A message from the worker"), "worker");
 
         // The worker is NEW, not alive yet
         assert worker.getState() == State.NEW;
         if (!worker.isAlive()) {
-            log.trace("Before start, {} is not yet alive", worker.getName());
+            log.trace("Before start, {} is in state {}", worker.getName(), worker.getState());
         }
 
         worker.start();
@@ -45,12 +45,10 @@ public class Main {
             FakeTask.takeTime(10);
         }
 
-        assert worker.getState() == State.RUNNABLE || worker.getState() == State.TERMINATED;
-        if (worker.isAlive()) {
-            log.trace("After start, and the worker is alive (it could have been terminated)");
-        } else {
-            log.trace("After start, and the worker is terminated (it could have been alive)");
-        }
+        // The worker can now be either RUNNABLE or TERMINATED
+        State state = worker.getState();
+        assert state == State.RUNNABLE || state == State.TERMINATED;
+        log.trace("After start, and worker state is {}, meaning alive is {}", state, worker.isAlive());
 
         try {
             log.trace("Wait on worker termination");
