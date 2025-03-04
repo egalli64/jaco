@@ -11,16 +11,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An example of race condition. More threads have access to the same resource.
+ * An example of race condition. Multiple threads access the same resource
+ * (System.out) without synchronization, leading to garbled output
  */
 public class Race {
     private static final Logger log = LoggerFactory.getLogger(Race.class);
 
     /**
-     * Four threads using System.out with no synchronization
+     * Four threads writing to the console without synchronization
      * 
      * @param args not used
-     * @throws InterruptedException when join is interrupted
+     * @throws InterruptedException if join is interrupted
      */
     public static void main(String[] args) throws InterruptedException {
         log.trace("Enter");
@@ -41,18 +42,24 @@ public class Race {
         for (Thread thread : threads) {
             thread.join();
         }
+
+        System.out.println("Done");
         log.trace("Exit");
     }
 
     /**
-     * !!! BUGGED !!! Simulate access to user status and data print.
+     * !!! UNSAFE !!!
+     * 
+     * Simulate access to user status and print data without synchronization
      * <p>
-     * The output is done on a shared unprotected resource, expect garbling
+     * System.out is a shared resource and there is no synchronization. Output from
+     * different threads may interleave unpredictably
      * 
      * @param name the user name
      */
     public void printStatus(String name) {
         System.out.printf("Hello, %s. ", name);
+
         int score = ThreadLocalRandom.current().nextInt(100);
         if (score > 50) {
             System.out.print("Well done! ");
