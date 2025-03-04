@@ -22,6 +22,7 @@ public class SynchroStatic {
      */
     public static void main(String[] args) throws InterruptedException {
         log.trace("Enter");
+        // each object has its own instance lock
         SynchroStatic sy1 = new SynchroStatic();
         SynchroStatic sy2 = new SynchroStatic();
 
@@ -43,7 +44,7 @@ public class SynchroStatic {
     }
 
     /**
-     * Synchronized on the class object
+     * Synchronized on the class object (SynchroStatic.class)
      */
     private synchronized static void stat1() {
         log.trace("Enter");
@@ -52,7 +53,7 @@ public class SynchroStatic {
     }
 
     /**
-     * Synchronized on the class object
+     * Synchronized on the class object (SynchroStatic.class)
      */
     private synchronized static void stat2() {
         log.trace("Enter");
@@ -61,7 +62,15 @@ public class SynchroStatic {
     }
 
     /**
-     * Synchronized on this
+     * Synchronized on the current instance (this)
+     * <p>
+     * Each instance has its own lock, different objects can execute these methods
+     * concurrently
+     * <p>
+     * !!! This code is just a demo. There is a strong risk of deadlock if the code
+     * in the class gets more complicated than this. In production code try to avoid
+     * nested locking between instance-level and class-level. In modern code, use of
+     * Lock is preferred !!!
      */
     public synchronized void inst1() {
         log.trace("Enter");
@@ -72,7 +81,7 @@ public class SynchroStatic {
     }
 
     /**
-     * Synchronized on this
+     * Synchronized on the current instance (this)
      */
     public synchronized void inst2() {
         log.trace("Enter");
