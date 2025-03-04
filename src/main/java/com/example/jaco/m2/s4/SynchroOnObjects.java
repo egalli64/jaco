@@ -9,16 +9,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Finer synchronization, using more locks.
+ * Fine-grained synchronization using multiple locks
  * <p>
  * !!! Assume this is legacy code, see Lock for modern implementation !!!
  */
 public class SynchroOnObjects {
     private static final Logger log = LoggerFactory.getLogger(SynchroOnObjects.class);
 
-    private Object lockA = new Object();
+    private final Object lockA = new Object();
     private int resourceA = 0;
-    private Object lockB = new Object();
+    private final Object lockB = new Object();
     private int resourceB = 0;
 
     /**
@@ -54,11 +54,11 @@ public class SynchroOnObjects {
     }
 
     /**
-     * A and B are in read-only access, then there is no race condition on them
+     * Since A and B are read-only in this method, no race condition occurs
      */
     public synchronized void syncThis() {
         log.trace("Enter, lock on this");
-        System.out.printf("Accordingly to %s A is %d, B is %d%n", //
+        System.out.printf("Accordingly to %s A is %d, B is %d\n", //
                 Thread.currentThread().getName(), resourceA, resourceB);
         log.trace("Exit, unlock on this");
     }
@@ -91,6 +91,12 @@ public class SynchroOnObjects {
 
     /**
      * Synchronization for A and then B
+     * <p>
+     * !!! If another method need synchronization on both resources, the same order
+     * should be used, otherwise deadlocks may occur !!!
+     * <p>
+     * Consider using tryLock() with timeout in modern implementations
+     * 
      */
     public void syncAB() {
         log.trace("Enter");
