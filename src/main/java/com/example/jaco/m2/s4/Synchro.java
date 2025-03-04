@@ -11,7 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Avoid race condition even though more threads access the same resource
+ * Fix race condition by synchronizing access to System.out
+ * <p>
+ * Ensure that only one thread at a time can execute printStatus()
  */
 public class Synchro {
     private static final Logger log = LoggerFactory.getLogger(Synchro.class);
@@ -41,14 +43,17 @@ public class Synchro {
         for (Thread thread : threads) {
             thread.join();
         }
+
+        System.out.println("Done");
         log.trace("Exit");
     }
 
     /**
-     * Simulate access to user status and data print.
+     * Simulate access to user status and print data
      * <p>
-     * It is synchronized to protect the changes to System.out. If a thread enter
-     * this code, other threads should wait their turn.
+     * It is synchronized to protect System.out, only one thread can execute it at a
+     * time. Other threads attempting to executed it will block until the current
+     * thread completes.
      * 
      * @param name the user name
      */
