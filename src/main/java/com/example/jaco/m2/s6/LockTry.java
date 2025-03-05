@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Lock and ReentrantLock.
+ * Lock and ReentrantLock
  * <p>
  * Compare it to LockPlain, here tryLock() is used
  */
@@ -39,7 +39,7 @@ public class LockTry {
     }
 
     /**
-     * Run a few threads concurrently on the two resources.
+     * Run a few threads concurrently on the two resources
      * 
      * @param args not used
      * @throws InterruptedException in case of unexpected interrupted join
@@ -66,12 +66,15 @@ public class LockTry {
     }
 
     /**
-     * For threads accessing resource F
+     * Lock and modify resource F
      */
     public void syncOnF() {
         log.trace("Enter and try-lock on F");
         String name = Thread.currentThread().getName();
 
+        // Usually tryLock() is invoked with a timeout, waiting for a short period
+        // before giving up. Here we want to see the not-acquiring behavior more often
+        // than usually expected in real code
         if (lockF.tryLock()) {
             try {
                 double value = aRiskyJob();
@@ -89,7 +92,7 @@ public class LockTry {
     }
 
     /**
-     * For threads accessing resource G
+     * Lock and modify resource G
      */
     public void syncOnG() {
         log.trace("Enter and try-lock on G");
@@ -112,9 +115,9 @@ public class LockTry {
     }
 
     /**
-     * A job that could go wrong
+     * A job that could fail randomly
      * 
-     * @throws IllegalStateException if the job goes wrong
+     * @throws IllegalStateException if an invalid value is generated
      */
     private double aRiskyJob() {
         log.trace("Enter");
