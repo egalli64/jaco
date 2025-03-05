@@ -12,25 +12,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Thread communication - synchronized block as monitor: wait/notify
+ * Thread communication - synchronized block as monitor: wait/notifyAll
  * <p>
- * One Producer - Many Consumers, each consumer consumes a product and
+ * One Producer - Many Consumers, each consumer consumes a single product and
  * terminates
  */
 public class OneProdManyCons {
     private static final Logger log = LoggerFactory.getLogger(OneProdCon.class);
-    private static final int PRODUCT_NOT_READY = 0;
 
     /** The resource shared between threads */
-    private int product = PRODUCT_NOT_READY;
+    private Product product = new Product();
 
     /**
-     * Utility method for demonstration purposes
+     * Utility method to check thread states
      */
     private static synchronized void checkThreadStates() {
         log.trace("Enter");
         Thread[] ts = new Thread[6];
-        // Thread::enumerate() should be used only for debugging and monitoring purposes
+        // Thread.enumerate() should be used only for debugging and monitoring purposes
         int count = Thread.enumerate(ts);
         for (int i = 0; i < count; i++) {
             System.out.printf("%s is %s\n", ts[i].getName(), ts[i].getState());
@@ -39,24 +38,27 @@ public class OneProdManyCons {
     }
 
     /**
-     * The producer thread runs this method, that sets the shared resource.
+     * Generate products and notify consumers
      * <ul>
-     * <li>The production has to be terminated by interrupt.
-     * <li>After the production the producer notify all to consume it.
-     * <li>If there is a non-consumed product, the producer wait for its consumption
+     * <li>Run until interrupted
+     * <li>Notify all consumer after production
+     * <li>Ensure a product is consumed before generating the next one
      */
     private synchronized void produce() {
         log.trace("Enter");
+
+        int id = 0;
+
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 System.out.println("Producer is ready ... ");
-                product = ThreadLocalRandom.current().nextInt(1, 7);
-                System.out.printf("Producer generated %d and it is about to notify all for it\n", product);
+                product.produce(id++, ThreadLocalRandom.current().nextInt(1, 7));
+                System.out.printf("Producer generated %s and it is about to notify all for it\n", product);
 
                 checkThreadStates();
                 notifyAll();
-                while (product != PRODUCT_NOT_READY) {
-                    System.out.println("Producer waits");
+                while (!product.isConsumed()) {
+                    System.out.println("Producer waits product to be consumed");
                     wait();
                     System.out.println("Producer wait has ended");
                 }
@@ -65,17 +67,17 @@ public class OneProdManyCons {
             System.out.println("Producer wait has been interrupted");
             Thread.currentThread().interrupt();
         } finally {
-            if (product != PRODUCT_NOT_READY) {
-                System.out.println("Last product has not been consumed");
+            if (!product.isConsumed()) {
+                System.out.printf("Last product %s has not been consumed\n", product);
             }
             log.trace("Exit");
         }
     }
 
     /**
-     * Each consumer thread runs this method.
+     * Each consumer thread runs this method
      * <p>
-     * It waits the producer to set the product, then consumes it.
+     * Wait for a product, consume it, then terminate
      * 
      * @throws IllegalStateException if the thread is interrupted
      */
@@ -83,18 +85,20 @@ public class OneProdManyCons {
         log.trace("Enter");
         String tName = Thread.currentThread().getName();
         try {
-            while (product == PRODUCT_NOT_READY) {
-                System.out.println(tName + " waits");
+            while (!product.isProduced()) {
+                System.out.println(tName + " waits for a product");
                 wait();
                 System.out.println(tName + " wait is ended");
             }
 
-            System.out.printf("%s consumes %d and then notifies all about it before terminating\n", tName, product);
-            product = PRODUCT_NOT_READY;
+            int value = product.consume();
+            System.out.printf("%s has consumed %d, and is about to notify all about it\n", tName, value);
 
             checkThreadStates();
             notifyAll();
         } catch (InterruptedException e) {
+            // in this simple example, it is not legal interrupting a consumer
+            log.warn("Consumer interrupted while waiting the product to be produced");
             throw new IllegalStateException(e);
         }
         log.trace("Exit");
@@ -128,7 +132,7 @@ public class OneProdManyCons {
             consumer.join();
         }
 
-        System.out.println("No more consumer, interrupting producer");
+        System.out.println("All consumer finished, interrupting producer");
         producer.interrupt();
         producer.join();
 
