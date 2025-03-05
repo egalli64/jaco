@@ -14,13 +14,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Thread communication - synchronized block as monitor: wait/notify
  * <p>
- * One Producer - One Consumer
+ * Chain of exchanges between a single producer and single consumer
  */
-public class OneProdCon {
-    private static final Logger log = LoggerFactory.getLogger(OneProdCon.class);
+public class OneProdConChain {
+    private static final Logger log = LoggerFactory.getLogger(OneProdConChain.class);
 
     /** Number of product to be generated */
-    private static final int TOTAL_PRODUCTS = 3;
+    private static final int PRODUCT_NR = 3;
 
     /** The resource shared between two threads */
     private Product product = new Product();
@@ -37,7 +37,7 @@ public class OneProdCon {
         String tName = Thread.currentThread().getName();
 
         try {
-            for (int i = 0; i < TOTAL_PRODUCTS; i++) {
+            for (int i = 0; i < PRODUCT_NR; i++) {
                 product.produce(i, ThreadLocalRandom.current().nextInt(1, 7));
                 System.out.printf("%s has produced %s\n", tName, product);
 
@@ -45,7 +45,7 @@ public class OneProdCon {
                 notify();
 
                 // no need to wait after the last product has been produced
-                if (i < TOTAL_PRODUCTS - 1) {
+                if (i < PRODUCT_NR - 1) {
                     System.out.println(tName + " waits the product to be consumed");
                     wait();
                 }
@@ -70,7 +70,7 @@ public class OneProdCon {
         String tName = Thread.currentThread().getName();
 
         try {
-            for (int i = 0; i < TOTAL_PRODUCTS; i++) {
+            for (int i = 0; i < PRODUCT_NR; i++) {
                 System.out.println(tName + " requires a product");
 
                 // wait until the product is available - loop to avoid a spurious wake-up
@@ -102,7 +102,7 @@ public class OneProdCon {
      */
     public static void main(String[] args) throws InterruptedException {
         log.trace("Enter");
-        OneProdCon pc = new OneProdCon();
+        OneProdConChain pc = new OneProdConChain();
 
         System.out.println("Create and start consumer and producer");
         Thread[] threads = { new Thread(pc::producer, "producer"), new Thread(pc::consumer, "consumer") };
