@@ -19,50 +19,76 @@ import org.slf4j.LoggerFactory;
 public class OneProdCon {
     private static final Logger log = LoggerFactory.getLogger(OneProdCon.class);
 
-    private static final int PRODUCT_NOT_READY = 0;
+    /** Number of product to be generated */
+    private static final int TOTAL_PRODUCTS = 3;
 
     /** The resource shared between two threads */
-    private int product = PRODUCT_NOT_READY;
+    private Product product = new Product();
 
     /**
-     * The producer thread runs this method, that sets the shared resource.
+     * The producer thread runs this method to set the shared resource
      * <p>
-     * Once the job is done it notifies the consumer thread about it.
+     * It will produce TOTAL_PRODUCTS products before terminating. After each
+     * production notifies the (unique) consumer and waits till the consumer
+     * notifies the consumption.
      */
     private synchronized void producer() {
         log.trace("Enter");
+        String tName = Thread.currentThread().getName();
 
-        product = ThreadLocalRandom.current().nextInt(1, 7);
-        System.out.printf("%s has produced %d\n", Thread.currentThread().getName(), product);
-        // Since there is just one consumer, notifyAll() is not required
-        notify();
+        try {
+            for (int i = 0; i < TOTAL_PRODUCTS; i++) {
+                product.produce(i, ThreadLocalRandom.current().nextInt(1, 7));
+                System.out.printf("%s has produced %s\n", tName, product);
+
+                // there is just one consumer, no need to notifyAll()
+                notify();
+
+                // no need to wait after the last product has been produced
+                if (i < TOTAL_PRODUCTS - 1) {
+                    System.out.println(tName + " waits the product to be consumed");
+                    wait();
+                }
+            }
+        } catch (InterruptedException e) {
+            // in this simple example, it is not legal interrupting a consumer
+            log.warn("Producer interrupted while waiting the product to be consumed");
+            throw new IllegalStateException(e);
+        }
 
         log.trace("Exit");
     }
 
     /**
-     * The consumer thread runs this method.
+     * The consumer thread runs this method
      * <p>
-     * It waits the producer to set the product, then consumes it.
+     * It waits for the producer to set the product before consuming it. It loops
+     * until it consumes TOTAL_PRODUCTS products
      */
     private synchronized void consumer() {
         log.trace("Enter");
         String tName = Thread.currentThread().getName();
+
         try {
-            System.out.println(tName + " requires a product");
+            for (int i = 0; i < TOTAL_PRODUCTS; i++) {
+                System.out.println(tName + " requires a product");
 
-            // Wait until the product is available - loop to avoid a spurious wake-up
-            while (product == PRODUCT_NOT_READY) {
-                System.out.println(tName + " waits for the result");
-                wait();
-                System.out.println(tName + " wait has ended");
+                // wait until the product is available - loop to avoid a spurious wake-up
+                while (!product.isProduced()) {
+                    System.out.println(tName + " waits a product");
+                    wait();
+                    System.out.println(tName + " wait has ended");
+                }
+
+                // it is safe to assume that now product is ready to be consumed
+                System.out.printf("%s consumes %s\n", tName, product.consume());
+
+                // notify producer to produce next product
+                notify();
             }
-
-            // It is safe to assume that now product is ready to be consumed
-            System.out.printf("%s consumes %d\n", tName, product);
-            product = PRODUCT_NOT_READY;
         } catch (InterruptedException e) {
-            // In this simple case, it is not legal interrupting a consumer
+            // in this simple example, it is not legal interrupting a consumer
+            log.warn("Consumer interrupted while waiting the product to be produced");
             throw new IllegalStateException(e);
         }
         log.trace("Exit");
@@ -79,7 +105,7 @@ public class OneProdCon {
         OneProdCon pc = new OneProdCon();
 
         System.out.println("Create and start consumer and producer");
-        Thread[] threads = { new Thread(pc::consumer, "consumer"), new Thread(pc::producer, "producer") };
+        Thread[] threads = { new Thread(pc::producer, "producer"), new Thread(pc::consumer, "consumer") };
         Arrays.stream(threads).forEach(Thread::start);
 
         System.out.println("Nothing else to do in main");
