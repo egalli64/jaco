@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * terminates
  */
 public class OneProdManyCons {
-    private static final Logger log = LoggerFactory.getLogger(OneProdCon.class);
+    private static final Logger log = LoggerFactory.getLogger(OneProdManyCons.class);
 
     /** The resource shared between threads */
     private Product product = new Product();
