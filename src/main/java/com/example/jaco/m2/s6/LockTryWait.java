@@ -6,19 +6,19 @@
 package com.example.jaco.m2.s6;
 
 import java.util.Arrays;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.DoubleStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.jaco.m1.s3.FakeTask;
+
 /**
- * Lock and ReentrantLock.
+ * Lock and ReentrantLock
  * <p>
- * Compare it to LockTry, here tryLock() is used
+ * Compare it to LockTry, here tryLock() is used with a timeout
  */
 public class LockTryWait {
     private static final Logger log = LoggerFactory.getLogger(LockTryWait.class);
@@ -80,12 +80,14 @@ public class LockTryWait {
         try {
             locked = lockF.tryLock(50, TimeUnit.MILLISECONDS);
             if (locked) {
-                double value = aLongishJob();
+                // take some time, but the next tryLock should get the lock anyway
+                double value = FakeTask.calc(1_000);
                 System.out.printf("%s is adding %f to F\n", name, value);
                 resourceF += value;
             }
         } catch (InterruptedException ex) {
             log.warn("wait on lock unexpectedly interrupted ", ex);
+            Thread.currentThread().interrupt();
         } finally {
             if (locked) {
                 log.trace("Unlock F then exit");
@@ -109,12 +111,14 @@ public class LockTryWait {
         try {
             locked = lockG.tryLock(5, TimeUnit.MILLISECONDS);
             if (locked) {
-                double value = aLongishJob();
+                // take some time, so maybe the next tryLock can't get the lock
+                double value = FakeTask.calc(1_000);
                 System.out.printf("%s is adding %f to G\n", name, value);
                 resourceG += value;
             }
         } catch (InterruptedException ex) {
             log.warn("wait on lock unexpectedly interrupted ", ex);
+            Thread.currentThread().interrupt();
         } finally {
             if (locked) {
                 log.trace("Unlock G then exit");
@@ -123,15 +127,5 @@ public class LockTryWait {
                 log.warn("Exit without doing anything, lock was not available in the given time frame");
             }
         }
-    }
-
-    /**
-     * Just take some times running
-     * 
-     * @return a value
-     */
-    private double aLongishJob() {
-        log.trace("Enter");
-        return DoubleStream.generate(() -> Math.cbrt(ThreadLocalRandom.current().nextDouble())).limit(1_000).sum();
     }
 }
