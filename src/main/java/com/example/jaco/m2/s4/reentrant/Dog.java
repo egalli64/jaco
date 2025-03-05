@@ -9,15 +9,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Reentrant lock
+ * Base dog with synchronized barking
  */
 public class Dog {
     private static final Logger log = LoggerFactory.getLogger(Dog.class);
 
     /**
-     * Let a dog bark.
+     * Let a dog bark
      * <p>
-     * Being synchronized only one thread could run this code in a given moment.
+     * Being synchronized (implicitly on this), only one thread could run this code
+     * at a time per instance
      */
     public synchronized void bark() {
         log.trace("Enter");

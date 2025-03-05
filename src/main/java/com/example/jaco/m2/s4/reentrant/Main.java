@@ -9,14 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Reentrant lock
+ * Reentrant locking with synchronized methods
  */
 public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     /**
-     * A call to a synchronized method that calls another synchronized method on the
-     * same lock
+     * Call a synchronized method that calls another synchronized method on the same
+     * lock
      * 
      * @param args not used
      */
