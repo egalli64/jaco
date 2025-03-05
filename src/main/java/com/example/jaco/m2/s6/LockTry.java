@@ -73,8 +73,7 @@ public class LockTry {
         String name = Thread.currentThread().getName();
 
         // Usually tryLock() is invoked with a timeout, waiting for a short period
-        // before giving up. Here we want to see the not-acquiring behavior more often
-        // than usually expected in real code
+        // before giving up. See LockTryWait example for details
         if (lockF.tryLock()) {
             try {
                 double value = aRiskyJob();
@@ -98,6 +97,7 @@ public class LockTry {
         log.trace("Enter and try-lock on G");
         String name = Thread.currentThread().getName();
 
+        // Usually tryLock() is invoked with a timeout, see LockTryWait example
         if (lockG.tryLock()) {
             try {
                 double value = aRiskyJob();
