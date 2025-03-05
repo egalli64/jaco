@@ -39,7 +39,7 @@ public class LockPlain {
     }
 
     /**
-     * Run a few threads concurrently on the two resources.
+     * Run a few threads concurrently on the two resources
      * 
      * @param args not used
      * @throws InterruptedException in case of unexpected interrupted join
@@ -68,14 +68,14 @@ public class LockPlain {
     }
 
     /**
-     * For threads accessing resource F
+     * Lock and modify resource F
      */
     public void syncOnF() {
-        log.trace("Enter and lock on F");
         String name = Thread.currentThread().getName();
-
+        lockF.lock();
+        log.trace("Lock acquired on F");
+        
         try {
-            lockF.lock();
             double value = aRiskyJob();
             System.out.printf("%s is adding %f to F\n", name, value);
             resourceF += value;
@@ -88,14 +88,14 @@ public class LockPlain {
     }
 
     /**
-     * For threads accessing resource G
+     * Lock and modify resource G
      */
     public void syncOnG() {
-        log.trace("Enter and lock on G");
         String name = Thread.currentThread().getName();
-
+        lockG.lock();
+        log.trace("Lock acquired on G");
+        
         try {
-            lockG.lock();
             double value = aRiskyJob();
             System.out.printf("%s is adding %f to G\n", name, value);
             resourceG += value;
@@ -108,9 +108,9 @@ public class LockPlain {
     }
 
     /**
-     * A job that could go wrong
+     * A job that could fail randomly
      * 
-     * @throws IllegalStateException if the job goes wrong
+     * @throws IllegalStateException if an invalid value is generated 
      */
     private double aRiskyJob() {
         log.trace("Enter");
