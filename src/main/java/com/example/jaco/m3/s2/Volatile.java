@@ -11,10 +11,10 @@ import org.slf4j.LoggerFactory;
 import com.example.jaco.m1.s3.FakeTask;
 
 /**
- * Thread communication - weak synchronization by volatile.
+ * Thread communication - weak synchronization by volatile
  * <p>
  * More threads could work on a volatile variable, but only one of them should
- * be allowed to change it.
+ * be allowed to change it
  */
 public class Volatile {
     private static final Logger log = LoggerFactory.getLogger(Volatile.class);
@@ -26,18 +26,18 @@ public class Volatile {
 
     /**
      * Main thread and runner communicates over two volatile variables. No need of
-     * synchronization.
+     * synchronization
      * 
      * @param args not used
-     * @throws InterruptedException - no interrupt is expected
+     * @throws InterruptedException - no interrupt is expected here
      */
     public static void main(String[] args) throws InterruptedException {
         log.trace("Enter");
         Thread worker = new Thread(() -> {
             log.trace("Enter");
-            // run is read
+            // run is read - worker needs to see its actual value
             while (run) {
-                // counter is written
+                // counter is written - main needs to see its actual value
                 counter += 1;
             }
             log.trace("Exit");
@@ -45,13 +45,13 @@ public class Volatile {
         worker.start();
 
         // do something in main thread, give time to worker thread to kick in
-        FakeTask.takeTime(0);
+        FakeTask.takeTime(1);
 
-        // run is written
+        // run is written - worker needs to see its actual value
         run = false;
         worker.join();
 
-        // counter is read
+        // counter is read - main needs to see its actual value
         System.out.println("Calculated by worker: " + counter);
         log.trace("Exit");
     }
