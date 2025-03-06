@@ -28,9 +28,9 @@ public class OneProdConChain {
     /**
      * The producer thread runs this method to set the shared resource
      * <p>
-     * It will produce TOTAL_PRODUCTS products before terminating. After each
-     * production notifies the (unique) consumer and waits till the consumer
-     * notifies the consumption.
+     * It will produce PRODUCT_NR products before terminating. After each production
+     * notifies the (unique) consumer and waits till the consumer notifies the
+     * consumption.
      */
     private synchronized void producer() {
         log.trace("Enter");
@@ -63,7 +63,7 @@ public class OneProdConChain {
      * The consumer thread runs this method
      * <p>
      * It waits for the producer to set the product before consuming it. It loops
-     * until it consumes TOTAL_PRODUCTS products
+     * until it consumes PRODUCT_NR products
      */
     private synchronized void consumer() {
         log.trace("Enter");
@@ -95,10 +95,11 @@ public class OneProdConChain {
     }
 
     /**
-     * Start consumer and producer, then join them.
+     * Start consumer and producer, then join on them.
      * 
      * @param args not used
-     * @throws InterruptedException when a join is interrupted
+     * @throws InterruptedException  join interrupted
+     * @throws IllegalStateException wait interrupted in producer or consumer
      */
     public static void main(String[] args) throws InterruptedException {
         log.trace("Enter");
