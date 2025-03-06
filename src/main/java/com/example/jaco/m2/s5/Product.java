@@ -8,10 +8,12 @@ package com.example.jaco.m2.s5;
 /**
  * The product for Producer / Consumer
  */
-class Product {
+public class Product {
+    /** Product id, not really used */
     private int id;
+    /** The actual product payload */
     private int value;
-    /** a product could be produced or consumed */
+    /** A product could be produced or consumed */
     private boolean consumed;
 
     /**
