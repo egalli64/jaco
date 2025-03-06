@@ -13,6 +13,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.jaco.m2.s5.Product;
+
 /**
  * Lock and Condition
  * <p>
@@ -25,28 +27,26 @@ public class OneProdConChain {
     /** Number of products the producer is going to produce */
     private static final int PRODUCT_NR = 3;
 
-    private int product;
-    /** false if the product is not ready for consumption */
-    private boolean produced;
+    private Product product;
     private final Lock lock;
-    private final Condition availablility;
+    private final Condition availability;
     private final Condition consumption;
 
     /**
      * Constructor
      */
     public OneProdConChain() {
-        this.produced = false;
+        this.product = new Product();
         this.lock = new ReentrantLock();
-        this.availablility = lock.newCondition();
+        this.availability = lock.newCondition();
         this.consumption = lock.newCondition();
     }
 
     /**
-     * For the producer thread.
+     * For the producer thread
      * <p>
      * Produce the requested products, once a time, signaling its availability then
-     * terminate.
+     * terminate
      */
     private void produce() {
         log.trace("Enter");
@@ -55,16 +55,15 @@ public class OneProdConChain {
             lock.lock();
             try {
                 log.trace("Lock acquired");
-                while (produced) {
+                while (!product.isConsumed()) {
                     log.trace("Wait for product consumption");
                     consumption.await();
                     log.trace("Consumption has been signaled");
                 }
 
-                product = ThreadLocalRandom.current().nextInt(1, 7);
-                produced = true;
+                product.produce(i, ThreadLocalRandom.current().nextInt(1, 7));
                 System.out.println("Producer signals production of " + product);
-                availablility.signal();
+                availability.signal();
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
                 log.warn("Exit with an unexpected interruption when waiting on consumption", ex);
@@ -78,7 +77,7 @@ public class OneProdConChain {
     }
 
     /**
-     * For the consumer thread.
+     * For the consumer thread
      * <p>
      * Acquire the lock, if the product is not ready, await() on the condition for
      * it. Then consume it.
@@ -91,14 +90,14 @@ public class OneProdConChain {
             lock.lock();
             log.trace("Lock acquired");
             try {
-                while (!produced) {
+                while (!product.isProduced()) {
                     log.trace("Wait for product availability");
-                    availablility.await();
+                    availability.await();
                     log.trace("Availablility has been signaled");
                 }
 
-                System.out.printf("%s signals that %d has been consumed\n", name, product);
-                produced = false;
+                int value = product.consume();
+                System.out.printf("%s signals consumption of product: %d\n", name, value);
                 consumption.signal();
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
