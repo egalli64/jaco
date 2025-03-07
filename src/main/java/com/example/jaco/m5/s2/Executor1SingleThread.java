@@ -8,7 +8,6 @@ package com.example.jaco.m5.s2;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.DoubleAdder;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,9 @@ public class Executor1SingleThread {
 
         final long start = System.currentTimeMillis();
         try (ExecutorService executor = Executors.newSingleThreadExecutor()) {
-            Stream.generate(() -> new Thread(task)).limit(TASK_NR).forEach(executor::execute);
+            for (int i = 0; i < TASK_NR; i++) {
+                executor.execute(task);
+            }
         }
         System.out.printf("Result is %.2f (%d ms)\n", result.sum(), System.currentTimeMillis() - start);
 
