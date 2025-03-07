@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.example.jaco.m1.s3.FakeTask;
 
 /**
- * Using a CyclicBarrier in a loop, plus interrupting workers and reset barrier.
+ * Using a CyclicBarrier in a loop, plus interrupting workers and reset barrier
  */
 public class BarrierLoop {
     private static final Logger log = LoggerFactory.getLogger(BarrierLoop.class);
@@ -45,22 +45,21 @@ public class BarrierLoop {
         Runnable worker = () -> {
             log.trace("Enter");
 
+            // Simulate the work done by the current thread
             double value = FakeTask.adder(100);
-            log.debug("Value {}", value);
+            log.debug("Generated value: {}", value);
             accumulator.add(value);
             try {
                 barrier.await();
             } catch (InterruptedException | BrokenBarrierException ex) {
-                String name = Thread.currentThread().getName();
                 long time = System.nanoTime() / 1000 % 10_000;
-                System.out.printf("%s, wait interrupted @%d %s\n", name, time, ex);
+                log.warn("Interrupted @{} μs by {}", time, ex.getClass().getSimpleName());
             }
 
             log.trace("Exit");
         };
 
         // Loop on the barrier
-        String name = Thread.currentThread().getName();
         for (int i = 0; i < LOOP_NR; i++) {
             Stream.generate(() -> new Thread(worker)).limit(TASK_NR).forEach(Thread::start);
 
@@ -70,7 +69,7 @@ public class BarrierLoop {
                 log.warn("Wait on barrier interrupted", ex);
             }
 
-            System.out.printf("In %s: %f (%d)\n", name, accumulator.sum(), i);
+            System.out.printf("In main: %f (%d)\n", accumulator.sum(), i);
         }
 
         // Prepare another loop, but then reset it
@@ -78,7 +77,8 @@ public class BarrierLoop {
         new Thread(worker, "B2").start();
 
         // BrokenBarrierException expected for both B1 and B2
-        System.out.println("Giving time for the workers to kick in: " + FakeTask.adder(10));
+        double value = FakeTask.adder(10);
+        System.out.println("A fake task (before barrier reset) generated: " + value);
         barrier.reset();
 
         // Prepare another loop, but then interrupt a worker
@@ -87,6 +87,7 @@ public class BarrierLoop {
         new Thread(worker, "I2").start();
 
         // InterruptedException expected for I1, BrokenBarrierException for I2
+        System.out.println("Interrupting I1 from main ...");
         ti1.interrupt();
         log.trace("Exit");
     }
