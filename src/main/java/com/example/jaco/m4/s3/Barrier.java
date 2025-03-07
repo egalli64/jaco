@@ -35,10 +35,12 @@ public class Barrier {
     public static void main(String[] args) {
         log.trace("Enter");
         // put workers and main thread on the barrier
-        CyclicBarrier barrier = new CyclicBarrier(TASK_NR + 1, () -> log.info("Tripping!"));
+        CyclicBarrier barrier = new CyclicBarrier(TASK_NR + 1,
+                () -> log.info("All threads have reached the barrier: tripping!"));
         // an atomic double keeps the total
         DoubleAdder accumulator = new DoubleAdder();
 
+        // the runnable task for each worker
         Runnable worker = () -> {
             log.trace("Enter");
 
@@ -46,10 +48,10 @@ public class Barrier {
             log.debug("Value is {}", value);
             accumulator.add(value);
             try {
-                // the current worker thread waits on the barrier
+                log.debug("Waiting at barrier...");
                 barrier.await();
             } catch (InterruptedException | BrokenBarrierException ex) {
-                log.warn("Wait on barrier interrupted", ex);
+                log.warn("Wait on barrier interrupted or broken", ex);
             }
 
             log.trace("Exit");
@@ -62,9 +64,10 @@ public class Barrier {
             // the main thread waits on the barrier
             barrier.await();
         } catch (InterruptedException | BrokenBarrierException ex) {
-            log.warn("Wait on barrier interrupted", ex);
+            log.warn("Wait on barrier interrupted or broken", ex);
         }
 
+        // After barrier is tripped, main thread checks the result
         System.out.println("Total is " + accumulator.sum());
         log.trace("Exit");
     }
