@@ -9,7 +9,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.DoubleAdder;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,15 +39,19 @@ public class Executor1SingleThreadExplicit {
         };
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        Stream.generate(() -> new Thread(task)).limit(TASK_NR).forEach(executor::execute);
+        for (int i = 0; i < TASK_NR; i++) {
+            executor.execute(task);
+        }
 
         // before Java 19, shutdown must be explicit
         executor.shutdown();
         try {
             // give some reasonable time to the pending tasks to terminate
-            executor.awaitTermination(100, TimeUnit.MILLISECONDS);
+            if (!executor.awaitTermination(1, TimeUnit.SECONDS)) {
+                log.warn("Executor did not terminate in the expected time");
+            }
         } catch (InterruptedException e) {
-            log.warn("Unexpected", e);
+            log.warn("Interrupted while waiting for tasks to finish", e);
             Thread.currentThread().interrupt();
         }
         System.out.println("Result is " + result.sum());
