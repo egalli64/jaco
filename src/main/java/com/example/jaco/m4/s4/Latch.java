@@ -39,11 +39,12 @@ public class Latch {
         Runnable worker = () -> {
             log.trace("Enter");
 
+            // Simulate the work done by the thread
             double value = FakeTask.adder(100);
             accumulator.add(value);
             latch.countDown();
 
-            log.trace("Exit value {}, latch {}", value, latch.getCount());
+            log.trace("Exit value {}, latch is currently {}", value, latch.getCount());
         };
 
         Stream.generate(() -> new Thread(worker)).limit(TASK_NR).forEach(t -> t.start());
@@ -54,9 +55,8 @@ public class Latch {
             log.trace("Main sees countdown completed: {}", latch.getCount());
         } catch (InterruptedException ex) {
             log.warn("Wait on latch unexpectedly interrupted", ex);
-            return;
         }
-        System.out.println("Result: " + accumulator.sum());
+        System.out.printf("Result: %.2f\n", accumulator.sum());
 
         log.trace("Exit");
     }
