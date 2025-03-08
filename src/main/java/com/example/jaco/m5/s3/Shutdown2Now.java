@@ -8,7 +8,6 @@ package com.example.jaco.m5.s3;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,16 +41,8 @@ public class Shutdown2Now {
 
         log.info("{} tasks have been canceled", canceled.size());
 
-        try {
-            if (!es.awaitTermination(1, TimeUnit.SECONDS)) {
-                log.warn("Executor did not terminate in time");
-            } else {
-                log.info("Executor terminated successfully");
-            }
-        } catch (InterruptedException e) {
-            log.error("Interrupted while waiting for termination", e);
-            Thread.currentThread().interrupt();
-        }
+        // notice that the main thread do not wait for the executor to end
+        // see awaitTermination() - next example
 
         log.trace("Exit");
     }
