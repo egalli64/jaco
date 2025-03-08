@@ -54,7 +54,7 @@ public class Executor1SingleThreadExplicit {
             log.warn("Interrupted while waiting for tasks to finish", e);
             Thread.currentThread().interrupt();
         }
-        System.out.println("Result is " + result.sum());
+        System.out.printf("Result is %.2f\n", result.sum());
 
         log.trace("Exit");
     }
