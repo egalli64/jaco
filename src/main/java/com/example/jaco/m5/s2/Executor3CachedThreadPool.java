@@ -8,7 +8,7 @@ package com.example.jaco.m5.s2;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
+import java.util.stream.IntStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.example.jaco.m1.s3.FakeTask;
 
 /**
- * Executor, ThreadPoolExecutor via Executors::newCachedThreadPool()
+ * Executor, ThreadPoolExecutor via Executors.newCachedThreadPool()
  */
 public class Executor3CachedThreadPool {
     private static final Logger log = LoggerFactory.getLogger(Executor3CachedThreadPool.class);
@@ -38,7 +38,7 @@ public class Executor3CachedThreadPool {
 
         try (ExecutorService executor = Executors.newCachedThreadPool()) {
             // Pass n Hello runnable to the executor
-            Consumer<Integer> batch = n -> Stream.generate(() -> new Thread(task)).limit(n).forEach(executor::execute);
+            Consumer<Integer> batch = n -> IntStream.range(0, n).forEach(i -> executor.execute(task));
 
             System.out.println("Running the first batch of jobs ...");
             batch.accept(TASK_NR);
