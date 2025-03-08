@@ -37,14 +37,15 @@ public class Shutdown1Reject {
         }
 
         es.shutdown();
-        System.out.println("Shutdown is started");
+        System.out.println("Calling for shutdown");
 
         try {
-            es.execute(() -> System.out.println("Rejected"));
+            es.execute(() -> System.out.println("This task should be rejected"));
         } catch (RejectedExecutionException ex) {
             log.info("Can't add a task after shutdown");
         }
 
+        // the executor service go on working with the pending tasks
         log.trace("Exit");
     }
 }
