@@ -40,19 +40,20 @@ public class Shutdown3Await {
         }
 
         es.shutdown();
-        System.out.println("Shutdown is started");
+        System.out.println("Calling for shutdown");
 
         try {
             // Wait a while for existing tasks to terminate
-            if (!es.awaitTermination(60, TimeUnit.SECONDS)) {
+            if (!es.awaitTermination(10, TimeUnit.SECONDS)) {
                 // Cancel currently executing tasks
                 es.shutdownNow();
                 // Wait a while for tasks to respond to being cancelled
-                if (!es.awaitTermination(60, TimeUnit.SECONDS))
-                    System.err.println("Pool did not terminate");
+                if (!es.awaitTermination(10, TimeUnit.SECONDS))
+                    log.error("Pool did not terminate");
             }
         } catch (InterruptedException ex) {
             // (Re-)Cancel if current thread also interrupted
+            log.error("Shutdown interrupted, forcing shutdown", ex);
             es.shutdownNow();
             // Preserve interrupt status
             Thread.currentThread().interrupt();
