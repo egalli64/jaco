@@ -15,6 +15,8 @@ import com.example.jaco.m1.s3.FakeTask;
 
 /**
  * delegate the shutdown() of a single thread executor to try with resources
+ * 
+ * @apiNote auto-closeable ExecutorService is a Java 19
  */
 public class Shutdown4Modern {
     private static final Logger log = LoggerFactory.getLogger(Shutdown4Modern.class);
@@ -28,6 +30,7 @@ public class Shutdown4Modern {
     public static void main(String[] args) {
         log.trace("Enter");
 
+        // implicit shutdown
         try (ExecutorService es = Executors.newSingleThreadExecutor()) {
             for (int i = 0; i < TASK_NR; i++) {
                 es.execute(() -> FakeTask.adder(1_000_000));
