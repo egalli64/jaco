@@ -3,8 +3,9 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m5.s6;
+package com.example.jaco.m6.x1;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,36 +17,31 @@ import org.slf4j.LoggerFactory;
 import com.example.jaco.m1.s3.FakeTask;
 
 /**
- * Submit a Runnable to an Executor
+ * Submit a Callable to an Executor
  */
-public class SvcSubmit1Runnable {
-    private static final Logger log = LoggerFactory.getLogger(SvcSubmit1Runnable.class);
+public class SvcSubmit2Callable {
+    private static final Logger log = LoggerFactory.getLogger(SvcSubmit2Callable.class);
 
     /**
-     * Create a Runnable, submit it to an Executor
+     * Create a Callable, submit it to an Executor
      * <p>
      * The Future returned by submit() allows the caller to interact with the
-     * runnable execution on the Executor
+     * callable execution on the Executor
      * 
      * @param args not used
      */
     public static void main(String[] args) {
         log.trace("Enter");
 
-        Runnable task = () -> {
-            log.trace("Runnable started");
-            FakeTask.adder(40_000);
+        Callable<Double> task = () -> {
+            log.trace("Callable started");
+            return FakeTask.adder(40_000);
         };
 
-        /*
-         * We can force submit() to push into the future a result of a given type
-         * 
-         * If the result type/value is interesting, a Future<?> could be used instead;
-         * in this case, future.get() would return null
-         */
-        Future<String> future;
+        // the future type should match with the callable type
+        Future<Double> future;
         try (ExecutorService executor = Executors.newSingleThreadExecutor()) {
-            future = executor.submit(task, "OK!");
+            future = executor.submit(task);
 
             log.trace("While the executor works on the task, do something in the main thread");
             while (!future.isDone()) {

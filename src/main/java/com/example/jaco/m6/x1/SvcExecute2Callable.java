@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m5.s6;
+package com.example.jaco.m6.x1;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -16,26 +16,26 @@ import org.slf4j.LoggerFactory;
 import com.example.jaco.m1.s3.FakeTask;
 
 /**
- * Execute a Runnable on an Executor as FutureTask
+ * Execute a Callable on an Executor as FutureTask
  */
-public class SvcExecute1Runnable {
-    private static final Logger log = LoggerFactory.getLogger(SvcExecute1Runnable.class);
+public class SvcExecute2Callable {
+    private static final Logger log = LoggerFactory.getLogger(SvcExecute2Callable.class);
 
     /**
-     * Create a future task from a Runnable, execute it on an Executor
+     * Create a future task from a Callable, execute it on an Executor
      * <p>
      * Being the task a Runnable, could be passed to execute(), being a Future,
      * could be used by the caller to interact with its execution on the Executor
      * 
      * @param args not used
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         log.trace("Enter");
 
-        FutureTask<String> task = new FutureTask<>(() -> {
-            log.trace("Runnable started");
-            FakeTask.adder(40_000);
-        }, "OK!");
+        FutureTask<Double> task = new FutureTask<>(() -> {
+            log.trace("Future task started");
+            return FakeTask.adder(40_000);
+        });
 
         try (ExecutorService executor = Executors.newSingleThreadExecutor()) {
             executor.execute(task);

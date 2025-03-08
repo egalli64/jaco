@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m5.s6;
+package com.example.jaco.m6.x1;
 
 import java.util.List;
 import java.util.concurrent.Callable;
