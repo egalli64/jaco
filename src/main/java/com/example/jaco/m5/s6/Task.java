@@ -3,17 +3,16 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m5.s4.task;
+package com.example.jaco.m5.s6;
 
-import java.util.List;
 import java.util.concurrent.RecursiveTask;
 
 /**
- * A recursive task for Fork/Join
+ * A recursive task for Fork/Join - explicit fork/join
  */
 @SuppressWarnings("serial")
-public class CubeAdderRecursiveTask extends RecursiveTask<Double> {
-    /** Where the recursion should stop - it is our responsibility to find a good value */
+public class Task extends RecursiveTask<Double> {
+    /** It is our responsibility to determine where the recursion should stop */
     private static final int THRESHOLD = 200_000;
 
     private double[] data;
@@ -27,7 +26,7 @@ public class CubeAdderRecursiveTask extends RecursiveTask<Double> {
      * @param begin left index in the current interval (included)
      * @param end   right index in the current interval (excluded)
      */
-    public CubeAdderRecursiveTask(double[] data, int begin, int end) {
+    public Task(double[] data, int begin, int end) {
         this.data = data;
         this.begin = begin;
         this.end = end;
@@ -42,16 +41,12 @@ public class CubeAdderRecursiveTask extends RecursiveTask<Double> {
             }
             return result;
         } else {
-            CubeAdderRecursiveTask left = new CubeAdderRecursiveTask(data, begin, (begin + end) / 2);
-            CubeAdderRecursiveTask right = new CubeAdderRecursiveTask(data, (begin + end) / 2, end);
+            int middle = (begin + end) / 2;
+            Task left = new Task(data, begin, middle);
+            Task right = new Task(data, middle, end);
 
-            // explicit fork - compute - join
-//            right.fork();
-//            return left.compute() + right.join();
-            
-            // implicit fork - compute by ForkJoinTask.invokeAll()
-            invokeAll(List.of(left, right));
-            return left.join() + right.join();
+            right.fork();
+            return left.compute() + right.join();
         }
     }
 }
