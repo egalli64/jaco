@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m6.x1;
+package com.example.jaco.m6.s2;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -22,7 +22,7 @@ public class SvcExecute1Runnable {
     private static final Logger log = LoggerFactory.getLogger(SvcExecute1Runnable.class);
 
     /**
-     * Create a future task from a Runnable, execute it on an Executor
+     * Create a future task from a Runnable, execute it on an ExecutorService
      * <p>
      * Being the task a Runnable, could be passed to execute(), being a Future,
      * could be used by the caller to interact with its execution on the Executor
@@ -49,7 +49,7 @@ public class SvcExecute1Runnable {
         try {
             System.out.println("Task result is " + task.get());
         } catch (InterruptedException ex) {
-            log.warn("Unexpected", ex);
+            log.warn("Unexpectedly interrupted while waiting for the task to complete", ex);
             Thread.currentThread().interrupt();
         } catch (ExecutionException ex) {
             log.error("Error in task execution", ex);
