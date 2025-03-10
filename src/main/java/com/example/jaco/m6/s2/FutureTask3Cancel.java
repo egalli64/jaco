@@ -17,7 +17,7 @@ import com.example.jaco.m1.s3.FakeTask;
 /**
  * Running a FutureTask with a Callable.
  * <p>
- * Basic asynchronous execution and result retrieval
+ * Basic asynchronous execution but cancel before getting the result
  */
 public class FutureTask3Cancel {
     private static final Logger log = LoggerFactory.getLogger(FutureTask3Cancel.class);
@@ -36,7 +36,7 @@ public class FutureTask3Cancel {
             for (int i = 0; i < 40; i++) {
                 if (Thread.currentThread().isInterrupted()) {
                     log.trace("Task interrupted!");
-                    // interrupted task can access this value, cancelled one not
+                    // useless in case of cancel
                     return result;
                 }
                 result += FakeTask.adder(1_000);
@@ -46,14 +46,13 @@ public class FutureTask3Cancel {
             return result;
         });
 
-        // start the FutureTask in a new thread
         new Thread(task).start();
 
         log.trace("While calculating the future task, do something in the main thread");
         double result = FakeTask.adder(10_000);
         System.out.println("Main thread result is " + result);
 
-        // something happens that push to cancel the task
+        // something happens that requires to cancel the task
         if (task.cancel(true)) {
             log.trace("Cancel accepted");
         } else {
@@ -61,7 +60,7 @@ public class FutureTask3Cancel {
         }
 
         try {
-            // Attempt to get the result (will throw if cancelled)
+            // Attempt to get the result (will throw after cancel)
             System.out.println("Task result: " + task.get());
         } catch (CancellationException ex) {
             log.info("Task cancelled!");
