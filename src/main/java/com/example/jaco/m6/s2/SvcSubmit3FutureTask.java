@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m6.x1;
+package com.example.jaco.m6.s2;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -51,7 +51,7 @@ public class SvcSubmit3FutureTask {
         try {
             System.out.println("Task result is " + task.get());
         } catch (InterruptedException ex) {
-            log.warn("Unexpected", ex);
+            log.warn("Unexpectedly interrupted while waiting for the task to complete", ex);
             Thread.currentThread().interrupt();
         } catch (ExecutionException ex) {
             log.error("Error in task execution", ex);
