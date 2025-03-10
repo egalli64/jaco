@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m6.x1;
+package com.example.jaco.m6.s2;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -26,7 +26,7 @@ public class SvcSubmit2Callable {
      * Create a Callable, submit it to an Executor
      * <p>
      * The Future returned by submit() allows the caller to interact with the
-     * callable execution on the Executor
+     * Callable execution
      * 
      * @param args not used
      */
@@ -38,7 +38,7 @@ public class SvcSubmit2Callable {
             return FakeTask.adder(40_000);
         };
 
-        // the future type should match with the callable type
+        // the Future type should match with the Callable parametric type
         Future<Double> future;
         try (ExecutorService executor = Executors.newSingleThreadExecutor()) {
             future = executor.submit(task);
@@ -52,7 +52,7 @@ public class SvcSubmit2Callable {
         try {
             System.out.println("Task result is " + future.get());
         } catch (InterruptedException ex) {
-            log.warn("Unexpected", ex);
+            log.warn("Unexpectedly interrupted while waiting for the task to complete", ex);
             Thread.currentThread().interrupt();
         } catch (ExecutionException ex) {
             log.error("Error in task execution", ex);
