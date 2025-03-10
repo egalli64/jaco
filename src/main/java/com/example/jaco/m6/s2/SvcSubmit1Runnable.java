@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m6.x1;
+package com.example.jaco.m6.s2;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -38,10 +38,11 @@ public class SvcSubmit1Runnable {
         };
 
         /*
-         * We can force submit() to push into the future a result of a given type
+         * We can make submit() associate a given result to the Future. This is useful
+         * when you want to retrieve a specific value after the Runnable completes.
          * 
-         * If the result type/value is interesting, a Future<?> could be used instead;
-         * in this case, future.get() would return null
+         * If the result type/value is not important, a Future<Void> could be used
+         * instead; in that case, future.get() would return null.
          */
         Future<String> future;
         try (ExecutorService executor = Executors.newSingleThreadExecutor()) {
@@ -56,7 +57,7 @@ public class SvcSubmit1Runnable {
         try {
             System.out.println("Task result is " + future.get());
         } catch (InterruptedException ex) {
-            log.warn("Unexpected", ex);
+            log.warn("Unexpectedly interrupted while waiting for the task to complete", ex);
             Thread.currentThread().interrupt();
         } catch (ExecutionException ex) {
             log.error("Error in task execution", ex);
