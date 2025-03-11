@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m6.s2;
+package com.example.jaco.m6.s3;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
@@ -16,22 +16,21 @@ import com.example.jaco.m1.s3.FakeTask;
 /**
  * Simple creation of CompletableFuture by runAsync()
  */
-public class Creation2RunAsync {
-    private static final Logger log = LoggerFactory.getLogger(Creation2RunAsync.class);
+public class Completable2RunAsync {
+    private static final Logger log = LoggerFactory.getLogger(Completable2RunAsync.class);
 
     public static void main(String[] args) {
         log.trace("Enter");
 
-        Future<Void> cf = CompletableFuture.runAsync(() -> {
+        Future<Void> async = CompletableFuture.runAsync(() -> {
             log.debug("Enter");
             FakeTask.adder(100_000);
-            log.debug("Exit");
         });
 
-        while (!cf.isDone()) {
+        while (!async.isDone()) {
             FakeTask.adder(1_000);
         }
 
-        log.debug("The future done now is {}", cf.isDone());
+        log.trace("Exit");
     }
 }
