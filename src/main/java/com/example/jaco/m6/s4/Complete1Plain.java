@@ -3,9 +3,10 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m6.s3;
+package com.example.jaco.m6.s4;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
@@ -14,7 +15,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Synchronous completion by complete()
  * <p>
- * Only the first call to complete() succeeds, the next ones are ignored
+ * Only the first call to complete() succeeds, the other ones are ignored
  */
 public class Complete1Plain {
     private static final Logger log = LoggerFactory.getLogger(Complete1Plain.class);
@@ -26,13 +27,12 @@ public class Complete1Plain {
         log.debug("Created {}", cf);
 
         cf.complete("Completed!");
+        log.debug("After completing");
 
-        if (cf.isDone()) {
-            log.debug("After completing");
-
-            cf.complete("Being already completed, this request is ignored");
+        if (cf.complete("ignored")) {
+            log.warn("Unexpected! Second complete() succeeded!");
         } else {
-            log.warn("Unexpected!");
+            log.info("Can't complete a CompletableFuture more than once");
         }
 
         try {
@@ -44,6 +44,10 @@ public class Complete1Plain {
             log.error("Nobody should throw anything here", ex);
         }
 
-        log.info("Join: {}", cf.join());
+        try {
+            log.info("Join result: {}", cf.join());
+        } catch (CompletionException ex) {
+            log.error("Unexpected", ex);
+        }
     }
 }
