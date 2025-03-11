@@ -15,8 +15,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Synchronous completion by completeExceptionally()
  */
-public class Complete2Exception {
-    private static final Logger log = LoggerFactory.getLogger(Complete2Exception.class);
+public class CompleteExceptionally {
+    private static final Logger log = LoggerFactory.getLogger(CompleteExceptionally.class);
 
     public static void main(String[] args) {
         log.trace("Enter");

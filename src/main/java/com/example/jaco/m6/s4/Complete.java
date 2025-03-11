@@ -17,8 +17,8 @@ import org.slf4j.LoggerFactory;
  * <p>
  * Only the first call to complete() succeeds, the other ones are ignored
  */
-public class Complete1Plain {
-    private static final Logger log = LoggerFactory.getLogger(Complete1Plain.class);
+public class Complete {
+    private static final Logger log = LoggerFactory.getLogger(Complete.class);
 
     public static void main(String[] args) {
         log.trace("Enter");

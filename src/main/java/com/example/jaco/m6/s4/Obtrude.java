@@ -17,8 +17,8 @@ import org.slf4j.LoggerFactory;
  * <p>
  * Forcibly sets or resets the result. Use with extreme caution
  */
-public class Complete3Obtrude {
-    private static final Logger log = LoggerFactory.getLogger(Complete3Obtrude.class);
+public class Obtrude {
+    private static final Logger log = LoggerFactory.getLogger(Obtrude.class);
 
     public static void main(String[] args) {
         log.trace("Enter");
