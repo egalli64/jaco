@@ -3,9 +3,10 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m6.s4;
+package com.example.jaco.m6.s5;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,14 +29,17 @@ public class ThenRun {
      */
     public static void main(String[] args) {
         log.trace("Enter");
-        CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> FakeTask.adder(100)) //
-                .thenRun(() -> log.trace("In the runner"));
+
+        Supplier<Double> task1 = () -> FakeTask.adder(1_000);
+        Runnable task2 = () -> log.trace("In the runner");
+
+        CompletableFuture<Void> cf = CompletableFuture.supplyAsync(task1).thenRun(task2);
 
         log.info("Do something else until the future is not completed");
         while (!cf.isDone()) {
             FakeTask.adder(10);
         }
 
-        log.info("Not much to see here: {}", cf.join());
+        log.info("Join on the (void) future: {}", cf.join());
     }
 }
