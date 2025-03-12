@@ -3,10 +3,12 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m6.s6;
+package com.example.jaco.m6.s7;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +22,7 @@ public class Exceptionally {
     private static final Logger log = LoggerFactory.getLogger(Exceptionally.class);
 
     /**
-     * Create a CompletableFuture that randomly could throw an exception. The
+     * Create a CompletableFuture that randomly throws an exception. The
      * exceptionally step convert the eventual exception in a fallback value.
      * 
      * @param args not used
@@ -28,16 +30,24 @@ public class Exceptionally {
     public static void main(String[] args) {
         log.trace("Enter");
 
-        CompletableFuture<Double> cf = CompletableFuture.supplyAsync(() -> {
+        Supplier<Double> task = () -> {
             if (ThreadLocalRandom.current().nextBoolean()) {
+                log.trace("Generating an exception");
                 throw new IllegalStateException("Something went wrong!");
+            } else {
+                log.trace("No exception, proceeding with task");
+                return FakeTask.adder(10);
             }
-            return FakeTask.adder(10);
-        }).exceptionally(ex -> {
-            log.warn("Here is the exception", ex);
-            return 0.0;
-        });
+        };
 
-        log.info("Join: {}", cf.join());
+        Function<Throwable, Double> fallback = ex -> {
+            log.warn("Fallback for {}: {}", //
+                    ex.getCause().getClass().getSimpleName(), ex.getCause().getMessage());
+            return 0.0;
+        };
+
+        CompletableFuture<Double> cf = CompletableFuture.supplyAsync(task).exceptionally(fallback);
+
+        log.info("Result: {}", cf.join());
     }
 }
