@@ -41,8 +41,7 @@ public class Exceptionally {
         };
 
         Function<Throwable, Double> fallback = ex -> {
-            log.warn("Fallback for {}: {}", //
-                    ex.getCause().getClass().getSimpleName(), ex.getCause().getMessage());
+            log.warn("Fallback for {}", ex.getCause().toString());
             return 0.0;
         };
 

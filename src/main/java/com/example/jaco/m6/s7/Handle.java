@@ -43,8 +43,7 @@ public class Handle {
 
         BiFunction<Double, Throwable, Double> handler = (result, ex) -> {
             if (ex != null) {
-                log.warn("Fallback for {}: {}", //
-                        ex.getCause().getClass().getSimpleName(), ex.getCause().getMessage());
+                log.warn("Fallback for {}", ex.getCause().toString());
                 return 0.0;
             } else {
                 log.info("Processing {} from previous step", result);
