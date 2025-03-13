@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m6.x1;
+package com.example.jaco.m6.s2;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -33,8 +33,8 @@ public class X2DiceCaster {
 
     /**
      * <ul>
-     * <li>A callable defines how a die is thrown
-     * <li>A list of FutureTask based on the callable is generated
+     * <li>A Callable defines how a die is thrown
+     * <li>A list of FutureTask based on the Callable is generated
      * <li>All the tasks are submitted to an executor
      * <li>Let the executor shutdown, all the tasks have time to complete
      * <li>Extract the results from the futures
@@ -46,19 +46,19 @@ public class X2DiceCaster {
         log.trace("Enter");
 
         // 1. a callable that generates a die cast result (or exception, for lost die)
-        Callable<Integer> cast = () -> {
+        Callable<Integer> caster = () -> {
             // sometimes a die get lost
             if (ThreadLocalRandom.current().nextDouble() < DIE_LOSS_PROBABILITY) {
-                log.trace("A lost die");
-                throw new IllegalStateException();
+                throw new IllegalStateException("A lost die");
+            } else {
+                int result = ThreadLocalRandom.current().nextInt(1, MAX_VALUE + 1);
+                log.trace("Cast {}", result);
+                return result;
             }
-            int result = ThreadLocalRandom.current().nextInt(1, MAX_VALUE + 1);
-            log.trace("Cast {}", result);
-            return result;
         };
 
         // 2. a list of DICE_NR future tasks, each based on the cast callable
-        List<FutureTask<Integer>> dice = IntStream.range(0, DICE_NR).mapToObj(i -> new FutureTask<>(cast)).toList();
+        List<FutureTask<Integer>> dice = IntStream.range(0, DICE_NR).mapToObj(i -> new FutureTask<>(caster)).toList();
 
         // 3. run a fixed thread pool executor, each task is submitted
         try (ExecutorService executor = Executors.newFixedThreadPool(TASK_NR)) {
@@ -71,11 +71,11 @@ public class X2DiceCaster {
             try {
                 System.out.println(die.get());
             } catch (InterruptedException ex) {
-                log.warn("No interruption was expected!", ex);
+                log.warn("No interruption is expected in this example!", ex);
                 Thread.currentThread().interrupt();
             } catch (ExecutionException ex) {
-                // Lost die - the IllegalStateException is wrapped in an ExecutionException
-                System.out.println("No result");
+                // Lost die - the actual Exception is wrapped in an ExecutionException
+                log.warn("No result, {}", ex.getMessage());
             }
         }
 
