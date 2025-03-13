@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m6.x1;
+package com.example.jaco.m6.s2;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -60,6 +60,8 @@ public class X1FutureList {
             } catch (ExecutionException ex) {
                 log.error("Can't extract value from future", ex);
             }
+
+            // Returning 0.0 as default value in case of error
             return 0.0;
         };
 
