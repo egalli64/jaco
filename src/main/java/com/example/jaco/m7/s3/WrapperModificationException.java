@@ -43,6 +43,7 @@ public class WrapperModificationException {
             log.info("The dropper result is {}", FakeTask.calc(30_000));
 
             list.remove(0);
+            log.info("Now list has size {}", list.size());
         });
 
         tReader.start();
