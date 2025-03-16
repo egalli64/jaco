@@ -19,17 +19,17 @@ public class CowaList {
 
         // get a snapshot of data
         Iterator<Integer> it = data.iterator();
+
         // change data
         data.set(2, 33);
         data.add(5);
+        System.out.println("The current data: " + data);
 
-        System.out.print("Reading from the 'old' snapshot: ");
+        System.out.print("Reading from an 'old' snapshot: ");
         while (it.hasNext()) {
             System.out.print(it.next() + " ");
         }
         System.out.println();
-
-        System.out.println("The current data: " + data);
 
         // get a new snapshot of data
         it = data.iterator();
