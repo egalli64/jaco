@@ -19,16 +19,17 @@ public class Main {
     public static void main(String[] args) {
         System.out.printf("The thread running the main method is named %s\n", Thread.currentThread().getName());
 
-        final long delta = 1_000;
-        System.out.printf("About to sleep @ %d for %d millis\n", System.currentTimeMillis(), delta);
+        final long delta = 1_000L;
+
+        log.info("About to sleep for {} millis", delta);
         try {
             // Thread.sleep() is seldom seen in production code!
             Thread.sleep(delta);
         } catch (InterruptedException e) {
             log.error("Sleep interrupted", e);
             Thread.currentThread().interrupt();
+        } finally {
+            log.info("Done");
         }
-
-        System.out.printf("...sleep ended @ %d%n", System.currentTimeMillis());
     }
 }
