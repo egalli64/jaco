@@ -40,18 +40,13 @@ public class BaseCase {
         // The worker could be running or maybe already terminated
         assert t.getState() == State.RUNNABLE || t.getState() == State.TERMINATED;
         System.out.printf("Thread %s is %s\n", t.getName(), t.getState());
-        if (t.isAlive()) {
+
+        while (t.isAlive()) {
             log.info("After start, a thread is said to be alive");
-        } else {
-            log.info("If main thread is slow, the other thread could terminate in the meantime!");
         }
+        log.info("We don't know when the worker thread is terminated");
 
-        // Some other task executed by the main thread
-        FakeTask.takeTime(100);
-
-        // Now we could reasonably expect the worker thread to be terminated
-        assert !t.isAlive();
-        System.out.printf("Thread %s is %s\n", t.getName(), t.getState());
+        System.out.printf("Now thread %s is %s\n", t.getName(), t.getState());
         log.info("After termination, a thread is no more alive");
 
         System.out.println("- Main is about to terminate -");
