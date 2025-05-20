@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 public class ArrayBQ {
     private static final Integer TERMINATOR = -1;
@@ -23,7 +23,7 @@ public class ArrayBQ {
         Runnable producer = () -> {
             try {
                 for (int i = 0; i < 12; i++) {
-                    FakeTask.takeTime(10 * (i + 1));
+                    FakeTasks.takeTime(10 * (i + 1));
                     queue.put(i);
                     System.out.printf("Delivered %d - queue: %d\n", i, queue.size());
                 }
@@ -41,7 +41,7 @@ public class ArrayBQ {
                 do {
                     item = queue.poll(250, TimeUnit.MILLISECONDS);
                     if (item != null) {
-                        FakeTask.takeTime(100);
+                        FakeTasks.takeTime(100);
                         System.out.println("Consuming " + item + " - queue: " + queue.size());
                     } else {
                         System.out.println("Consumer timeout");

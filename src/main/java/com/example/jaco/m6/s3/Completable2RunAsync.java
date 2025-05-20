@@ -11,7 +11,7 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * Simple creation of CompletableFuture by runAsync()
@@ -24,11 +24,11 @@ public class Completable2RunAsync {
 
         Future<Void> async = CompletableFuture.runAsync(() -> {
             log.debug("Enter");
-            FakeTask.adder(100_000);
+            FakeTasks.adder(100_000);
         });
 
         while (!async.isDone()) {
-            FakeTask.adder(1_000);
+            FakeTasks.adder(1_000);
         }
 
         log.trace("Exit");

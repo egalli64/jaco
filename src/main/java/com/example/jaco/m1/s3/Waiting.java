@@ -10,6 +10,8 @@ import java.lang.Thread.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.jaco.FakeTasks;
+
 /**
  * Show waiting and time waiting threads
  * <p>
@@ -33,7 +35,7 @@ public class Waiting {
         t1.start();
 
         // Do something else on main thread, so we can safely assume t1 kicks in
-        FakeTask.takeTime(50);
+        FakeTasks.takeTime(50);
 
         // Now t1 is expected to be timed waiting
         assert t1.getState() == State.TIMED_WAITING;
@@ -56,7 +58,7 @@ public class Waiting {
     public static void aMethod() {
         log.info("Simulating a timed wait on a resource");
 
-        FakeTask.takeTime(500);
+        FakeTasks.takeTime(500);
 
         // getAllStackTraces() should be used for debugging, monitoring, profiling only!
         for (Thread t : Thread.getAllStackTraces().keySet()) {

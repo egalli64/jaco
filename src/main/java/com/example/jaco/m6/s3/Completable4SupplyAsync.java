@@ -12,7 +12,7 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * Simple creation of CompletableFuture by supplyAsinc()
@@ -25,11 +25,11 @@ public class Completable4SupplyAsync {
 
         Future<Double> async = CompletableFuture.supplyAsync(() -> {
             log.debug("Enter");
-            return FakeTask.adder(100_000);
+            return FakeTasks.adder(100_000);
         });
 
         while (!async.isDone()) {
-            FakeTask.adder(4_000);
+            FakeTasks.adder(4_000);
         }
 
         try {

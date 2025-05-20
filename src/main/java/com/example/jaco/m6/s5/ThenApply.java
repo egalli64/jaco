@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * CompletableFuture::thenApply()
@@ -31,11 +31,11 @@ public class ThenApply {
     public static void main(String[] args) {
         log.trace("Enter");
 
-        Supplier<Double> task1 = () -> FakeTask.adder(2);
+        Supplier<Double> task1 = () -> FakeTasks.adder(2);
 
         Function<Double, String> task2 = x -> {
             log.info("Task 2 received {} from task 1", x);
-            double processedValue = x * FakeTask.adder(10);
+            double processedValue = x * FakeTasks.adder(10);
             log.info("Task 2 uses it input to generate {}", processedValue);
             return x + ", " + processedValue;
         };
@@ -44,7 +44,7 @@ public class ThenApply {
 
         log.info("Do something else until the future is not completed");
         while (!cf.isDone()) {
-            FakeTask.adder(2);
+            FakeTasks.adder(2);
         }
 
         log.info("Join gives: {}", cf.join());

@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * Execute each FutureTask in a list, then get the results
@@ -42,7 +42,7 @@ public class X1FutureList {
     public static void main(String[] args) {
         log.trace("Enter");
 
-        List<FutureTask<Double>> futures = Stream.generate(() -> new FutureTask<>(() -> FakeTask.adder(TASK_SIZE)))
+        List<FutureTask<Double>> futures = Stream.generate(() -> new FutureTask<>(() -> FakeTasks.adder(TASK_SIZE)))
                 .limit(TASK_NR).toList();
 
         try (ExecutorService es = Executors.newFixedThreadPool(POOL_SIZE)) {

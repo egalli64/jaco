@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.DoubleAdder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * Executor, ThreadPoolExecutor via Executors.newFixedThreadPool()
@@ -34,7 +34,7 @@ public class Executor2FixedThread {
         DoubleAdder result = new DoubleAdder();
 
         Runnable task = () -> {
-            double cur = FakeTask.calc(TASK_SIZE);
+            double cur = FakeTasks.calc(TASK_SIZE);
             log.trace("Current value is {}", cur);
             result.add(cur);
         };

@@ -13,7 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * Lock and ReentrantLock
@@ -81,7 +81,7 @@ public class LockTryWait {
             locked = lockF.tryLock(50, TimeUnit.MILLISECONDS);
             if (locked) {
                 // take some time, but the next tryLock should get the lock anyway
-                double value = FakeTask.calc(1_000);
+                double value = FakeTasks.calc(1_000);
                 System.out.printf("%s is adding %f to F\n", name, value);
                 resourceF += value;
             }
@@ -112,7 +112,7 @@ public class LockTryWait {
             locked = lockG.tryLock(5, TimeUnit.MILLISECONDS);
             if (locked) {
                 // take some time, so maybe the next tryLock can't get the lock
-                double value = FakeTask.calc(1_000);
+                double value = FakeTasks.calc(1_000);
                 System.out.printf("%s is adding %f to G\n", name, value);
                 resourceG += value;
             }

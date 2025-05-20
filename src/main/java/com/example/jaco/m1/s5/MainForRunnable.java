@@ -8,7 +8,7 @@ package com.example.jaco.m1.s5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * Working on a thread by composition
@@ -38,7 +38,7 @@ public class MainForRunnable {
         System.out.println("After starting, the worker thread state is " + worker.getState());
 
         // Doing something else in the main thread
-        FakeTask.takeTime(300);
+        FakeTasks.takeTime(300);
 
         // At this point the worker state should be TERMINATED
         System.out.println("The worker thread state is now " + worker.getState());

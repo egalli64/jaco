@@ -14,7 +14,7 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * Submit a Callable to an Executor
@@ -35,7 +35,7 @@ public class SvcSubmit2Callable {
 
         Callable<Double> task = () -> {
             log.trace("Callable started");
-            return FakeTask.adder(40_000);
+            return FakeTasks.adder(40_000);
         };
 
         // the Future type should match with the Callable parametric type
@@ -45,7 +45,7 @@ public class SvcSubmit2Callable {
 
             log.trace("While the executor works on the task, do something in the main thread");
             while (!future.isDone()) {
-                FakeTask.adder(4);
+                FakeTasks.adder(4);
             }
         }
 

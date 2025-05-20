@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * Cache Expensive objects in a ConcurrentHashMap
@@ -50,7 +50,7 @@ public class ConcurrentCache {
                 cache.computeIfAbsent(id, key -> new Expensive(key, tName));
 
                 // then use the created/fetched object for a random time
-                FakeTask.calc(10 * ThreadLocalRandom.current().nextInt(100));
+                FakeTasks.calc(10 * ThreadLocalRandom.current().nextInt(100));
             }
         };
 

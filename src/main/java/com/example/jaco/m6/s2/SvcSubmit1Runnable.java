@@ -13,7 +13,7 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * Submit a Runnable to an Executor
@@ -34,7 +34,7 @@ public class SvcSubmit1Runnable {
 
         Runnable task = () -> {
             log.trace("Runnable started");
-            FakeTask.adder(40_000);
+            FakeTasks.adder(40_000);
         };
 
         /*
@@ -50,7 +50,7 @@ public class SvcSubmit1Runnable {
 
             log.trace("While the executor works on the task, do something in the main thread");
             while (!future.isDone()) {
-                FakeTask.adder(4);
+                FakeTasks.adder(4);
             }
         }
 

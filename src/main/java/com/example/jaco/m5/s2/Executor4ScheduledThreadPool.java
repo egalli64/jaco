@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * Executor, ScheduledThreadPoolExecutor via Executors.newScheduledThreadPool()
@@ -31,7 +31,7 @@ public class Executor4ScheduledThreadPool {
 
         Runnable fixedDelayTask = () -> {
             log.info("Fixed-delay task");
-            FakeTask.adder(100);
+            FakeTasks.adder(100);
         };
 
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(CORE_POOL_SIZE);

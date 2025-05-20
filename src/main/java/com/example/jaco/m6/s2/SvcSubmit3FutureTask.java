@@ -14,7 +14,7 @@ import java.util.concurrent.FutureTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * Submit a FutureTask to an Executor
@@ -34,7 +34,7 @@ public class SvcSubmit3FutureTask {
 
         FutureTask<Double> task = new FutureTask<>(() -> {
             log.trace("Future task started");
-            return FakeTask.adder(40_000);
+            return FakeTasks.adder(40_000);
         });
 
         try (ExecutorService executor = Executors.newSingleThreadExecutor()) {
@@ -44,7 +44,7 @@ public class SvcSubmit3FutureTask {
             log.trace("While the executor works on the task, do something in the main thread");
             // the check could be done on task, there's no actual need of future here
             while (!future.isDone()) {
-                FakeTask.adder(4);
+                FakeTasks.adder(4);
             }
         }
 

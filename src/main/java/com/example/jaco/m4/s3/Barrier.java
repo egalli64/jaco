@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * CyclicBarrier
@@ -44,7 +44,7 @@ public class Barrier {
         Runnable worker = () -> {
             log.trace("Enter");
 
-            double value = FakeTask.adder(100);
+            double value = FakeTasks.adder(100);
             log.debug("Value is {}", value);
             accumulator.add(value);
             try {

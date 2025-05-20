@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * CompletableFuture::allOf()
@@ -29,7 +29,7 @@ public class AllOf {
     public static void main(String[] args) {
         log.trace("Enter");
 
-        Supplier<Double> task = () -> FakeTask.adder(10);
+        Supplier<Double> task = () -> FakeTasks.adder(10);
 
         CompletableFuture<Double> cf1 = CompletableFuture.supplyAsync(task);
         CompletableFuture<Double> cf2 = CompletableFuture.supplyAsync(task);
@@ -37,7 +37,7 @@ public class AllOf {
 
         CompletableFuture<Void> all = CompletableFuture.allOf(cf1, cf2, cf3);
         while (!all.isDone()) {
-            FakeTask.adder(1);
+            FakeTasks.adder(1);
         }
 
         log.info("Future results: {}, {}, {}", cf1.join(), cf2.join(), cf3.join());

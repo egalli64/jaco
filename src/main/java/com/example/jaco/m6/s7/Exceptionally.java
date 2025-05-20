@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * CompletableFuture::exceptionally()
@@ -36,7 +36,7 @@ public class Exceptionally {
                 throw new IllegalStateException("Something went wrong!");
             } else {
                 log.trace("No exception, proceeding with task");
-                return FakeTask.adder(10);
+                return FakeTasks.adder(10);
             }
         };
 

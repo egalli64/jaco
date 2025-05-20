@@ -8,7 +8,7 @@ package com.example.jaco.m1.s5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * A thread class, to create threads for its run() method
@@ -31,7 +31,7 @@ public class MyThread extends Thread {
     public void run() {
         log.trace("Enter");
 
-        FakeTask.takeTime(100);
+        FakeTasks.takeTime(100);
 
         log.trace("Exit");
     }

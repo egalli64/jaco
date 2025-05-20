@@ -10,7 +10,7 @@ import java.lang.Thread.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * Using Thread::isAlive() and Thread::join()
@@ -42,7 +42,7 @@ public class Main {
 
         if (args.length > 0) {
             // in this case the worker should have time to terminate
-            FakeTask.takeTime(10);
+            FakeTasks.takeTime(10);
         }
 
         // The worker can now be either RUNNABLE or TERMINATED

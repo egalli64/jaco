@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * Producer consumer on a ConcurrentLinkedQueue
@@ -33,7 +33,7 @@ public class LinkedList1Queue {
         Runnable producer = () -> {
             long id = Thread.currentThread().threadId();
             for (int i = 0; i < MESSAGE_NR; i++) {
-                Message message = new Message(id, FakeTask.calc(1_000));
+                Message message = new Message(id, FakeTasks.calc(1_000));
                 queue.offer(message);
                 log.info("Produced: {}", message);
             }
@@ -43,9 +43,9 @@ public class LinkedList1Queue {
             for (int i = 0; i < MESSAGE_NR * PRODUCER_NR; i++) {
                 Message message = queue.poll();
                 if (message != null) {
-                    log.info("Consuming: {} -> {}", message, FakeTask.calc(1_000) + message.payload);
+                    log.info("Consuming: {} -> {}", message, FakeTasks.calc(1_000) + message.payload);
                 } else {
-                    log.warn("No message in queue: {}", FakeTask.calc(1_000));
+                    log.warn("No message in queue: {}", FakeTasks.calc(1_000));
                 }
             }
         };

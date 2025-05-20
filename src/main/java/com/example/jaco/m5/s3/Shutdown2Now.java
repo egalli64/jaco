@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * shutdownNow() a single thread executor
@@ -33,7 +33,7 @@ public class Shutdown2Now {
 
         ExecutorService es = Executors.newSingleThreadExecutor();
         for (int i = 0; i < TASK_NR; i++) {
-            es.execute(() -> FakeTask.adder(1_000_000));
+            es.execute(() -> FakeTasks.adder(1_000_000));
         }
 
         List<Runnable> canceled = es.shutdownNow();

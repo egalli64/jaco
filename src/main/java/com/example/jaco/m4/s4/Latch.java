@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * CountDownLatch
@@ -40,7 +40,7 @@ public class Latch {
             log.trace("Enter");
 
             // Simulate the work done by the thread
-            double value = FakeTask.adder(100);
+            double value = FakeTasks.adder(100);
             accumulator.add(value);
             latch.countDown();
 

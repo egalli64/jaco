@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * Execute a Runnable on an Executor: fire and forget
@@ -31,7 +31,7 @@ public class SvcExecuteRunnable {
 
         Runnable task = () -> {
             log.trace("Runnable started");
-            FakeTask.adder(40_000);
+            FakeTasks.adder(40_000);
         };
 
         try (ExecutorService executor = Executors.newSingleThreadExecutor()) {
@@ -39,7 +39,7 @@ public class SvcExecuteRunnable {
 
             log.trace("Main thread continues execution...");
             for (int i = 0; i < 6; i++) {
-                FakeTask.adder(1_000);
+                FakeTasks.adder(1_000);
             }
         }
 

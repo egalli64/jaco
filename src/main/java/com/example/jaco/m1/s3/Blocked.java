@@ -10,6 +10,8 @@ import java.lang.Thread.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.jaco.FakeTasks;
+
 /**
  * A blocked thread
  * <p>
@@ -33,7 +35,7 @@ public class Blocked {
         System.out.printf("Thread %s is %s\n", t1.getName(), t1.getState());
 
         // Waste some time before creating and starting another thread
-        FakeTask.takeTime(50);
+        FakeTasks.takeTime(50);
 
         // Create and start another thread on the same method of blocking one
         System.out.println("- Main starts a second thread that should be blocked waiting for the first -");
@@ -41,14 +43,14 @@ public class Blocked {
         t2.start();
 
         // Waste some other time, so that the new thread has time to kick in
-        FakeTask.takeTime(50);
+        FakeTasks.takeTime(50);
 
         // The second child thread should be blocked from the blocking thread
         assert t2.getState() == State.BLOCKED;
         System.out.printf("Thread %s is %s\n", t2.getName(), t2.getState());
 
         // Keep the main thread busy in a long job
-        FakeTask.takeTime(900);
+        FakeTasks.takeTime(900);
 
         // Now both children should have ended their job
         assert !t1.isAlive() && !t2.isAlive();
@@ -66,7 +68,7 @@ public class Blocked {
     public static synchronized void aSynchronizedMethod() {
         log.trace("Enter");
 
-        FakeTask.takeTime(300);
+        FakeTasks.takeTime(300);
 
         log.trace("Exit");
     }

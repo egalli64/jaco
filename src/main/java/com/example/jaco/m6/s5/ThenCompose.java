@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * CompletableFuture::thenCompose()
@@ -29,7 +29,7 @@ public class ThenCompose {
     public static void main(String[] args) {
         log.trace("Enter");
 
-        Supplier<Double> task1 = () -> FakeTask.adder(10);
+        Supplier<Double> task1 = () -> FakeTasks.adder(10);
         Function<Double, CompletableFuture<Integer>> task2 = x -> CompletableFuture.completedFuture(x.intValue());
 
         // using thenApply results in nested CompletableFuture

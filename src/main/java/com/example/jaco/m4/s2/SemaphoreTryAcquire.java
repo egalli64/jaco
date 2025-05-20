@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * A semaphore that allows PERMIT_NR threads at a time to access a critical area
@@ -29,7 +29,7 @@ public class SemaphoreTryAcquire {
                 // no more than PERMIT_NR tasks could be running in this critical area
                 log.trace("Currently available permits: {}", semaphore.availablePermits());
 
-                FakeTask.takeTime(500);
+                FakeTasks.takeTime(500);
                 semaphore.release();
             } else {
                 log.trace("No permit available");

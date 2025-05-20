@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * Simple creation of CompletableFuture by runAsync() with provided executor
@@ -30,7 +30,7 @@ public class Completable3RunAsyncExecutor {
         // the task we want to run asynchronously as CompletableFuture
         Runnable task = () -> {
             log.debug("Enter");
-            FakeTask.adder(40_000);
+            FakeTasks.adder(40_000);
         };
 
         try (ExecutorService es = Executors.newFixedThreadPool(NR_THREADS)) {
@@ -42,7 +42,7 @@ public class Completable3RunAsyncExecutor {
             for (Future<Void> future : futures) {
                 while (!future.isDone()) {
                     log.debug("While at least a future is not done ...");
-                    FakeTask.adder(4_000);
+                    FakeTasks.adder(4_000);
                 }
             }
         }

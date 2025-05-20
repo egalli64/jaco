@@ -11,7 +11,7 @@ import java.util.concurrent.FutureTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * Running a FutureTask with a Callable.
@@ -33,7 +33,7 @@ public class FutureTask2Callable {
         // a FutureTask with a Callable, notice that it returns a value directly
         FutureTask<Double> task = new FutureTask<>(() -> {
             log.trace("Future task started");
-            return FakeTask.adder(40_000);
+            return FakeTasks.adder(40_000);
         });
 
         // start the FutureTask in a new thread
@@ -43,7 +43,7 @@ public class FutureTask2Callable {
         double result = 0.0;
 
         while (!task.isDone()) {
-            result += FakeTask.adder(4);
+            result += FakeTasks.adder(4);
         }
         System.out.println("Result in the main thread is " + result);
 

@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * Using a CyclicBarrier in a loop, plus interrupting workers and reset barrier
@@ -46,7 +46,7 @@ public class BarrierLoop {
             log.trace("Enter");
 
             // Simulate the work done by the current thread
-            double value = FakeTask.adder(100);
+            double value = FakeTasks.adder(100);
             log.debug("Generated value: {}", value);
             accumulator.add(value);
             try {
@@ -77,7 +77,7 @@ public class BarrierLoop {
         new Thread(worker, "B2").start();
 
         // BrokenBarrierException expected for both B1 and B2
-        double value = FakeTask.adder(10);
+        double value = FakeTasks.adder(10);
         System.out.println("A fake task (before barrier reset) generated: " + value);
         barrier.reset();
 

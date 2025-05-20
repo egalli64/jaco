@@ -10,7 +10,7 @@ import java.util.concurrent.Phaser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 public class BasicPhaserUsage {
     private static final Logger log = LoggerFactory.getLogger(BasicPhaserUsage.class);
@@ -45,7 +45,7 @@ public class BasicPhaserUsage {
         }).start();
 
         // run a fake task in the main thread, so that the worker kicks in
-        FakeTask.takeTime(2);
+        FakeTasks.takeTime(2);
 
         log.info(phaser.toString());
 

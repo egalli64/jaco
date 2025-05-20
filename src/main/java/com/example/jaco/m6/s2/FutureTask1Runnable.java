@@ -11,7 +11,7 @@ import java.util.concurrent.FutureTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * Running a FutureTask with a Runnable
@@ -33,7 +33,7 @@ public class FutureTask1Runnable {
         // a FutureTask with a Runnable and the result to be retrieved by get()
         FutureTask<String> task = new FutureTask<>(() -> {
             log.trace("Runnable started");
-            FakeTask.adder(40_000);
+            FakeTasks.adder(40_000);
         }, "OK!");
 
         // start the FutureTask in a new thread
@@ -44,7 +44,7 @@ public class FutureTask1Runnable {
 
         // do other tasks while the FutureTask is running
         while (!task.isDone()) {
-            result += FakeTask.adder(4);
+            result += FakeTasks.adder(4);
         }
         System.out.println("Result in the main thread is " + result);
 

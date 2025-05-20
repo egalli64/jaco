@@ -8,7 +8,7 @@ package com.example.jaco.m1.s6;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * User of MyInterruptibleThread, show how to terminate a thread using a custom
@@ -34,7 +34,7 @@ public class CustomInterrupt {
 
         try {
             // Let the worker kick in
-            FakeTask.takeTime(20);
+            FakeTasks.takeTime(20);
 
             // Ask the worker to interrupt, but it does not cooperate
             System.out.println("Interrupting worker");

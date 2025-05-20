@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m1.s3;
+package com.example.jaco;
 
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.DoubleStream;
@@ -12,10 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Fake task
+ * A few fake tasks
  */
-public class FakeTask {
-    private static final Logger log = LoggerFactory.getLogger(FakeTask.class);
+public class FakeTasks {
+    private static final Logger log = LoggerFactory.getLogger(FakeTasks.class);
 
     /**
      * Simulate to be busy doing something for a while

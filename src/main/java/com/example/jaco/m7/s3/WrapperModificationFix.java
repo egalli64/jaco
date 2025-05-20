@@ -12,7 +12,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * Avoid ConcurrentModificationException
@@ -24,7 +24,7 @@ public class WrapperModificationFix {
         log.trace("Enter");
         List<Double> list = Collections.synchronizedList(new ArrayList<>());
         for (int i = 0; i < 10; i++) {
-            double value = FakeTask.calc(100);
+            double value = FakeTasks.calc(100);
             list.add(value);
         }
 
@@ -38,7 +38,7 @@ public class WrapperModificationFix {
         });
 
         Thread tDropper = new Thread(() -> {
-            log.info("The dropper result is {}", FakeTask.calc(30_000));
+            log.info("The dropper result is {}", FakeTasks.calc(30_000));
 
             list.remove(0);
             log.info("Now list has size {}", list.size());

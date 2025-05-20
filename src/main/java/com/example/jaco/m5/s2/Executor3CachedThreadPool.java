@@ -13,7 +13,7 @@ import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * Executor, ThreadPoolExecutor via Executors.newCachedThreadPool()
@@ -33,7 +33,7 @@ public class Executor3CachedThreadPool {
         log.trace("Enter");
 
         Runnable task = () -> {
-            FakeTask.adder(100);
+            FakeTasks.adder(100);
         };
 
         try (ExecutorService executor = Executors.newCachedThreadPool()) {
@@ -43,12 +43,12 @@ public class Executor3CachedThreadPool {
             System.out.println("Running the first batch of jobs ...");
             batch.accept(TASK_NR);
 
-            System.out.println("Doing something else in main: " + FakeTask.adder(100));
+            System.out.println("Doing something else in main: " + FakeTasks.adder(100));
 
             System.out.println("Running the second batch of jobs ...");
             batch.accept(TASK_NR);
 
-            System.out.println("Doing something else in main: " + FakeTask.adder(100));
+            System.out.println("Doing something else in main: " + FakeTasks.adder(100));
 
             System.out.println("Running the third batch of jobs (double size) ...");
             batch.accept(TASK_NR * 2);

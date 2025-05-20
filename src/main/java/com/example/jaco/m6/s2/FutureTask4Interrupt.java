@@ -12,7 +12,7 @@ import java.util.concurrent.FutureTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m1.s3.FakeTask;
+import com.example.jaco.FakeTasks;
 
 /**
  * Running a FutureTask with a Callable
@@ -39,7 +39,7 @@ public class FutureTask4Interrupt {
                     // interrupted task will get this partial result
                     return result;
                 }
-                result += FakeTask.adder(1_000);
+                result += FakeTasks.adder(1_000);
             }
 
             log.trace("Task completed");
@@ -50,7 +50,7 @@ public class FutureTask4Interrupt {
         thread.start();
 
         log.trace("While calculating the future task, do something in the main thread");
-        double result = FakeTask.adder(10_000);
+        double result = FakeTasks.adder(10_000);
         System.out.println("Main thread result is " + result);
 
         // something happens that push to interrupt the task
