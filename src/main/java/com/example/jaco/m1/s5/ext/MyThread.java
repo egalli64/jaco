@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m1.s5;
+package com.example.jaco.m1.s5.ext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

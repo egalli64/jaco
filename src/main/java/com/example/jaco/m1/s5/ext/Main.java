@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m1.s5;
+package com.example.jaco.m1.s5.ext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +13,8 @@ import com.example.jaco.FakeTasks;
 /**
  * Working on a thread by derivation
  */
-public class MainForMyThread {
-    private static final Logger log = LoggerFactory.getLogger(MainForMyThread.class);
+public class Main {
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     /**
      * Create and start a thread by instancing a class that extends Thread
@@ -35,14 +35,13 @@ public class MainForMyThread {
         // The thread state should be RUNNABLE
         System.out.println("After starting, the worker thread state is " + worker.getState());
 
-        // Doing something else in the main thread
-        FakeTasks.takeTime(300);
+        while (worker.isAlive()) {
+            // Doing something else in the main thread - this is NOT a common approach
+            FakeTasks.takeTime(50);
+        }
 
-        // At this point the worker state should be TERMINATED
+        // Now the worker is TERMINATED
         System.out.println("The worker thread state is now " + worker.getState());
         log.trace("Exit");
-
-        // !!! There's no guarantee that the worker thread has completed !!!
-        // We'll see how to ensure that - spoiler: the main thread could join on it
     }
 }
