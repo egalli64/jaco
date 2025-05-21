@@ -17,8 +17,8 @@ import com.example.jaco.FakeTasks;
  * 
  * Enable assertions with -ea VM argument
  */
-public class Main {
-    private static final Logger log = LoggerFactory.getLogger(Main.class);
+public class Join {
+    private static final Logger log = LoggerFactory.getLogger(Join.class);
 
     /**
      * Create, start, and join thread, checking if it is alive now and there.

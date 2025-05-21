@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Using Thread::isAlive() and Thread::join() with time
  */
-public class MainLongRunner {
-    private static final Logger log = LoggerFactory.getLogger(MainLongRunner.class);
+public class TimeoutJoin {
+    private static final Logger log = LoggerFactory.getLogger(TimeoutJoin.class);
 
     /**
      * Create a thread, join with time limit. Maybe the other thread terminate
@@ -26,7 +26,7 @@ public class MainLongRunner {
         Thread worker = new Thread(() -> {
             log.trace("Enter");
 
-            double result = IntStream.range(2, 1_000).mapToDouble(i -> Math.cbrt(i)).sum();
+            double result = IntStream.range(2, 10_000).mapToDouble(i -> Math.cbrt(i)).sum();
             System.out.printf("Worker result is %f\n", result);
 
             log.trace("Exit");
@@ -45,12 +45,11 @@ public class MainLongRunner {
 
         // Maybe the worker is still alive, maybe not
         if (worker.isAlive()) {
-            log.trace("After timed joining in, the worker is still alive");
+            log.trace("After timed joining in: the worker is still alive");
         } else {
-            log.trace("After timed joining in, the worker was faster than main thread");
+            log.trace("After timed joining in: the worker was faster than main thread");
         }
 
-        System.out.println("Worker is " + worker.getState());
         log.trace("Exit");
     }
 }
