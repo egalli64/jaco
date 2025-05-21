@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
  * <p>
  * The console is carelessly shared between threads, expect troubles.
  */
-public class CheckInterrupted {
-    private static final Logger log = LoggerFactory.getLogger(CheckInterrupted.class);
+public class Interrupt {
+    private static final Logger log = LoggerFactory.getLogger(Interrupt.class);
 
     /**
      * Create another thread and start it. After a while interrupt it.
@@ -31,8 +31,7 @@ public class CheckInterrupted {
 
             int i = 0;
             while (!cur.isInterrupted()) {
-                System.out.print("In thread ");
-                System.out.print(cur.getName());
+                System.out.print("In thread " + cur.getName());
                 System.out.print(" ... ");
                 System.out.println(i);
                 i += 1;
@@ -47,9 +46,8 @@ public class CheckInterrupted {
 
         worker.start();
 
-        for (int i = 0; i < 50; i++) {
-            System.out.print("In thread ");
-            System.out.print(Thread.currentThread().getName());
+        for (int i = 0; i < 30; i++) {
+            System.out.print("In thread " + Thread.currentThread().getName());
             System.out.print(" ... ");
             System.out.println(i);
         }

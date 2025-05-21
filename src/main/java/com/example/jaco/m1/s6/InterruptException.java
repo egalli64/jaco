@@ -5,19 +5,16 @@
  */
 package com.example.jaco.m1.s6;
 
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.DoubleStream;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.example.jaco.FakeTasks;
 
 /**
- * What happens when an interrupt is sent to a waiting (here, sleeping) thread
+ * What happens when an interrupt is sent to a thread that could be WAITING
  */
-public class CheckInterruptedExceptional {
-    private static final Logger log = LoggerFactory.getLogger(CheckInterruptedExceptional.class);
+public class InterruptException {
+    private static final Logger log = LoggerFactory.getLogger(InterruptException.class);
 
     /**
      * A thread is created and started. After a while an interrupt is sent to it.
@@ -38,13 +35,12 @@ public class CheckInterruptedExceptional {
             try {
                 while (!cur.isInterrupted()) {
                     System.out.print("(Fake) wait on a resource ... ");
-                    // This is just a simulation! Thread.sleep() in seldom seen in production code
-                    // Put the current thread in TIMED_WAITING state
+                    // Simulate an IO bound task - Thread.sleep() in seldom seen in production code
+                    // The current thread is put in TIMED_WAITING state
                     Thread.sleep(1);
 
-                    double value = DoubleStream.generate(ThreadLocalRandom.current()::nextDouble).limit(10_000).sum();
-                    System.out.print("The result is ");
-                    System.out.println(value);
+                    // when the thread wakes up, do some CPU bound task
+                    System.out.println("The result is " + FakeTasks.calc(10_000));
                 }
                 // thread interrupted when in RUNNING state
                 log.info("(Fake) resource elaboration interrupted");
@@ -70,6 +66,7 @@ public class CheckInterruptedExceptional {
         System.out.println("Worker state now is " + worker.getState());
 
         System.out.println("Thread main requests worker interruption");
+        // it could lead to an exception in the worker!
         worker.interrupt();
 
         // Let the worker time to manage the interrupt
