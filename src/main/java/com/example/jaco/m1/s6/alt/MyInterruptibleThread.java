@@ -3,14 +3,14 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m1.s6;
+package com.example.jaco.m1.s6.alt;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A thread that ignore the standard interrupt approach but could be interrupted
- * following a custom approach.
+ * following a custom approach
  */
 public class MyInterruptibleThread extends Thread {
     private static final Logger log = LoggerFactory.getLogger(MyInterruptibleThread.class);
@@ -34,10 +34,10 @@ public class MyInterruptibleThread extends Thread {
     }
 
     /**
-     * Accept a termination request.
+     * Accept a termination request
      * <p>
-     * Package private method, only from this package a MyInterruptibleThread could
-     * be terminated.
+     * It is intentionally package private, only from this package a
+     * MyInterruptibleThread could be terminated
      */
     void shutdown() {
         log.trace("Enter");
