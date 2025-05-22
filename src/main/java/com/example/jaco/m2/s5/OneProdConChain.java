@@ -34,7 +34,7 @@ public class OneProdConChain {
      */
     private synchronized void producer() {
         log.trace("Enter");
-        String tName = Thread.currentThread().getName();
+        final String tName = Thread.currentThread().getName();
 
         try {
             for (int i = 0; i < PRODUCT_NR; i++) {
@@ -67,7 +67,7 @@ public class OneProdConChain {
      */
     private synchronized void consumer() {
         log.trace("Enter");
-        String tName = Thread.currentThread().getName();
+        final String tName = Thread.currentThread().getName();
 
         try {
             for (int i = 0; i < PRODUCT_NR; i++) {
