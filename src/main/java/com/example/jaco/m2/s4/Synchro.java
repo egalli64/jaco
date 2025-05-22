@@ -57,7 +57,7 @@ public class Synchro {
      * 
      * @param name the user name
      */
-    public synchronized void printStatus(String name) {
+    private synchronized void printStatus(String name) {
         System.out.printf("Hello, %s. ", name);
         int score = ThreadLocalRandom.current().nextInt(100);
         if (score > 50) {

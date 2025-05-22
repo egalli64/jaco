@@ -56,7 +56,7 @@ public class SynchroOnObjects {
     /**
      * Since A and B are read-only in this method, no race condition occurs
      */
-    public synchronized void syncThis() {
+    private synchronized void syncThis() {
         log.trace("Enter, lock on this");
         System.out.printf("Accordingly to %s A is %d, B is %d\n", //
                 Thread.currentThread().getName(), resourceA, resourceB);

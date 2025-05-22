@@ -72,7 +72,7 @@ public class SynchroStatic {
      * nested locking between instance-level and class-level. In modern code, use of
      * Lock is preferred !!!
      */
-    public synchronized void inst1() {
+    private synchronized void inst1() {
         log.trace("Enter");
         stat1();
         System.out.println(Thread.currentThread().getName() + " hello1()");
@@ -83,7 +83,7 @@ public class SynchroStatic {
     /**
      * Synchronized on the current instance (this)
      */
-    public synchronized void inst2() {
+    private synchronized void inst2() {
         log.trace("Enter");
         stat1();
         System.out.println(Thread.currentThread().getName() + " hello2()");

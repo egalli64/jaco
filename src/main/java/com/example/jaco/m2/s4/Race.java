@@ -57,7 +57,7 @@ public class Race {
      * 
      * @param name the user name
      */
-    public void printStatus(String name) {
+    void printStatus(String name) {
         System.out.printf("Hello, %s. ", name);
 
         int score = ThreadLocalRandom.current().nextInt(100);
