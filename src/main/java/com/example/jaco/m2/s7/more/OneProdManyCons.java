@@ -3,7 +3,7 @@
  * 
  * https://github.com/egalli64/jaco
  */
-package com.example.jaco.m2.s7;
+package com.example.jaco.m2.s7.more;
 
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m2.s5.Product;
+import com.example.jaco.m2.s5.more.Product;
 
 /**
  * Fair Lock and Condition
