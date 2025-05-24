@@ -16,8 +16,8 @@ import com.example.jaco.FakeTasks;
  * More threads could work on a volatile variable, but only one of them should
  * be allowed to change it
  */
-public class Volatile {
-    private static final Logger log = LoggerFactory.getLogger(Volatile.class);
+public class VolatileExample {
+    private static final Logger log = LoggerFactory.getLogger(VolatileExample.class);
 
     /** Written only by main */
     private static volatile boolean run = true;
@@ -33,11 +33,15 @@ public class Volatile {
      */
     public static void main(String[] args) throws InterruptedException {
         log.trace("Enter");
+
+        // super-intensive CPU bound task, this is not meant to be real code!
         Thread worker = new Thread(() -> {
             log.trace("Enter");
             // run is read - worker needs to see its actual value
             while (run) {
-                // counter is written - main needs to see its actual value
+                // counter is written only by the worker
+                // notice that volatile ensures visibility but not atomicity!
+                // see AtomicInteger for a more robust implementation
                 counter += 1;
             }
             log.trace("Exit");
