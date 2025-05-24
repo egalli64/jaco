@@ -8,12 +8,10 @@ package com.example.jaco.m3.s3;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Approaching to atomic variables
+ * A few basic methods on AtomicInteger
  */
-public class AtomicHello {
+public class AtomicIntegerBasics {
     /**
-     * A few basic methods on AtomicInteger
-     * 
      * @param args not used
      */
     public static void main(String[] args) {
