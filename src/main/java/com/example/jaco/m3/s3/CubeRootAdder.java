@@ -11,12 +11,12 @@ import java.util.concurrent.atomic.DoubleAdder;
 import com.example.jaco.m1.s7.adder.Problem;
 
 /**
- * A more interesting use of an atomic variable
+ * A DoubleAdder example
  * <p>
- * The fixed number of thread is not good, but keeps it simple and close to
- * MultiThreadedBuggy
+ * Meant as a fix to m1.s7.adder.MultiThreadedBuggy
  */
 public class CubeRootAdder extends Problem {
+    // TODO: number of working threads?
     private static final int WORKER_NR = 8;
     private final int CHUNK_SIZE = data.length / WORKER_NR;
 
