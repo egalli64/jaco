@@ -12,8 +12,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.jaco.m3.s2.Volatile;
-
 /**
  * A runnable encapsulating a ThreadLocal cache
  */
@@ -22,7 +20,7 @@ public class ThreadLocalCacheWorker implements Runnable {
     private static final int BOUND = 100;
     private static ThreadLocal<Set<Integer>> cache = ThreadLocal.withInitial(TreeSet::new);
 
-    private static final Logger log = LoggerFactory.getLogger(Volatile.class);
+    private static final Logger log = LoggerFactory.getLogger(ThreadLocalCacheWorker.class);
 
     @Override
     public void run() {
