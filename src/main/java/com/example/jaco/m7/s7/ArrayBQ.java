@@ -9,48 +9,61 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.example.jaco.FakeTasks;
 
+/**
+ * Using an ArrayBlockingQueue (fixed capacity) for a one to one
+ * producer/consumer
+ */
 public class ArrayBQ {
+    private static final Logger log = LoggerFactory.getLogger(ArrayBQ.class);
+
     private static final Integer TERMINATOR = -1;
+    private static final int NR_MESSAGES = 12;
 
     public static void main(String[] args) {
-        // notice the fixed capacity
+        log.trace("Enter");
         BlockingQueue<Integer> queue = new ArrayBlockingQueue<>(3);
 
         Runnable producer = () -> {
+            log.trace("Enter");
             try {
-                for (int i = 0; i < 12; i++) {
+                for (int i = 0; i < NR_MESSAGES; i++) {
+                    // simulate resource production
                     FakeTasks.takeTime(10 * (i + 1));
                     queue.put(i);
-                    System.out.printf("Delivered %d - queue: %d\n", i, queue.size());
+                    System.out.println("Produced " + i);
+                    log.debug("Queue size is {}", queue.size());
                 }
 
                 queue.put(TERMINATOR);
-                System.out.printf("Producer has terminated (queue: %d)\n", queue.size());
+                log.info("Last message produced - queue size is {}", queue.size());
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+                log.warn("Interrupt");
             }
+            log.trace("Exit");
         };
 
         Runnable consumer = () -> {
+            log.trace("Enter");
             try {
                 Integer item = null;
-                do {
-                    item = queue.poll(250, TimeUnit.MILLISECONDS);
-                    if (item != null) {
-                        FakeTasks.takeTime(100);
-                        System.out.println("Consuming " + item + " - queue: " + queue.size());
-                    } else {
-                        System.out.println("Consumer timeout");
-                    }
-                } while (item != TERMINATOR);
-
+                while ((item = queue.take()) != TERMINATOR) {
+                    FakeTasks.takeTime(80);
+                    System.out.println("Consumed " + item);
+                    log.debug("Queue size is {}", queue.size());
+                }
+                log.info("Last message consumed - queue size is {}", queue.size());
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+                log.warn("Interrupt");
             }
+            log.trace("Exit");
         };
 
         System.out.println("Starting ...");
@@ -58,6 +71,7 @@ public class ArrayBQ {
             executor.submit(producer);
             executor.submit(consumer);
         }
-        System.out.println("... done!");
+
+        log.trace("Exit");
     }
 }
